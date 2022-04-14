@@ -1,7 +1,7 @@
 
 '''
-Alejandro Cedillo Gamez
-A00824742
+Alejandro Cedillo A00824742
+Sergio Guasso A00826042
 13/04/2022
 '''
 from lark import Lark
