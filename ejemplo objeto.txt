@@ -1,0 +1,21 @@
+Start 
+{
+    <class> Person 
+    {
+        Public:
+            var num : int 
+            var spreak : String
+            num = 4
+            speak = "hola mundo"
+    }
+    var aux : int
+    aux = 4
+
+    while (aux > 0) {
+        print("hola mundo" ) 
+        print("\n")
+        aux = aux - 1
+    }
+
+}
+Finish
