@@ -20,7 +20,7 @@ RIGHT_BRACKET : /\]/
 
 COMMA     :  /,/    
 COLON     :  /:/  
-DOT       :  /./
+DOT       :  /\./
 
 NEW_LINE: /\n+/
 WHITESPACE: (" " | /\t/ )+
@@ -121,8 +121,9 @@ class : LESS_THAN CLASS GREATER_THAN class2 IDENTIFIER bloque
 class2 : IDENTIFIER EXTENDS | 
 
 function  : DEF IDENTIFIER LEFT_PARENTHESIS function1 RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function2 RIGHT_CURRLY_BRACES 
-function1 : var_cte COMMA function1 | 
+function1 : var_cte function3 | 
 function2 : RETURN var_cte | 
+function3 : COMMA var_cte function3 | 
 
 function_call : IDENTIFIER fc1 LEFT_PARENTHESIS fc2 RIGHT_PARENTHESIS NEW_LINE
 fc1 : DOT IDENTIFIER | 
