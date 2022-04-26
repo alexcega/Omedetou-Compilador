@@ -1,5 +1,5 @@
 //tokens
-START_PROGRAM   : "Start "
+START_PROGRAM   : "Start"
 FINISH_PROGRAM  : "Finish"
 VAR             : "var "
 WHILE           : "while"
@@ -10,17 +10,17 @@ RETURN          : "return"
 CLASS           : "class"
 EXTENDS         : "extends"
 PRINT           : "print"
-PRIVATE         : "Private"
-PUBLIC          : "Public"
-PROTECTED       : "Protected"
 
-LEFT_CURRLY_BRACES      : /{/
-RIGHT_CURRLY_BRACES     : /}/ 
+LEFT_CURRLY_BRACES      : /\{/
+RIGHT_CURRLY_BRACES     : /\}/ 
 LEFT_PARENTHESIS  : /\(/
 RIGHT_PARENTHESIS : /\)/ 
+LEFT_BRACKET : /\[/
+RIGHT_BRACKET : /\]/
 
 COMMA     :  /,/    
 COLON     :  /:/  
+DOT       :  /./
 
 NEW_LINE: /\n+/
 WHITESPACE: (" " | /\t/ )+
@@ -39,15 +39,16 @@ ASTERISK         : /\*/
 
 SLASH            : /\//
 
-INT_CTE       : "int"
-FLOAT_CTE     : "float"
-DOUBLE_CTE    : "double"
-STRING_CTE    : "String"
+INT_WORD      : "int"
+FLOAT_WORD     : "float"
+BOOL_WORD      : "bool"
+STRING_WORD    : "String"
  
 IDENTIFIER: /[a-zA-Z_][a-zA-Z0-9_]*/
 CONST_INT: /\d+/
 CONST_FLOAT: /\d+(\.\d+)?/
-STRING          : /".*"/
+CONST_BOOL: /[a-zA-Z_][a-zA-Z0-9_]*/
+CONST_STRING          : /".*"/
 
 
 %ignore WHITESPACE
@@ -56,17 +57,15 @@ STRING          : /".*"/
 // rules
 start: programa
 
-programa : START_PROGRAM bloque_global FINISH_PROGRAM
+programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
+programa2 : estatuto programa3 | class programa3
+programa3 : programa2 | 
 
-bloque_global : LEFT_CURRLY_BRACES bg1 RIGHT_CURRLY_BRACES
-bg1 : estatuto_global bg1 |  
+asignacion : IDENTIFIER asignacion2 EQUAL expresion NEW_LINE
+asignacion2 : DOT IDENTIFIER | 
 
-estatuto_global : asignacion | condicion | escritura | class_declaration | ciclo | vars
-
-asignacion : IDENTIFIER EQUAL expresion NEW_LINE
-
-condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque condicion1
-condicion1 : ELSE bloque |  
+condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque condicion2
+condicion2 : ELSE bloque |  
 
 bloque: LEFT_CURRLY_BRACES b1 RIGHT_CURRLY_BRACES
 b1 : estatuto b1 | 
@@ -76,23 +75,24 @@ estatuto    : asignacion
             | escritura 
             | ciclo 
             | vars
+            | function
+            | function_call
 
-// TO do
-tipo: INT_CTE 
-    | FLOAT_CTE 
-    | STRING_CTE
+tipo: INT_WORD
+    | FLOAT_WORD 
+    | STRING_WORD
+    | BOOL_WORD
 
 ciclo : WHILE LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque
 
-escritura : PRINT LEFT_PARENTHESIS esc1 esc2 RIGHT_PARENTHESIS NEW_LINE
-esc1: expresion 
-    | STRING
-esc2: COMMA esc1 | 
+escritura : PRINT LEFT_PARENTHESIS expresion esc2 RIGHT_PARENTHESIS NEW_LINE
+esc2: COMMA expresion esc2 | 
 
 vars    : VAR vars2
-vars2   : IDENTIFIER vars3
-vars3   : COMMA vars2 
-        | COLON tipo NEW_LINE
+vars2   : IDENTIFIER IDENTIFIER NEW_LINE | tipo vars3
+vars3   : asignacion | IDENTIFIER vars4 NEW_LINE
+vars4   : LEFT_BRACKET CONST_INT RIGHT_BRACKET vars5 | 
+vars5   : LEFT_BRACKET CONST_INT RIGHT_BRACKET | 
 
 expresion   : exp expresion1
 expresion1  : expresion2 exp | 
@@ -101,7 +101,7 @@ expresion2  : GREATER_THAN
             | EQUAL_COMPARATION 
             | NOT_EQUAL 
             | GREATER_EQUAL 
-            | LESS_EQUAL |
+            | LESS_EQUAL
 
 exp : termino ex1 
 ex1 : ex2 exp | 
@@ -109,37 +109,29 @@ ex2 : PLUS | MINUS
 
 factor  : factor1 | factor2
 factor1 : LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS
-factor2 : factor3 var_cte
+factor2 : factor3 factor4
 factor3 : PLUS | MINUS | 
+factor4 : var_cte | IDENTIFIER DOT IDENTIFIER
 
 termino : factor t1
 t1 : t2 termino | 
 t2 : ASTERISK | SLASH
 
-
-class_declaration : class | class_extends
-
-class : LESS_THAN CLASS GREATER_THAN IDENTIFIER bloque_class
-
-//to do 
-class_extends : //LESS_THAN CLASS GREATER_THAN IDENTIFIER EXTENDS class_cte bloque_class
+class : LESS_THAN CLASS GREATER_THAN class2 IDENTIFIER bloque
+class2 : IDENTIFIER EXTENDS | 
 
 function  : DEF IDENTIFIER LEFT_PARENTHESIS function1 RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function2 RIGHT_CURRLY_BRACES 
 function1 : var_cte COMMA function1 | 
-function2 : RETURN var_cte 
+function2 : RETURN var_cte | 
 
-bloque_class : LEFT_CURRLY_BRACES bc1 content_class bc2 content_class bc3 content_class RIGHT_CURRLY_BRACES
-bc1 : PRIVATE COLON | 
-bc2 : PUBLIC COLON | 
-bc3 : PROTECTED COLON | 
+function_call : IDENTIFIER fc1 LEFT_PARENTHESIS fc2 RIGHT_PARENTHESIS NEW_LINE
+fc1 : DOT IDENTIFIER | 
+fc2 : IDENTIFIER fc3 | 
+fc3 : COMMA IDENTIFIER fc3 | 
 
-content_class : cc1 | 
-cc1 : cc2 content_class
-cc2 : vars | function | asignacion
-
-// to do
-var_cte : IDENTIFIER 
+var_cte : IDENTIFIER
         | CONST_INT 
         | CONST_FLOAT 
-        | STRING
-        | //OBJECT
+        | CONST_STRING
+        | CONST_BOOL
+        | function_call
