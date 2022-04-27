@@ -1,0 +1,38 @@
+Start
+
+    <class> Persona {
+        var int edad = 0 
+        var String name
+        var String lastname = ""
+    }
+
+    <class> Maestro extends persona {
+        def aprobar (alumno){
+            print("Felicidades ", alumno, "pasaste \n")
+        }
+    }
+
+    <class> Alumno extends Persona {
+        def estudiar () {
+            print("Estoy estudiando")
+        }
+    }
+
+    var Maestro tioRico
+    tioRico.name = "tioRico"
+    tioRico.lastname = "McPato"
+
+    var Alumno hugo
+    hugo.name = "hugo"
+    hugo.edad = 21
+    hugo.lastname = "McPato"
+
+    var Alumno paco = hugo
+    paco.name = "paco"
+
+    var Alumno luis
+    luis = paco
+    luis.name = "luis"
+
+    tioRico.aprobar(luis.name + " " + luis.lastname)
+Finish

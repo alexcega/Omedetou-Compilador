@@ -89,10 +89,11 @@ escritura : PRINT LEFT_PARENTHESIS expresion esc2 RIGHT_PARENTHESIS NEW_LINE
 esc2: COMMA expresion esc2 | 
 
 vars    : VAR vars2
-vars2   : IDENTIFIER IDENTIFIER NEW_LINE | tipo vars3
+vars2   : IDENTIFIER IDENTIFIER vars6 NEW_LINE| tipo vars3
 vars3   : asignacion | IDENTIFIER vars4 NEW_LINE
 vars4   : LEFT_BRACKET CONST_INT RIGHT_BRACKET vars5 | 
 vars5   : LEFT_BRACKET CONST_INT RIGHT_BRACKET | 
+vars6   : EQUAL expresion |
 
 expresion   : exp expresion1
 expresion1  : expresion2 exp | 
@@ -121,14 +122,14 @@ class : LESS_THAN CLASS GREATER_THAN class2 IDENTIFIER bloque
 class2 : IDENTIFIER EXTENDS | 
 
 function  : DEF IDENTIFIER LEFT_PARENTHESIS function1 RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function2 RIGHT_CURRLY_BRACES 
-function1 : var_cte function3 | 
+function1 : var_cte function3 |
 function2 : RETURN var_cte | 
 function3 : COMMA var_cte function3 | 
 
 function_call : IDENTIFIER fc1 LEFT_PARENTHESIS fc2 RIGHT_PARENTHESIS NEW_LINE
 fc1 : DOT IDENTIFIER | 
-fc2 : IDENTIFIER fc3 | 
-fc3 : COMMA IDENTIFIER fc3 | 
+fc2 : expresion fc3 | 
+fc3 : COMMA expresion fc3 | 
 
 var_cte : IDENTIFIER
         | CONST_INT 
