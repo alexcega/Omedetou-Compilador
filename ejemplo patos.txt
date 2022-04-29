@@ -6,7 +6,7 @@ Start
         var String lastname = ""
     }
 
-    <class> Maestro extends persona {
+    <class> Maestro extends Persona {
         def aprobar (alumno){
             print("Felicidades ", alumno, "pasaste \n")
         }
@@ -35,4 +35,5 @@ Start
     luis.name = "luis"
 
     tioRico.aprobar(luis.name + " " + luis.lastname)
+
 Finish

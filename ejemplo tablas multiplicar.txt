@@ -1,0 +1,11 @@
+Start
+    var int miNum = 1
+    
+    while ( miNum < 0 ) {
+        var int segundoNum = 1
+        while ( segundoNum < 10 ) {
+            print( miNum * segundoNum)
+            segundoNum = segundoNum + 1
+        }
+    }
+Finish
