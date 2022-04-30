@@ -13,4 +13,4 @@ Propuesta de compilador con lista de tokens, diagramas de sintaxis y otras consi
 Ejemplo de codigo en lenguaje Omedetou, archivo sencillo de python con sintaxis en lark y ejemplo de funcionamiento en Lark IDE
 
 ## Fase 2
-Ejemplo de clase funcional, corrección de diagramas de fluejo, e inicio de logica en puntos neuralgicos
+Ejemplo de clase funcional, corrección de diagramas de flujo, e inicio de lógica en puntos neuralgicos
