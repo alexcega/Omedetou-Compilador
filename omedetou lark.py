@@ -2,10 +2,10 @@
 '''
 Alejandro Cedillo A00824742
 Sergio Guasso A00826042
-13/04/2022
+02/05/2022
 '''
 from asyncio.windows_events import NULL
-from curses.ascii import NUL
+import cuboSemantico
 from lark import Lark
 tbd = NULL
 cont = tbd
@@ -13,6 +13,7 @@ pilaO = []
 Poper = []
 Quads = []
 Psaltos = []
+
 
 # codigo de if
 def condicion():
@@ -59,9 +60,9 @@ l = Lark(open("tokens omedetou.txt", 'r').read())
 
 #diagrama / arbol del 
 try : 
-
     my_input = open("ejemplo patos.txt", 'r').read()
     print( l.parse(my_input).pretty() )             #funcion pretty para mejor visualizacion
-
+    l.parese(my_input)
+    l.grammar
 except EOFError:
     print(EOFError)
