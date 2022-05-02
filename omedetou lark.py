@@ -14,6 +14,7 @@ Poper = []
 Quads = []
 Psaltos = []
 
+# codigo de if
 def condicion():
     falseIf = pilaO.pop()
     if falseIf.type() != bool :
@@ -22,11 +23,21 @@ def condicion():
         Quads.append(['gotoF',falseIf,NULL,tbd])
         Psaltos.append(cont)
 
-def ciclo1():
-    # Psaltos.append(cont)
-    pass
+def finCondicion():
+    salida = Psaltos.pop()
+    Quads[salida][3] = cont
 
-def ciclo2():
+def inicioElse():
+    Quads.append(['goto',NULL,NULL,tbd])
+    Falsoif = Psaltos.pop()
+    Psaltos.push(cont-1)
+    Quads[Falsoif][3] = cont
+
+# codigo de while
+def inicioCiclo():
+    Psaltos.append(cont)
+
+def ciclobool():
     falsewhile = pilaO.pop()
     if falsewhile.type() != bool : 
         print('type missmatch')
@@ -37,10 +48,11 @@ def finciclo():
     iniciowhile = Psaltos.pop()
     Quads[iniciowhile][3] = cont
 
-
+# codigo de print
 def printo():
     tinta = pilaO.pop()
     Quads.append(['print', NULL, NULL, tinta])
+
 
 #objeto lark
 l = Lark(open("tokens omedetou.txt", 'r').read())
