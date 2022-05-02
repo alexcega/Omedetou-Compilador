@@ -32,6 +32,8 @@ GREATER_EQUAL       : />=/
 NOT_EQUAL         : /!=/
 EQUAL_COMPARATION : /==/
 EQUAL            : /=/
+OR               : /\|/
+AND              : /\&/
 
 PLUS             : /\+/
 MINUS            : /-/
@@ -103,6 +105,8 @@ expresion2  : GREATER_THAN
             | NOT_EQUAL 
             | GREATER_EQUAL 
             | LESS_EQUAL
+            | OR
+            | AND
 
 exp : termino ex1 
 ex1 : ex2 exp | 
