@@ -70,7 +70,6 @@ except EOFError:
 
 
 for tree in mytree.children:
-
     for node in tree.children:
         print (node)
 
