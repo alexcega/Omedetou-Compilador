@@ -67,11 +67,11 @@ programa3 : programa2 |
 asignacion : IDENTIFIER asignacion2 EQUAL expresion NEW_LINE
 asignacion2 : DOT IDENTIFIER | 
 
-condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque condicion2
-condicion2 : ELSE bloque |  
+condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque condicionElse
+condicionElse : ELSE bloque |  
 
-bloque: LEFT_CURRLY_BRACES b1 RIGHT_CURRLY_BRACES
-b1 : estatuto b1 | 
+bloque: LEFT_CURRLY_BRACES bloqueEstatuto RIGHT_CURRLY_BRACES
+bloqueEstatuto : estatuto bloqueEstatuto | 
 
 estatuto    : asignacion 
             | condicion 
@@ -91,16 +91,16 @@ ciclo : WHILE LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque
 escritura : PRINT LEFT_PARENTHESIS expresion esc2 RIGHT_PARENTHESIS NEW_LINE
 esc2: COMMA expresion esc2 | 
 
-vars    : VAR vars2
-vars2   : IDENTIFIER IDENTIFIER vars6 NEW_LINE| tipo vars3
-vars3   : asignacion | IDENTIFIER vars4 NEW_LINE
-vars4   : LEFT_BRACKET CONST_INT RIGHT_BRACKET vars5 | 
-vars5   : LEFT_BRACKET CONST_INT RIGHT_BRACKET | 
-vars6   : EQUAL expresion |
+vars    : VAR varsType
+varsType   : IDENTIFIER IDENTIFIER varsAsign NEW_LINE| tipo vars3
+vars3   : asignacion | IDENTIFIER varsArray NEW_LINE
+varsArray   : LEFT_BRACKET CONST_INT RIGHT_BRACKET varsMatrix | 
+varsMatrix   : LEFT_BRACKET CONST_INT RIGHT_BRACKET | 
+varsAsign   : EQUAL expresion |
 
 expresion   : exp expresion1
-expresion1  : expresion2 exp | 
-expresion2  : GREATER_THAN 
+expresion1  : expresionComparation exp | 
+expresionComparation  : GREATER_THAN 
             | LESS_THAN 
             | EQUAL_COMPARATION 
             | NOT_EQUAL 
@@ -110,31 +110,31 @@ expresion2  : GREATER_THAN
             | AND
 
 exp : termino ex1 
-ex1 : ex2 exp | 
-ex2 : PLUS | MINUS
+ex1 : expSumRes exp | 
+expSumRes : PLUS | MINUS
 
-factor  : factor1 | factor2
-factor1 : LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS
-factor2 : factor3 factor4
-factor3 : PLUS | MINUS | 
-factor4 : var_cte | IDENTIFIER DOT IDENTIFIER
+factor  : factorFF | factor2
+factorFF : LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS
+factor2 : factorSumResEps factorGetID
+factorSumResEps : PLUS | MINUS | 
+factorGetID : var_cte | IDENTIFIER DOT IDENTIFIER
 
 termino : factor t1
-t1 : t2 termino | 
-t2 : ASTERISK | SLASH
+t1 : terminoMD termino | 
+terminoMD : ASTERISK | SLASH
 
-class : LESS_THAN CLASS GREATER_THAN class2 IDENTIFIER bloque
-class2 : IDENTIFIER EXTENDS | 
+class : LESS_THAN CLASS GREATER_THAN classExtended IDENTIFIER bloque
+classExtended : IDENTIFIER EXTENDS | 
 
-function  : DEF IDENTIFIER LEFT_PARENTHESIS function1 RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function2 RIGHT_CURRLY_BRACES 
-function1 : var_cte function3 |
-function2 : RETURN var_cte | 
-function3 : COMMA var_cte function3 | 
+function  : DEF IDENTIFIER LEFT_PARENTHESIS functionParameter RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto functionReturn RIGHT_CURRLY_BRACES 
+functionParameter : var_cte functionParameters |
+functionReturn : RETURN var_cte | 
+functionParameters : COMMA var_cte functionParameters | 
 
-function_call : IDENTIFIER fc1 LEFT_PARENTHESIS fc2 RIGHT_PARENTHESIS NEW_LINE
-fc1 : DOT IDENTIFIER | 
-fc2 : expresion fc3 | 
-fc3 : COMMA expresion fc3 | 
+function_call : IDENTIFIER fcClass LEFT_PARENTHESIS fcParamLiteral RIGHT_PARENTHESIS NEW_LINE
+fcClass : DOT IDENTIFIER | 
+fcParamLiteral : expresion fcParams | 
+fcParams : COMMA expresion fcParams | 
 
 var_cte : IDENTIFIER
         | CONST_INT 
