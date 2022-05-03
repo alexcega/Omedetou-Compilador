@@ -56,6 +56,13 @@ def printo():
     tinta = pilaO.pop()
     Quads.append(['print', null, null, tinta])
 
+# termino 
+# def termino():
+#     if(input == '+')
+#         Poper.push('+')
+#     elif(input == '*')
+#         Poper.push('*')
+
 
 #objeto lark
 l = Lark(open("tokens omedetou.txt", 'r').read())
@@ -65,14 +72,30 @@ try :
     my_input = open("declaracion vars.txt", 'r').read()
     # print( l.parse(my_input).pretty() )             #funcion pretty para mejor visualizacion
     mytree = l.parse(my_input)
+
+    # print(type(mytree.pretty()))
+
+    for node in mytree.children:
+        print( node)
+
 except EOFError:
     print(EOFError)
 
 
-for tree in mytree.children:
-    for node in tree.children:
-        print (node)
+# for tree in mytree.children:
+#     for node in tree.children:
+#         print (node)
 
 
 # class mytransformer(Transformer):
 #     def 
+
+reglas = {
+    'condicion' : condicion(),
+    'finCondicion' : finCondicion(),
+    'inicioElse' : inicioElse(),
+    'inicioCiclo' : inicioCiclo(),
+    'ciclobool' : ciclobool(),
+    'finciclo' : finciclo(),
+    'printo' : printo()
+}

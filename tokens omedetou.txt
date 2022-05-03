@@ -1,144 +1,144 @@
-//tokens
-START_PROGRAM   : "Start"
-FINISH_PROGRAM  : "Finish"
-VAR             : "var "
-WHILE           : "while"
-IF              : "if "
-ELSE            : "else "
-DEF             : "def"
-RETURN          : "return"
-CLASS           : "class"
-EXTENDS         : "extends"
-PRINT           : "print"
+    //tokens
+    START_PROGRAM   : "Start"
+    FINISH_PROGRAM  : "Finish"
+    VAR             : "var "
+    WHILE           : "while"
+    IF              : "if "
+    ELSE            : "else "
+    DEF             : "def"
+    RETURN          : "return"
+    CLASS           : "class"
+    EXTENDS         : "extends"
+    PRINT           : "print"
 
-LEFT_CURRLY_BRACES      : /\{/
-RIGHT_CURRLY_BRACES     : /\}/ 
-LEFT_PARENTHESIS  : /\(/
-RIGHT_PARENTHESIS : /\)/ 
-LEFT_BRACKET : /\[/
-RIGHT_BRACKET : /\]/
+    LEFT_CURRLY_BRACES      : /\{/
+    RIGHT_CURRLY_BRACES     : /\}/ 
+    LEFT_PARENTHESIS  : /\(/
+    RIGHT_PARENTHESIS : /\)/ 
+    LEFT_BRACKET : /\[/
+    RIGHT_BRACKET : /\]/
 
-COMMA     :  /,/    
-COLON     :  /:/  
-DOT       :  /\./
+    COMMA     :  /,/    
+    COLON     :  /:/  
+    DOT       :  /\./
 
-NEW_LINE: /\n+/
-WHITESPACE: (" " | /\t/ )+
+    NEW_LINE: /\n+/
+    WHITESPACE: (" " | /\t/ )+
 
-GREATER_THAN      : />/
-LESS_THAN         : /</
-LESS_EQUAL        : /<=/
-GREATER_EQUAL       : />=/
-NOT_EQUAL         : /!=/
-EQUAL_COMPARATION : /==/
-EQUAL            : /=/
-OR               : /\|/
-AND              : /\&/
+    GREATER_THAN      : />/
+    LESS_THAN         : /</
+    LESS_EQUAL        : /<=/
+    GREATER_EQUAL       : />=/
+    NOT_EQUAL         : /!=/
+    EQUAL_COMPARATION : /==/
+    EQUAL            : /=/
+    OR               : /\|/
+    AND              : /\&/
 
-PLUS             : /\+/
-MINUS            : /-/
-ASTERISK         : /\*/
+    PLUS             : /\+/
+    MINUS            : /-/
+    ASTERISK         : /\*/
 
-SLASH            : /\//
+    SLASH            : /\//
 
-INT_WORD      : "int"
-FLOAT_WORD     : "float"
-BOOL_WORD      : "bool"
-STRING_WORD    : "String"
- 
-IDENTIFIER: /[a-zA-Z_][a-zA-Z0-9_]*/
-CONST_INT: /\d+/
-CONST_FLOAT: /\d+(\.\d+)?/
-CONST_BOOL: /[a-zA-Z_][a-zA-Z0-9_]*/
-CONST_STRING          : /".*"/
+    INT_WORD      : "int"
+    FLOAT_WORD     : "float"
+    BOOL_WORD      : "bool"
+    STRING_WORD    : "String"
+    
+    IDENTIFIER: /[a-zA-Z_][a-zA-Z0-9_]*/
+    CONST_INT: /\d+/
+    CONST_FLOAT: /\d+(\.\d+)?/
+    CONST_BOOL: /True | False/ 
+    CONST_STRING          : /".*"/
 
-COMMENT : /#.*/
+    COMMENT : /#.*/
 
-%ignore WHITESPACE
-%ignore NEW_LINE
+    %ignore WHITESPACE
+    %ignore NEW_LINE
 
-// rules
-start: programa
+    // rules
+    start: programa
 
-programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
-programa2 : estatuto programa3 | class programa3
-programa3 : programa2 | 
+    programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
+    programa2 : estatuto programa3 | class programa3
+    programa3 : programa2 | 
 
-asignacion : IDENTIFIER asignacion2 EQUAL expresion NEW_LINE
-asignacion2 : DOT IDENTIFIER | 
+    asignacion : IDENTIFIER asignacion2 EQUAL expresion NEW_LINE
+    asignacion2 : DOT IDENTIFIER | 
 
-condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque condicionelse
-condicionelse : ELSE bloque |  
+    condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque condicionelse
+    condicionelse : ELSE bloque |  
 
-bloque: LEFT_CURRLY_BRACES b1 RIGHT_CURRLY_BRACES
-b1 : estatuto b1 | 
+    bloque: LEFT_CURRLY_BRACES b1 RIGHT_CURRLY_BRACES
+    b1 : estatuto b1 | 
 
-estatuto    : asignacion 
-            | condicion 
-            | escritura 
-            | ciclo 
-            | vars
-            | function
+    estatuto    : asignacion 
+                | condicion 
+                | escritura 
+                | ciclo 
+                | vars
+                | function
+                | function_call
+
+    tipo: INT_WORD
+        | FLOAT_WORD 
+        | STRING_WORD
+        | BOOL_WORD
+
+    ciclo : WHILE LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque
+
+    escritura : PRINT LEFT_PARENTHESIS expresion esc2 RIGHT_PARENTHESIS NEW_LINE
+    esc2: COMMA expresion esc2 | 
+
+    vars    : VAR varstype
+    varstype   :  tipo vars3 | IDENTIFIER IDENTIFIER vars_asign_obj NEW_LINE
+    vars3   : asignacion | IDENTIFIER varsarray NEW_LINE
+    varsarray   : LEFT_BRACKET CONST_INT RIGHT_BRACKET varsmatix | 
+    varsmatix   : LEFT_BRACKET CONST_INT RIGHT_BRACKET | 
+    vars_asign_obj   : EQUAL expresion |
+
+    expresion   : exp expresion1
+    expresion1  : expresion_comparacion exp | 
+    expresion_comparacion  : GREATER_THAN 
+                | LESS_THAN 
+                | EQUAL_COMPARATION 
+                | NOT_EQUAL 
+                | GREATER_EQUAL 
+                | LESS_EQUAL
+                | OR
+                | AND
+
+    exp : termino ex1 
+    ex1 : exp_mas_menos exp | 
+    exp_mas_menos : PLUS | MINUS
+
+    factor  : factor_fondofalso | factor2
+    factor_fondofalso : LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS
+    factor2 : factor_masmenos_eps factor_var
+    factor_masmenos_eps : PLUS | MINUS | 
+    factor_var : var_cte | IDENTIFIER DOT IDENTIFIER
+
+    termino : factor t1
+    t1 : termino_por_entre termino | 
+    termino_por_entre : ASTERISK | SLASH
+
+    class : LESS_THAN CLASS GREATER_THAN class_extended IDENTIFIER bloque
+    class_extended : IDENTIFIER EXTENDS | 
+
+    function  : DEF IDENTIFIER LEFT_PARENTHESIS function_param RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function_return RIGHT_CURRLY_BRACES 
+    function_param : var_cte function_params |
+    function_return : RETURN var_cte | 
+    function_params : COMMA var_cte function_params | 
+
+    function_call : IDENTIFIER fc_class LEFT_PARENTHESIS fc_param RIGHT_PARENTHESIS NEW_LINE
+    fc_class : DOT IDENTIFIER | 
+    fc_param : expresion fc_params | 
+    fc_params : COMMA expresion fc_params | 
+
+    var_cte : IDENTIFIER
+            | CONST_INT 
+            | CONST_FLOAT 
+            | CONST_STRING
+            | CONST_BOOL
             | function_call
-
-tipo: INT_WORD
-    | FLOAT_WORD 
-    | STRING_WORD
-    | BOOL_WORD
-
-ciclo : WHILE LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque
-
-escritura : PRINT LEFT_PARENTHESIS expresion esc2 RIGHT_PARENTHESIS NEW_LINE
-esc2: COMMA expresion esc2 | 
-
-vars    : VAR varstype
-varstype   :  tipo vars3 | IDENTIFIER IDENTIFIER vars_asign_obj NEW_LINE
-vars3   : asignacion | IDENTIFIER varsarray NEW_LINE
-varsarray   : LEFT_BRACKET CONST_INT RIGHT_BRACKET varsmatix | 
-varsmatix   : LEFT_BRACKET CONST_INT RIGHT_BRACKET | 
-vars_asign_obj   : EQUAL expresion |
-
-expresion   : exp expresion1
-expresion1  : expresion_comparacion exp | 
-expresion_comparacion  : GREATER_THAN 
-            | LESS_THAN 
-            | EQUAL_COMPARATION 
-            | NOT_EQUAL 
-            | GREATER_EQUAL 
-            | LESS_EQUAL
-            | OR
-            | AND
-
-exp : termino ex1 
-ex1 : exp_mas_menos exp | 
-exp_mas_menos : PLUS | MINUS
-
-factor  : factor_fondofalso | factor2
-factor_fondofalso : LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS
-factor2 : factor_masmenos_eps factor_var
-factor_masmenos_eps : PLUS | MINUS | 
-factor_var : var_cte | IDENTIFIER DOT IDENTIFIER
-
-termino : factor t1
-t1 : termino_por_entre termino | 
-termino_por_entre : ASTERISK | SLASH
-
-class : LESS_THAN CLASS GREATER_THAN class_extended IDENTIFIER bloque
-class_extended : IDENTIFIER EXTENDS | 
-
-function  : DEF IDENTIFIER LEFT_PARENTHESIS function_param RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function_return RIGHT_CURRLY_BRACES 
-function_param : var_cte function_params |
-function_return : RETURN var_cte | 
-function_params : COMMA var_cte function_params | 
-
-function_call : IDENTIFIER fc_class LEFT_PARENTHESIS fc_param RIGHT_PARENTHESIS NEW_LINE
-fc_class : DOT IDENTIFIER | 
-fc_param : expresion fc_params | 
-fc_params : COMMA expresion fc_params | 
-
-var_cte : IDENTIFIER
-        | CONST_INT 
-        | CONST_FLOAT 
-        | CONST_STRING
-        | CONST_BOOL
-        | function_call

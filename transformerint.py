@@ -12,6 +12,8 @@ parser = Lark("""
 print(parser.parse('3 14 159'))
 
 myparse = parser.parse('3 14 159').children
+print (type(myparse))
+
 for node in myparse :
     print ( type(node))
 
