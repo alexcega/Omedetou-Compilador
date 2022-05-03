@@ -52,6 +52,7 @@ CONST_FLOAT: /\d+(\.\d+)?/
 CONST_BOOL: /[a-zA-Z_][a-zA-Z0-9_]*/
 CONST_STRING          : /".*"/
 
+COMMENT : /#.*/
 
 %ignore WHITESPACE
 %ignore NEW_LINE

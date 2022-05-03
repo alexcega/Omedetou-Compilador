@@ -4,10 +4,12 @@ Alejandro Cedillo A00824742
 Sergio Guasso A00826042
 02/05/2022
 '''
-from asyncio.windows_events import NULL
+
 import cuboSemantico
 from lark import Lark
-tbd = NULL
+from lark import Transformer
+null = lambda self, _: None
+tbd = null
 cont = tbd
 pilaO = []
 Poper = []
@@ -21,7 +23,7 @@ def condicion():
     if falseIf.type() != bool :
         print("Error, type missmatch")
     else:
-        Quads.append(['gotoF',falseIf,NULL,tbd])
+        Quads.append(['gotoF',falseIf,null,tbd])
         Psaltos.append(cont)
 
 def finCondicion():
@@ -29,7 +31,7 @@ def finCondicion():
     Quads[salida][3] = cont
 
 def inicioElse():
-    Quads.append(['goto',NULL,NULL,tbd])
+    Quads.append(['goto',null,null,tbd])
     Falsoif = Psaltos.pop()
     Psaltos.push(cont-1)
     Quads[Falsoif][3] = cont
@@ -43,7 +45,7 @@ def ciclobool():
     if falsewhile.type() != bool : 
         print('type missmatch')
     else:
-        Quads.append(['gotof', falsewhile,NULL, tbd])
+        Quads.append(['gotof', falsewhile,null, tbd])
 
 def finciclo():
     iniciowhile = Psaltos.pop()
@@ -52,7 +54,7 @@ def finciclo():
 # codigo de print
 def printo():
     tinta = pilaO.pop()
-    Quads.append(['print', NULL, NULL, tinta])
+    Quads.append(['print', null, null, tinta])
 
 
 #objeto lark
@@ -60,9 +62,18 @@ l = Lark(open("tokens omedetou.txt", 'r').read())
 
 #diagrama / arbol del 
 try : 
-    my_input = open("ejemplo patos.txt", 'r').read()
-    print( l.parse(my_input).pretty() )             #funcion pretty para mejor visualizacion
-    l.parese(my_input)
-    l.grammar
+    my_input = open("declaracion vars.txt", 'r').read()
+    # print( l.parse(my_input).pretty() )             #funcion pretty para mejor visualizacion
+    mytree = l.parse(my_input)
 except EOFError:
     print(EOFError)
+
+
+for tree in mytree.children:
+
+    for node in tree.children:
+        print (node)
+
+
+# class mytransformer(Transformer):
+#     def 
