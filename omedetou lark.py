@@ -4,10 +4,11 @@ Alejandro Cedillo A00824742
 Sergio Guasso A00826042
 02/05/2022
 '''
-
 import cuboSemantico
 from lark import Lark
 from lark import Transformer
+from lark import Visitor
+# from Visitor import Transformer, Visitor
 null = lambda self, _: None
 tbd = null
 cont = tbd
@@ -62,40 +63,97 @@ def printo():
 #         Poper.push('+')
 #     elif(input == '*')
 #         Poper.push('*')
+# Visitor
+class IncreaseAllNumbers(Visitor):
+    def number(self, tree):
+        assert tree.data == "number"
+        tree.children[0] += 1
 
 
+
+'''class Visitor(VisitorBase, ABC, Generic[_Leaf_T]):
+    """Tree visitor, non-recursive (can handle huge trees).
+    Visiting a node calls its methods (provided by the user via inheritance) according to ``tree.data``
+    """
+
+    def visit(self, tree: Tree[_Leaf_T]) -> Tree[_Leaf_T]:
+        "Visits the tree, starting with the leaves and finally the root (bottom-up)"
+        for subtree in tree.iter_subtrees():
+            self._call_userfunc(subtree)
+        return tree
+
+    def visit_topdown(self, tree: Tree[_Leaf_T]) -> Tree[_Leaf_T]:
+        "Visit the tree, starting at the root, and ending at the leaves (top-down)"
+        for subtree in tree.iter_subtrees_topdown():
+            self._call_userfunc(subtree)
+        return tree
+# '''
+
+'''
+<class 'lark.lexer.Token'>
+<class 'lark.tree.Tree'>
+'''
+def run_instruction(t):
+    try:
+        print('data :: ')
+        print(t.data)
+    except:
+        pass
+    # print()
+    if t.data == ('programa' or 'programa2'):
+        for cmd in t.children:
+            # if type(cmd) == "<class 'lark.tree.Tree'>" :
+            try:
+                run_instruction(cmd)
+            except:
+                pass
+    elif t.data == 'programa2':
+        for cmd in t.children:
+            try:
+                run_instruction(cmd)
+            except:
+                pass
+    elif t.data == 'unnumero': 
+        print('soy un numero')
+        # print(t.children)
+        # print(*t.children)
+        pilaO.append(*t.children.children)
+        print(pilaO)
+    else:
+        raise SyntaxError('Unknown instruction: %s' % t.data)
 #objeto lark
-l = Lark(open("tokens omedetou.txt", 'r').read())
+my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #diagrama / arbol del 
 try : 
-    my_input = open("declaracion vars.txt", 'r').read()
+    my_input = open("test1.txt", 'r').read()
     # print( l.parse(my_input).pretty() )             #funcion pretty para mejor visualizacion
-    mytree = l.parse(my_input)
+    my_parse_tree = my_parser.parse(my_input)
+    IncreaseAllNumbers().visit(my_parse_tree)
+    # my_parse_tree.
+    # print(type(my_parse_tree.pretty()))
 
-    # print(type(mytree.pretty()))
-
-    for node in mytree.children:
-        print( node)
-
+    # for node in my_parse_tree.children:
+    #     run_instruction(node)
+        # print(node)
 except EOFError:
     print(EOFError)
-
-
-# for tree in mytree.children:
-#     for node in tree.children:
-#         print (node)
-
+    print('aqui')
 
 # class mytransformer(Transformer):
 #     def 
 
-reglas = {
-    'condicion' : condicion(),
-    'finCondicion' : finCondicion(),
-    'inicioElse' : inicioElse(),
-    'inicioCiclo' : inicioCiclo(),
-    'ciclobool' : ciclobool(),
-    'finciclo' : finciclo(),
-    'printo' : printo()
-}
+
+# call a function with a dictionary
+# https://stackoverflow.com/questions/9168340/using-a-dictionary-to-select-function-to-execute
+# reglas = {
+#     'condicion' : condicion,
+#     'finCondicion' : finCondicion,
+#     'inicioElse' : inicioElse,
+#     'inicioCiclo' : inicioCiclo,
+#     'ciclobool' : ciclobool,
+#     'finciclo' : finciclo,
+#     'escritura' : printo,
+#     'esc2' :  printo, 
+#     'factor_var' : '',
+# }

@@ -73,14 +73,14 @@
     bloque: LEFT_CURRLY_BRACES b1 RIGHT_CURRLY_BRACES
     b1 : estatuto b1 | 
 
-    estatuto    : asignacion 
-                | condicion 
-                | escritura 
-                | ciclo 
-                | vars
-                | function
-                | function_call
-
+    estatuto    : asignacion -> igualar
+                | condicion  -> unif
+                | escritura  -> unprint
+                | ciclo      -> unwhile
+                | vars       -> unavars
+                | function   -> unafuncion
+                | function_call -> unallamadafuncion
+                | var_cte -> unnumero
     tipo: INT_WORD
         | FLOAT_WORD 
         | STRING_WORD
@@ -92,8 +92,10 @@
     esc2: COMMA expresion esc2 | 
 
     vars    : VAR varstype
-    varstype   :  tipo vars3 | IDENTIFIER IDENTIFIER vars_asign_obj NEW_LINE
-    vars3   : asignacion | IDENTIFIER varsarray NEW_LINE
+    varstype    :  tipo vars3 -> tipo_normal
+                | IDENTIFIER IDENTIFIER vars_asign_obj NEW_LINE -> tipo_object
+    vars3   : asignacion -> asignar_var_normal
+            | IDENTIFIER varsarray NEW_LINE
     varsarray   : LEFT_BRACKET CONST_INT RIGHT_BRACKET varsmatix | 
     varsmatix   : LEFT_BRACKET CONST_INT RIGHT_BRACKET | 
     vars_asign_obj   : EQUAL expresion |
@@ -116,12 +118,15 @@
     factor  : factor_fondofalso | factor2
     factor_fondofalso : LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS
     factor2 : factor_masmenos_eps factor_var
-    factor_masmenos_eps : PLUS | MINUS | 
-    factor_var : var_cte | IDENTIFIER DOT IDENTIFIER
+    factor_masmenos_eps : PLUS 
+                        | MINUS | 
+    factor_var  : var_cte -> var_guardada
+                | IDENTIFIER DOT IDENTIFIER -> var_de_obj
 
     termino : factor t1
     t1 : termino_por_entre termino | 
-    termino_por_entre : ASTERISK | SLASH
+    termino_por_entre   : ASTERISK  -> multiplicacion
+                        | SLASH     -> division
 
     class : LESS_THAN CLASS GREATER_THAN class_extended IDENTIFIER bloque
     class_extended : IDENTIFIER EXTENDS | 

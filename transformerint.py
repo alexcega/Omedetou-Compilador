@@ -1,4 +1,4 @@
-from lark import Lark, Transformer
+from lark import Lark, Transformer, Visitor
 class T(Transformer):
     def INT(self, tok):
         return tok.update(value=int(tok))
@@ -9,13 +9,16 @@ parser = Lark("""
     %ignore " "
     """, parser="lalr")
 
-print(parser.parse('3 14 159'))
+# print(parser.parse('3 14 159'))
 
 myparse = parser.parse('3 14 159').children
-print (type(myparse))
 
 for node in myparse :
-    print ( type(node))
+    print (node)
 
+class IncreaseAllNumbers(Visitor):
+    def number(self, tree):
+        assert tree.data == "number"
+        tree.children[0] += 1
 
-print(int(myparse[0]) + int(myparse[1]))   
+IncreaseAllNumbers().visit(myparse)
