@@ -1,5 +1,9 @@
 # Omedetou-Compilador
 Proyecto de compilador para la materia de Compiladores enero - junio 2022
+Se hace uso de la libreria Lark para la gramatica tokens parser y lexer
+
+para inicial instala la libreria con el comando:
+`pip install lark`
 
 Compilador en base a programacion orientada a objetos con soporte de acceso a sus funciones y atributos
 Equipo:
