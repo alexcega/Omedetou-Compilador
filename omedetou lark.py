@@ -33,13 +33,18 @@ for somee in my_parse_tree.iter_subtrees_topdown():
     print(somee.data)
 
 class instructions(Visitor):
+    def escritura(self,tree):
+        Quads.append(['print',None,None, pilaO.pop()])
     def unnumero(self, tree):
         print(self)
         # print(tree.children)
     def var_cte(self,tree):
-        pilaO.append(tree.children[0])
+        pilaO.append(int(tree.children[0]))
         print(tree.children[0]) # el valor de cte
     # def vars_as
 
 print()
 instructions().visit(my_parse_tree)
+# instructions.visit_topdown(my_parse_tree)
+
+print(Quads)
