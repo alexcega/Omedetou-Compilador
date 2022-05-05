@@ -4,7 +4,8 @@ Alejandro Cedillo A00824742
 Sergio Guasso A00826042
 02/05/2022
 '''
-import cuboSemantico
+from cuboSemantico import cuboSemantico
+from cuboSemantico import OTypeError
 from funcionesOmedetou import * 
 from lark import Lark
 #from lark import Transformer
@@ -64,6 +65,13 @@ class instructions(Visitor):
         operador = Poper.pop()
         num1 = pilaO.pop()
         num2 = pilaO.pop()
+        
+        # print("cubits",cuboSemantico[num1[1]][operador][num2[1]])
+        # verifica que no sea error
+        if(cuboSemantico[num1[1]][operador][num2[1]] == OTypeError):
+            print("ERROR PERRO")
+            exit()
+
         if(operador == '+'):
             temp = num1[0] + num2[0] #valor de la tupla
         elif(operador == '*'):
