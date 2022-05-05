@@ -80,7 +80,7 @@
                 | vars       -> unavars
                 | function   -> unafuncion
                 | function_call -> unallamadafuncion
-                | var_cte -> unnumero
+                | var_cte -> unnumero //se borra despues
     tipo: INT_WORD
         | FLOAT_WORD 
         | STRING_WORD
