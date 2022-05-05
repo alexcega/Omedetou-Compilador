@@ -80,7 +80,6 @@
                 | vars       -> unavars
                 | function   -> unafuncion
                 | function_call -> unallamadafuncion
-                | var_cte -> unnumero //se borra despues
     tipo: INT_WORD
         | FLOAT_WORD 
         | STRING_WORD
@@ -93,7 +92,7 @@
 
     vars    : VAR varstype
     varstype    :  tipo vars3 -> tipo_normal
-                | IDENTIFIER IDENTIFIER vars_asign_obj NEW_LINE -> tipo_object
+                //| IDENTIFIER IDENTIFIER vars_asign_obj NEW_LINE -> tipo_object
     vars3   : asignacion -> asignar_var_normal
             | IDENTIFIER varsarray NEW_LINE
     varsarray   : LEFT_BRACKET CONST_INT RIGHT_BRACKET varsmatix | 

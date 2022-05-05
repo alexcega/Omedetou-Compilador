@@ -35,6 +35,12 @@ myparsenodes = my_parse_tree.children
 for somee in my_parse_tree.iter_subtrees_topdown():
     print(somee.data)
 
+
+
+myGlobalVars = {
+
+}
+
 class instructions(Visitor):
     def escritura(self,tree):
         Quads.append(['print',None,None, pilaO.pop()])
@@ -53,14 +59,26 @@ class instructions(Visitor):
         Poper.append(tree.children[0].value)
         print(tree.children[0])
 
+    def esc2(self, tree):
+        Quads.append(['print',None,None, pilaO.pop()])
+
+    def vars(self,tree):
+        # print(tree.children)
+        # print(tree.children[0])
+        # print(tree.children[1])
+        pass
+    def tipo_normal(self,tree):
+        print(tree.children)
+
+
     def var_cte(self,tree):
         print("type",tree.children[0].type)
         if tree.children[0].type == "CONST_INT":
-            tupla_aux = (int(tree.children[0]), 'int')
-            pilaO.append(tupla_aux)
+            pilaO.append({'value':int(tree.children[0]), 'type':'int'})
             print("tuplonga = ",tupla_aux)
         # pilaO.append(int(tree.children[0]))
         print(tree.children[0]) # el valor de cte
+        
     def expresion(self,args):
         operador = Poper.pop()
         num1 = pilaO.pop()

@@ -1,3 +1,3 @@
 Start
-    print(1)
+    print("hola" , "adios")
 Finish
