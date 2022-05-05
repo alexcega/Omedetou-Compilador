@@ -78,7 +78,7 @@ class instructions(Visitor):
             print("tuplonga = ",tupla_aux)
         # pilaO.append(int(tree.children[0]))
         print(tree.children[0]) # el valor de cte
-        
+
     def expresion(self,args):
         operador = Poper.pop()
         num1 = pilaO.pop()
@@ -86,7 +86,7 @@ class instructions(Visitor):
         
         # print("cubits",cuboSemantico[num1[1]][operador][num2[1]])
         # verifica que no sea error
-        if(cuboSemantico[num1[1]][operador][num2[1]] == OTypeError):
+        if(cuboSemantico[num1['value']][operador][num2['value']] == OTypeError):
             print("ERROR PERRO")
             exit()
 
