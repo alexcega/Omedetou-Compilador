@@ -7,20 +7,22 @@ Sergio Guasso A00826042
 import cuboSemantico
 from funcionesOmedetou import * 
 from lark import Lark
-from lark import Transformer
+#from lark import Transformer
 from lark import Visitor
-from lark import visitors
+#from lark import visitors
 
 '''
 <class 'lark.lexer.Token'>
 <class 'lark.tree.Tree'>
 '''
 
+
+
 my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #diagrama / arbol del 
 try : 
-    my_input = open("Tests/print ome.txt", 'r').read()
+    my_input = open("Tests/print1mas1.txt", 'r').read()
     
     my_parse_tree = my_parser.parse(my_input)
     print( my_parse_tree.pretty())
@@ -33,14 +35,29 @@ for somee in my_parse_tree.iter_subtrees_topdown():
     print(somee.data)
 
 class instructions(Visitor):
-    def escritura(self,tree):
-        Quads.append(['print',None,None, pilaO.pop()])
+    # def escritura(self,tree):
+    #     Quads.append(['print',None,None, pilaO.pop()])
     def unnumero(self, tree):
         print(self)
         # print(tree.children)
+    def exp_mas_menos(self,tree):
+        Poper.append(tree.children[0].value)
+        print(tree.children[0])
     def var_cte(self,tree):
+        print("type",tree.children[0].type)
+        # if tree.children[0].type == 
         pilaO.append(int(tree.children[0]))
         print(tree.children[0]) # el valor de cte
+    def expresion(self,args):
+        operador = Poper.pop()
+        num1 = pilaO.pop()
+        num2 = pilaO.pop()
+        if(operador == '+'):
+            temp = num1 + num2
+        
+        Quads.append([operador, num1, num2, temp])
+    
+        
     # def vars_as
 
 print()
