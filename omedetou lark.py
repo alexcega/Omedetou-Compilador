@@ -76,14 +76,22 @@ class instructions(Visitor):
         # print(tree.children[1].children[0])   # name     
         # print(tree.children[0].children[0])   # type
 
+    def palabra(self, tree):
+        pilaO.append({'value': tree.children[0].value, 'type':'String'})
 
-    def var_cte(self,tree):
-        print("type",tree.children[0].type)
-        if tree.children[0].type == "CONST_INT":
-            pilaO.append({'value':int(tree.children[0]), 'type':'int'})
-            print("tuplonga = ",tupla_aux)
+    def entero(self,tree):
+        pilaO.append({'value':int(tree.children[0]), 'type':'int'})
         # pilaO.append(int(tree.children[0]))
-        print(tree.children[0]) # el valor de cte
+
+    def asignacion(self, tree):
+        try :
+            myGlobalVars[tree.children[0].value]['value'] = pilaO.pop()
+            Quads.append(['=' , myGlobalVars[tree.children[0].value]['value'], None,tree.children[0].value ])
+            # print(tree.children[0].value)
+            # print(pilaO)
+        except KeyError:
+            print('Error, not such variable with name', tree.children[0].value)
+
 
     ''' def expresion(self,args):
         operador = Poper.pop()

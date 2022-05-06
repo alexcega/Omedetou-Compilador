@@ -141,9 +141,9 @@
         | STRING_WORD
         | BOOL_WORD
 
-    var_cte : IDENTIFIER
-            | CONST_INT 
-            | CONST_FLOAT 
-            | CONST_STRING
-            | CONST_BOOL
-            | function_call
+    var_cte : IDENTIFIER    -> identificador
+            | CONST_INT     -> entero
+            | CONST_FLOAT   -> decimal
+            | CONST_STRING  -> palabra
+            | CONST_BOOL    -> booleano
+            | function_call -> funcion
