@@ -1,3 +1,4 @@
 Start
-    var int num = 2
+    var String nombre
+    nombre = "shinji"
 Finish

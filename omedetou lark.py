@@ -23,7 +23,7 @@ my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #diagrama / arbol del 
 try : 
-    my_input = open("Tests/print1mas1.txt", 'r').read()
+    my_input = open("Tests/declaracion vars.txt", 'r').read()
     
     my_parse_tree = my_parser.parse(my_input)
     print( my_parse_tree.pretty())
@@ -68,7 +68,13 @@ class instructions(Visitor):
         # print(tree.children[1])
         pass
     def tipo_normal(self,tree):
-        print(tree.children)
+        myGlobalVars[tree.children[1].children[0].value] = {
+            'type' : tree.children[0].children[0].value,
+            'value' : None,
+            'scope': None
+        }
+        # print(tree.children[1].children[0])   # name     
+        # print(tree.children[0].children[0])   # type
 
 
     def var_cte(self,tree):
@@ -79,7 +85,7 @@ class instructions(Visitor):
         # pilaO.append(int(tree.children[0]))
         print(tree.children[0]) # el valor de cte
 
-    def expresion(self,args):
+    ''' def expresion(self,args):
         operador = Poper.pop()
         num1 = pilaO.pop()
         num2 = pilaO.pop()
@@ -87,7 +93,7 @@ class instructions(Visitor):
         # print("cubits",cuboSemantico[num1[1]][operador][num2[1]])
         # verifica que no sea error
         if(cuboSemantico[num1['value']][operador][num2['value']] == OTypeError):
-            print("ERROR PERRO")
+            print(OTypeError)
             exit()
 
         if(operador == '+'):
@@ -96,8 +102,14 @@ class instructions(Visitor):
             temp = num1[0] * num2[0]
         pilaO.append(temp)
         Quads.append([operador, num1, num2, temp])
-    
+    ''' 
         
+    def vars_sin_valor(self,tree):
+        # print(tree)
+        # print(tree.children)
+        # print(tree.children[0])
+        pass
+    
     # def vars_as
 
 print()
@@ -105,3 +117,4 @@ instructions().visit(my_parse_tree)
 # instructions.visit_topdown(my_parse_tree)
 
 print(Quads)
+print(myGlobalVars)

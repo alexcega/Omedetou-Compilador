@@ -61,17 +61,21 @@
     start: programa
 
     programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
-    programa2 : estatuto programa3 | class programa3
-    programa3 : programa2 | 
+    programa2 : estatuto* class* 
 
-    asignacion : IDENTIFIER asignacion2 EQUAL expresion NEW_LINE
-    asignacion2 : DOT IDENTIFIER | 
+    vars    : VAR varstype
+    varstype    :  tipo vars3 -> tipo_normal
+                //| IDENTIFIER IDENTIFIER NEW_LINE -> tipo_object
+    vars3   : asignacion -> asignar_var
+            | IDENTIFIER varsarray? NEW_LINE  ->vars_sin_valor
+    varsarray   : LEFT_BRACKET CONST_INT RIGHT_BRACKET varsmatix? 
+    varsmatix   : LEFT_BRACKET CONST_INT RIGHT_BRACKET 
 
-    condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque condicionelse
-    condicionelse : ELSE bloque |  
+    asignacion : IDENTIFIER asignacion_atributo? EQUAL expresion NEW_LINE
+    asignacion_atributo : DOT IDENTIFIER 
 
-    bloque: LEFT_CURRLY_BRACES b1 RIGHT_CURRLY_BRACES
-    b1 : estatuto b1 | 
+    bloque: LEFT_CURRLY_BRACES b1? RIGHT_CURRLY_BRACES
+    b1 : estatuto b1*
 
     estatuto    : asignacion -> igualar
                 | condicion  -> unif
@@ -80,27 +84,17 @@
                 | vars       -> unavars
                 | function   -> unafuncion
                 | function_call -> unallamadafuncion
-    tipo: INT_WORD
-        | FLOAT_WORD 
-        | STRING_WORD
-        | BOOL_WORD
+
+    escritura : PRINT LEFT_PARENTHESIS expresion esc2* RIGHT_PARENTHESIS NEW_LINE
+    esc2: COMMA expresion 
+    
+    condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque condicionelse?
+    condicionelse : ELSE bloque  
 
     ciclo : WHILE LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS bloque
 
-    escritura : PRINT LEFT_PARENTHESIS expresion esc2 RIGHT_PARENTHESIS NEW_LINE
-    esc2: COMMA expresion esc2 | 
-
-    vars    : VAR varstype
-    varstype    :  tipo vars3 -> tipo_normal
-                //| IDENTIFIER IDENTIFIER vars_asign_obj NEW_LINE -> tipo_object
-    vars3   : asignacion -> asignar_var_normal
-            | IDENTIFIER varsarray NEW_LINE
-    varsarray   : LEFT_BRACKET CONST_INT RIGHT_BRACKET varsmatix | 
-    varsmatix   : LEFT_BRACKET CONST_INT RIGHT_BRACKET | 
-    vars_asign_obj   : EQUAL expresion |
-
-    expresion   : exp expresion1
-    expresion1  : expresion_comparacion exp | 
+    expresion   : exp expresion1?
+    expresion1  : expresion_comparacion exp
     expresion_comparacion  : GREATER_THAN 
                 | LESS_THAN 
                 | EQUAL_COMPARATION 
@@ -110,35 +104,42 @@
                 | OR
                 | AND
 
-    exp : termino ex1 
-    ex1 : exp_mas_menos exp | 
-    exp_mas_menos : PLUS | MINUS
+    exp : termino ex1? 
+    ex1 : exp_mas_menos exp 
+    exp_mas_menos   : PLUS 
+                    | MINUS
 
-    factor  : factor_fondofalso | factor2
+    factor  : factor_fondofalso 
+            | factor2
     factor_fondofalso : LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS
-    factor2 : factor_masmenos_eps factor_var
+    factor2 : factor_masmenos_eps? factor_var
     factor_masmenos_eps : PLUS 
-                        | MINUS | 
+                        | MINUS 
     factor_var  : var_cte -> var_guardada
                 | IDENTIFIER DOT IDENTIFIER -> var_de_obj
 
-    termino : factor t1
-    t1 : termino_por_entre termino | 
+    termino : factor t1?
+    t1 : termino_por_entre termino 
     termino_por_entre   : ASTERISK  -> multiplicacion
                         | SLASH     -> division
 
-    class : LESS_THAN CLASS GREATER_THAN class_extended IDENTIFIER bloque
-    class_extended : IDENTIFIER EXTENDS | 
+    class : LESS_THAN CLASS GREATER_THAN class_extended? IDENTIFIER bloque
+    class_extended : IDENTIFIER EXTENDS 
 
-    function  : DEF IDENTIFIER LEFT_PARENTHESIS function_param RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function_return RIGHT_CURRLY_BRACES 
-    function_param : var_cte function_params |
-    function_return : RETURN var_cte | 
-    function_params : COMMA var_cte function_params | 
+    function  : DEF IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function_return? RIGHT_CURRLY_BRACES 
+    function_param : var_cte function_params*
+    function_return : RETURN var_cte 
+    function_params : COMMA var_cte 
 
-    function_call : IDENTIFIER fc_class LEFT_PARENTHESIS fc_param RIGHT_PARENTHESIS NEW_LINE
-    fc_class : DOT IDENTIFIER | 
-    fc_param : expresion fc_params | 
-    fc_params : COMMA expresion fc_params | 
+    function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? RIGHT_PARENTHESIS NEW_LINE
+    fc_class : DOT IDENTIFIER 
+    fc_param : expresion fc_params*
+    fc_params : COMMA expresion 
+
+    tipo: INT_WORD
+        | FLOAT_WORD 
+        | STRING_WORD
+        | BOOL_WORD
 
     var_cte : IDENTIFIER
             | CONST_INT 
