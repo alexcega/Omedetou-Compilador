@@ -1,3 +1,4 @@
 Start
     print("hola" , "adios")
+    print("hola" + "mundo")
 Finish

@@ -1,4 +1,8 @@
 Start
-    var String nombre
-    nombre = "shinji"
+    var bool minum
+    minum = 0
+    minum = "alex"
+    minum = 10.5
+    
+    print(minum)
 Finish

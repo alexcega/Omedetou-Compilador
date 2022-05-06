@@ -49,13 +49,15 @@
     IDENTIFIER: /[a-zA-Z_][a-zA-Z0-9_]*/
     CONST_INT: /\d+/
     CONST_FLOAT: /\d+(\.\d+)?/
-    CONST_BOOL: /True | False/ 
-    CONST_STRING          : /".*"/
+    CONST_BOOL: /1 | 0/ 
+    CONST_STRING          : STRING
 
     COMMENT : /#.*/
 
     %ignore WHITESPACE
     %ignore NEW_LINE
+    %import common.ESCAPED_STRING   -> STRING
+    %import common.SIGNED_NUMBER    -> NUMBER
 
     // rules
     start: programa
