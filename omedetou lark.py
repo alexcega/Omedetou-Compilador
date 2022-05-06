@@ -4,14 +4,14 @@ Alejandro Cedillo A00824742
 Sergio Guasso A00826042
 02/05/2022
 '''
-from tokenize import String
-from xmlrpc.client import Boolean
 from cuboSemantico import cuboSemantico
 from cuboSemantico import OTypeError
 from funcionesOmedetou import * 
 from lark import Lark
 from lark import Transformer
 from lark import Visitor
+from lark import lexer 
+
 #from lark import visitors
 
 '''
@@ -44,10 +44,21 @@ try :
 except EOFError:
     print(EOFError)
 
-myparsenodes = my_parse_tree.children
-# print(*myparsenodes)
-for somee in my_parse_tree.iter_subtrees_topdown():
-    print(somee.data)
+
+# print(my_parse_tree)
+
+
+# how to print all tokens
+all_tokens = my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token))
+print('alltokens \n', *all_tokens)
+# for mint in my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token)):
+#     print(mint)
+
+print(*range(10))
+
+# how to print all rules
+# for somee in my_parse_tree.iter_subtrees_topdown():
+#     print(somee.data)
 
 
 
@@ -58,13 +69,10 @@ def errorValueDontExist(tree):
 
 class instructions(Visitor):
     def escritura(self,tree):
-        pass
-        
-        # Quads.append(['print',None,None, pilaO.pop()['value']])
+        Quads.append(['print',None,None, pilaO.pop()['value']])
     
     def esc2(self, tree):
-        pass
-        # Quads.append(['print',None,None, pilaO.pop()['value']])
+        Quads.append(['print',None,None, pilaO.pop()['value']])
 
     def unnumero(self, tree):
         print(self)
