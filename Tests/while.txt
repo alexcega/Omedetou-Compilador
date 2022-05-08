@@ -1,0 +1,8 @@
+Start
+    var int anum
+    anum = 10
+    while(anum > 0){
+        print(anum)
+        anum = anum - 1
+    }
+Finish

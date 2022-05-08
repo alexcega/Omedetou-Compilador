@@ -41,7 +41,7 @@ my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #diagrama / arbol del 
 try : 
-    my_input = open("Tests/declaracion vars.txt", 'r').read()
+    my_input = open("Tests/while.txt", 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
     print(EOFError)
@@ -74,6 +74,8 @@ myGlobalVars = {}
 def errorValueDontExist(tree):
     print('Error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
 
+class operaciones(Visitor):
+    pass
 class instructions(Visitor):
     def programa2(self,tree):
         # for nodito in tree.children:
@@ -99,20 +101,6 @@ class instructions(Visitor):
         Poper.append(tree.children[0].value)
         print(tree.children[0])
 
-    def multiplicacion(self,tree):
-        Poper.append(tree.children[0].value)
-        print(tree.children[0])
-
-    def division(self,tree):
-        Poper.append(tree.children[0].value)
-        print(tree.children[0])
-
-    def vars(self,tree):
-        # print(tree.children)
-        # print(tree.children[0])
-        # print(tree.children[1])
-        pass
-
     def declaracion_normal(self,tree):
         # print('pase')
         myGlobalVars[tree.children[1].children[0].value] = {
@@ -125,51 +113,18 @@ class instructions(Visitor):
         # print(tree.children[1].children[0])   # name     
         # print(tree.children[0].children[0])   # type
 
-    def palabra(self, tree):
-        pilaO.append({'value': tree.children[0].value, 'type':'String'})
-
-    def entero(self,tree):
-        pilaO.append({'value':int(tree.children[0]), 'type':'int'})
-        # pilaO.append(int(tree.children[0]))
-
-    def decimal(self,tree):
-        pilaO.append({'value':float(tree.children[0]), 'type':'float'})
-
-    def booleano(self,tree):
-        pilaO.append({'value':bool(tree.children[0]), 'type':'bool'})
 
     def asignacion(self, tree):
-        try :
+        # try :
             # print(tree.pretty())
-            myGlobalVars[tree.children[0].value]['value'] = pilaO.pop()['value']
-            Quads.append(['=' , myGlobalVars[tree.children[0].value]['value'], None,tree.children[0].value ])
+        myGlobalVars[tree.children[0].value]['value'] = pilaO.pop()['value']
+        Quads.append(['=' , myGlobalVars[tree.children[0].value]['value'], None,tree.children[0].value ])
 
-        except KeyError:
-            errorValueDontExist(tree)
-            exit()
-        pass
-    def expresion(self,tree):
-        print('expr, hijos')
-        print(tree.children )
-            # operador = Poper.pop()
-            # num1 = pilaO.pop()
-            # num2 = pilaO.pop()
-            
-            # # print("cubits",cuboSemantico[num1[1]][operador][num2[1]])
-            # # verifica que no sea error
-            # if(cuboSemantico[num1['value']][operador][num2['value']] == OTypeError):
-            #     print(OTypeError)
-            #     exit()
-
-            # if(operador == '+'):
-            #     temp = num1[0] + num2[0] #valor de la tupla
-            # elif(operador == '*'):
-            #     temp = num1[0] * num2[0]
-            # pilaO.append(temp)
-            # Quads.append([operador, num1, num2, temp])
+        # except KeyError:
+        #     errorValueDontExist(tree)
+        #     exit()
         pass
     def identificador(self, tree):
-
         # print(tree.children[0].value)
         # if myGlobalVars[tree.children[0].value]:
         #     pilaO.append(tree.children[0].value)
@@ -178,24 +133,29 @@ class instructions(Visitor):
         # print(tree.children[0].value)
         pass
 
-    def metermas(self,tree):
-        print('aqui esta el ams')
-        print(tree.children)
-        Poper.append(tree.children[0].value)
-        print(Poper)
 
-    def metermenos(self,tree):
+
+    def metermas(self,tree):
+        print('aqui se mete el mas')
+        Poper.append(tree.children[0].value)
+
+
+    def np_metermenos(self,tree):
+        print('aqui se mete el menos')
         Poper.append('-')
 
-    def meterpor(self,_tree):
+    def np_meterpor(self,_tree):
+        print('aqui se mete el por')
         Poper.append('*')
 
-    def meterentre(self,_tree):
+    def np_meterentre(self,_tree):
         Poper.append('/')
         
-    def sumarnumeros(self,tree):
+    def np_sumarnumeros(self,tree):
+        print(Poper)
+        print(pilaO)
         if Poper:
-            if Poper[-1] == ("+" or "-"):
+            if Poper[-1] == "+" or  Poper[-1] == "-":
                 right = pilaO.pop()
                 left = pilaO.pop()
                 operador = Poper.pop()
@@ -206,15 +166,16 @@ class instructions(Visitor):
                 if operador == '+':
                     result = right['value'] + left['value']
                     pilaO.append({'value':result , 'type':type(result)})
-                    Quads.append([operador, left['value'],right['value'], result])
+                    Quads.append([operador, right['value'], left['value'], result])
                 else :
                     result = right['value'] - left['value']
                     pilaO.append({'value':result , 'type':type(result)})
-                    Quads.append([operador, left['value'],right['value'], result])
+                    Quads.append([operador, right['value'], left['value'], result])
     
-    def multiplicarnumeros(self,tree):
+    def np_multiplicarnumeros(self,tree):
+        print('poper tiene', len(Poper))
         if Poper:
-            if Poper[-1] == ("*" or "/"):
+            if Poper[-1] == "*" or Poper[-1] == "/":
                 right = pilaO.pop()
                 left = pilaO.pop()
                 operador = Poper.pop()
@@ -223,11 +184,11 @@ class instructions(Visitor):
                 # temp = temp + 1
                 if operador == '*':
                     result = right['value'] * left['value']
-                    Quads.append([operador, left['value'],right['value'], result])
+                    Quads.append([operador, right['value'], left['value'], result])
                     pilaO.append({'value':result , 'type':type(result)})
                 else :
                     result = right['value'] / left['value']
-                    Quads.append([operador, left['value'],right['value'], result])
+                    Quads.append([operador, right['value'], left['value'], result])
                     pilaO.append({'value':result , 'type':type(result)})
 
     def vars_sin_valor(self,tree):
@@ -236,7 +197,7 @@ class instructions(Visitor):
         # print(tree.children[0])
         pass
     
-    def var_guardada(self, tree):
+    def guardar_cte(self, tree):
         print(tree)
         # exit()
         print('se guarda var cte', tree.children[0].value)
@@ -244,9 +205,54 @@ class instructions(Visitor):
         # print(tree)
 
     def operacion(self, tree):
+        pass
+        # print('operacion ')
+        # print(tree.pretty())
 
-        print('operacion ')
-        print(tree.pretty())
+    '''
+    Inicio de puntos neuralgicos
+    '''
+
+    # NP de while
+    # inicio, condicion y fin
+    def np_iniciowhile(self,tree):
+        Psaltos.append(len(Quads))
+
+    def np_truewhile(self, tree) :
+        condicion = pilaO.pop()
+        if condicion['type'] != bool:
+            print('Syntax Error, expected expresion')
+        else:
+            Quads.append(['gotof',condicion, None, tbd])
+            Psaltos.append(len(Quads))
+    
+    def np_endwhile(self, tree) :
+        falso = Psaltos.pop()
+        retorno =Psaltos.pop()
+        Quads.append(['goto', None, None, retorno])
+        Quads[falso][3] = len(Quads)
+
+    # np if
+    def np_falsoif(self):
+        condicion = pilaO.pop()
+        if condicion['type'] != bool:
+            print('Syntax Error, expected expresion')
+        else:
+            Quads.append(['gotof',condicion,None, condicion['value']])
+            Psaltos.append(len(Quads))
+
+    def np_finif(self):
+        end = Psaltos.pop()
+        Quads[end][3] = len(Quads)
+
+    # np else
+    # TODO #1 revisar len quads
+    def np_inicioelse(self):
+        Quads.append(['goto',None,None, tbd])
+        false = Psaltos.pop()
+        Psaltos.append(len(Quads))
+        Quads[false][3] = len(Quads+1)
+    
 print(my_parse_tree.pretty())
 print()
 
@@ -254,6 +260,6 @@ instructions().visit(my_parse_tree)
 # instructions.visit_topdown(my_parse_tree)
 
 
-
+print('## Mis cuadruplos')
 print(Quads)
 print(myGlobalVars)

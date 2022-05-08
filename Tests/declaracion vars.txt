@@ -1,3 +1,4 @@
 Start
-    True + 1
+    var int anum
+    anum = 10
 Finish
