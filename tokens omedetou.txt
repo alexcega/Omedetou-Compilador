@@ -46,10 +46,10 @@
     BOOL_WORD      : "bool"
     STRING_WORD    : "String"
     
-    IDENTIFIER: /[a-zA-Z_][a-zA-Z0-9_]*/
+    IDENTIFIER: /[^True|^False][a-zA-Z_][a-zA-Z0-9_]*/
     CONST_INT: /\d+/
     CONST_FLOAT: /\d+(\.\d+)?/
-    CONST_BOOL: /1 | 0/ 
+    CONST_BOOL: /True | False/ 
     CONST_STRING          : STRING
 
     COMMENT : /#.*/
@@ -58,6 +58,7 @@
     %ignore NEW_LINE
     %import common.ESCAPED_STRING   -> STRING
     %import common.SIGNED_NUMBER    -> NUMBER
+    %import common.bool -> bool
 
     // rules
     start: programa
@@ -66,7 +67,7 @@
     programa2 : estatuto* class* 
 
     vars    : VAR varstype
-    varstype    :  tipo vars3 -> tipo_normal
+    varstype    :  tipo vars3 -> declaracion_normal
                 //| IDENTIFIER IDENTIFIER NEW_LINE -> tipo_object
     vars3   : asignacion -> asignar_var
             | IDENTIFIER varsarray? NEW_LINE  ->vars_sin_valor
@@ -85,6 +86,7 @@
                 | ciclo      -> unwhile
                 | vars       -> unavars
                 | function   -> unafuncion
+                | exp -> operacion
                 | function_call -> unallamadafuncion
 
     escritura : PRINT LEFT_PARENTHESIS expresion esc2* RIGHT_PARENTHESIS NEW_LINE
@@ -106,21 +108,22 @@
                 | OR
                 | AND
 
-    exp : termino ex1? 
+    exp : termino sumarnumeros ex1? 
+    sumarnumeros: 
     ex1 : exp_mas_menos exp 
-    exp_mas_menos   : PLUS 
-                    | MINUS
+    exp_mas_menos   : PLUS -> metermas
+                    | MINUS -> metermenos               
+
 
     factor  : factor_fondofalso 
             | factor2
     factor_fondofalso : LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS
-    factor2 : factor_masmenos_eps? factor_var
-    factor_masmenos_eps : PLUS 
-                        | MINUS 
+    factor2 :  factor_var
+
     factor_var  : var_cte -> var_guardada
                 | IDENTIFIER DOT IDENTIFIER -> var_de_obj
 
-    termino : factor t1?
+    termino : factor  t1?
     t1 : termino_por_entre termino 
     termino_por_entre   : ASTERISK  -> multiplicacion
                         | SLASH     -> division

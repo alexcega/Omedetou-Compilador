@@ -419,12 +419,13 @@ cuboSemantico = {
         }
     },
 }
-
-def sem(oper1, oper2, operator):
+   
+    
+def getType(oper1, oper2, operator):
     '''
     regresa tipo de dato entre operaciones
     '''
-    # oper1 = string(oper1)
-    # oper2 = string(oper2)
-    # operator = string(operator)
+    oper1 = oper1['type']
+    oper2 = oper2['type']
+
     return cuboSemantico[oper1][operator][oper2]

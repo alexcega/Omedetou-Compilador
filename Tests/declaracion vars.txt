@@ -1,9 +1,3 @@
 Start
-    var bool minum
-    minum = 0
-    var int alfa
-    alfa = 10
-    alfa = minum
-
-    print(minum)
+    True + 1
 Finish
