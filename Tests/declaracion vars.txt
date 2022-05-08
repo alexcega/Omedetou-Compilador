@@ -1,8 +1,9 @@
 Start
     var bool minum
     minum = 0
-    minum = "alex"
-    minum = 10.5
-    
+    var int alfa
+    alfa = 10
+    alfa = minum
+
     print(minum)
 Finish

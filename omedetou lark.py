@@ -19,6 +19,7 @@ from lark import lexer
 <class 'lark.tree.Tree'>
 '''
 
+# transformar los tipos de datos del arbol
 class T(Transformer):
     def entero(self, tok):
         print(tok)
@@ -40,21 +41,29 @@ try :
     my_input = open("Tests/declaracion vars.txt", 'r').read()
     
     my_parse_tree = my_parser.parse(my_input)
-    print( my_parse_tree.pretty())
+    print(type(my_parse_tree))
+    # print( my_parse_tree.pretty())
 except EOFError:
     print(EOFError)
 
-
+my_parse_tree = T().transform(my_parse_tree)
 # print(my_parse_tree)
 
 
 # how to print all tokens
-all_tokens = my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token))
-print('alltokens \n', *all_tokens)
-# for mint in my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token)):
-#     print(mint)
+# all_tokens = my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token))
+# print('alltokens \n', *all_tokens)
 
-print(*range(10))
+
+# aqui comprobamos que se imprime correctamente el tipo de dato de los tokens, 
+# sigue en duda como commprobar cuando tengamos un string ya que todos los demas 
+# tokens en teoria son string
+# # 
+for mint in my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token)):
+    print(mint.value)
+    print(type(mint.value))
+    print()
+
 
 # how to print all rules
 # for somee in my_parse_tree.iter_subtrees_topdown():
@@ -68,6 +77,15 @@ def errorValueDontExist(tree):
     print('Error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
 
 class instructions(Visitor):
+    def programa2(self,tree):
+        for nodito in tree.children:
+        
+        # print(tree.children)
+        # print(type(tree.children[0]))
+            print(nodito.pretty())
+            instructions().visit(nodito)
+        quit()
+
     def escritura(self,tree):
         Quads.append(['print',None,None, pilaO.pop()['value']])
     
@@ -98,11 +116,13 @@ class instructions(Visitor):
         pass
 
     def tipo_normal(self,tree):
+        print('pase')
         myGlobalVars[tree.children[1].children[0].value] = {
             'type' : tree.children[0].children[0].value,
             'value' : None,
             'scope': None
         }
+        print(myGlobalVars)
         # print(tree.children[1].children[0])   # name     
         # print(tree.children[0].children[0])   # type
 
@@ -121,8 +141,8 @@ class instructions(Visitor):
         pilaO.append({'value':bool(tree.children[0]), 'type':'bool'})
 
     def asignacion(self, tree):
-        pass
         try :
+            print(pilaO)
             myGlobalVars[tree.children[0].value]['value'] = pilaO.pop()['value']
             Quads.append(['=' , myGlobalVars[tree.children[0].value]['value'], None,tree.children[0].value ])
             # print(tree.children[0].value)
@@ -151,7 +171,8 @@ class instructions(Visitor):
             # pilaO.append(temp)
             # Quads.append([operador, num1, num2, temp])
     def identificador(self, tree):
-        print(tree.children[0].value)
+
+        # print(tree.children[0].value)
         # if myGlobalVars[tree.children[0].value]:
         #     pilaO.append(tree.children[0].value)
         # else:
@@ -170,8 +191,7 @@ print()
 # instructions().visit(my_parse_tree)
 # instructions.visit_topdown(my_parse_tree)
 
-T().transform(my_parse_tree)
+
 
 print(Quads)
 print(myGlobalVars)
-
