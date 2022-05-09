@@ -86,7 +86,7 @@ estatuto    : asignacion -> igualar
         | ciclo      -> unwhile
         | vars       -> unavars
         | function   -> unafuncion
-        //| exp -> operacion
+        | exp -> operacion
         | function_call -> unallamadafuncion
 
 escritura : PRINT LEFT_PARENTHESIS expresion esc2* RIGHT_PARENTHESIS NEW_LINE
@@ -105,8 +105,8 @@ np_truewhile    :
 np_endwhile     :
 
 
-expresion   : exp expresion1?
-expresion1  : expresion_comparacion exp
+expresion   : exp+ expresion1?
+expresion1  : expresion_comparacion exp+
 expresion_comparacion  : GREATER_THAN 
         | LESS_THAN 
         | EQUAL_COMPARATION 
@@ -116,12 +116,17 @@ expresion_comparacion  : GREATER_THAN
         | OR
         | AND
 
-exp : termino np_sumarnumeros ex1? 
+exp : termino+ np_sumarnumeros exp_mas_menos? 
 np_sumarnumeros: 
-ex1 : exp_mas_menos exp 
+//ex1 : exp_mas_menos exp 
 exp_mas_menos   : PLUS -> np_metermas
                 | MINUS -> np_metermenos               
 
+termino : factor np_multiplicarnumeros termino_por_entre?
+np_multiplicarnumeros:
+//t1 : termino_por_entre termino 
+termino_por_entre   : ASTERISK  -> np_meterpor
+                    | SLASH     -> np_meterentre
 
 factor  : factor_fondofalso 
         | factor2
@@ -131,11 +136,7 @@ factor2 :  factor_var
 factor_var  : var_cte -> guardar_cte
         | IDENTIFIER DOT IDENTIFIER -> var_de_obj
 
-termino : factor np_multiplicarnumeros t1?
-np_multiplicarnumeros:
-t1 : termino_por_entre termino 
-termino_por_entre   : ASTERISK  -> np_meterpor
-                | SLASH     -> np_meterentre
+
 
 class : LESS_THAN CLASS GREATER_THAN class_extended? IDENTIFIER bloque
 class_extended : IDENTIFIER EXTENDS 

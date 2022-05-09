@@ -20,6 +20,7 @@ from lark import lexer
 <class 'lark.tree.Tree'>
 '''
 
+
 temp = 1
 # transformar los tipos de datos del arbol
 class T(Transformer):
@@ -41,7 +42,7 @@ my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #diagrama / arbol del 
 try : 
-    my_input = open("Tests/while.txt", 'r').read()
+    my_input = open("Tests/declaracion vars.txt", 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
     print(EOFError)
@@ -70,6 +71,8 @@ print(my_parse_tree.pretty())
 
 
 myGlobalVars = {}
+
+myDirFunctions = {}
 
 def errorValueDontExist(tree):
     print('Error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
@@ -135,7 +138,7 @@ class instructions(Visitor):
 
 
 
-    def metermas(self,tree):
+    def np_metermas(self,tree):
         print('aqui se mete el mas')
         Poper.append(tree.children[0].value)
 
@@ -164,13 +167,13 @@ class instructions(Visitor):
                 
                 # temp = temp + 1
                 if operador == '+':
-                    result = right['value'] + left['value']
+                    result =  left['value'] + right['value'] 
                     pilaO.append({'value':result , 'type':type(result)})
-                    Quads.append([operador, right['value'], left['value'], result])
+                    Quads.append([operador, left['value'],right['value'], result])
                 else :
                     result = right['value'] - left['value']
                     pilaO.append({'value':result , 'type':type(result)})
-                    Quads.append([operador, right['value'], left['value'], result])
+                    Quads.append([operador, left['value'], right['value'], result])
     
     def np_multiplicarnumeros(self,tree):
         print('poper tiene', len(Poper))
@@ -183,12 +186,12 @@ class instructions(Visitor):
                 # print('debe ser', resulttype)
                 # temp = temp + 1
                 if operador == '*':
-                    result = right['value'] * left['value']
-                    Quads.append([operador, right['value'], left['value'], result])
+                    result =  left['value'] * right['value']
+                    Quads.append([operador, left['value'], right['value'], result])
                     pilaO.append({'value':result , 'type':type(result)})
                 else :
-                    result = right['value'] / left['value']
-                    Quads.append([operador, right['value'], left['value'], result])
+                    result =   left['value'] / right['value']
+                    Quads.append([operador, left['value'], right['value'], result])
                     pilaO.append({'value':result , 'type':type(result)})
 
     def vars_sin_valor(self,tree):
@@ -253,6 +256,11 @@ class instructions(Visitor):
         Psaltos.append(len(Quads))
         Quads[false][3] = len(Quads+1)
     
+
+    # np Functions
+    def np_endfunc(self):
+        Quads.append(['EndFunc',None,None,None])
+
 print(my_parse_tree.pretty())
 print()
 
