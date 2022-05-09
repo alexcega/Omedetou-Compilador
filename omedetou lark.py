@@ -42,7 +42,7 @@ my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #diagrama / arbol del 
 try : 
-    my_input = open("Tests/declaracion vars.txt", 'r').read()
+    my_input = open("Tests/test1.txt", 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
     print(EOFError)
@@ -96,7 +96,7 @@ class instructions(Visitor):
         Quads.append(['print',None,None, pilaO.pop()['value']])
 
     def unnumero(self, tree):
-        print(self)
+        print(self, tree)
         # print(tree.children)
 
     # OPERACIONES ARITMETICAS
@@ -138,9 +138,12 @@ class instructions(Visitor):
 
 
 
+    '''
+    Inicio de puntos neuralgicos
+    '''
     def np_metermas(self,tree):
         print('aqui se mete el mas')
-        Poper.append(tree.children[0].value)
+        Poper.append('+')
 
 
     def np_metermenos(self,tree):
@@ -211,11 +214,55 @@ class instructions(Visitor):
         pass
         # print('operacion ')
         # print(tree.pretty())
+    
+    def np_meter_mayorque(self,tree):
+        Poper.append('>')
+    
+    def np_meter_menorque(self,tree):
+        Poper.append('<')
+    
+    def np_meter_igual_igual(self,tree):
+        Poper.append('==')
+    
+    def np_meter_no_igual(self, tree):
+        Poper.append('!=')
 
-    '''
-    Inicio de puntos neuralgicos
-    '''
+    def np_meter_and(self, tree):
+        Poper.append('&')
 
+    def np_meter_or(self, tree):
+        Poper.append('|')
+        
+    def np_meter_menor_igual(self, tree):
+        Poper.append('<=')
+    
+    def np_meter_mayor_igual(self, tree):
+        Poper.append('>=')
+        
+    def np_comparacion(self, tree):
+        if Poper:
+            if  Poper[-1] in ['>','<','>=','<=','==','!=']:
+                global temp
+                right = pilaO.pop()
+                left = pilaO.pop()
+                operador = Poper.pop()
+                Quads.append([operador, left['value'], right['value'], 't'+str(temp)])
+                pilaO.append({'value':'t'+str(temp) , 'type':type(True)})
+
+                temp+=1
+
+    def np_comparacion_andor(self, tree):
+        if Poper:
+            if  Poper[-1] in ['|','&']:
+                global temp
+                right = pilaO.pop()
+                left = pilaO.pop()
+                operador = Poper.pop()
+                # ans =cubo semantico(right,left,operator)
+                # if ans == bool:
+                Quads.append([operador, left['value'], right['value'], 't'+str(temp)])
+                pilaO.append({'value':'t'+str(temp) , 'type':type(True)})
+                temp+=1
     # NP de while
     # inicio, condicion y fin
     def np_iniciowhile(self,tree):
@@ -236,7 +283,7 @@ class instructions(Visitor):
         Quads[falso][3] = len(Quads)
 
     # np if
-    def np_falsoif(self):
+    def np_falsoif(self, tree):
         condicion = pilaO.pop()
         if condicion['type'] != bool:
             print('Syntax Error, expected expresion')
@@ -244,13 +291,13 @@ class instructions(Visitor):
             Quads.append(['gotof',condicion,None, condicion['value']])
             Psaltos.append(len(Quads))
 
-    def np_finif(self):
+    def np_finif(self, tree):
         end = Psaltos.pop()
         Quads[end][3] = len(Quads)
 
     # np else
     # TODO #1 revisar len quads
-    def np_inicioelse(self):
+    def np_inicioelse(self, tree):
         Quads.append(['goto',None,None, tbd])
         false = Psaltos.pop()
         Psaltos.append(len(Quads))
@@ -258,7 +305,7 @@ class instructions(Visitor):
     
 
     # np Functions
-    def np_endfunc(self):
+    def np_endfunc(self, tree):
         Quads.append(['EndFunc',None,None,None])
 
 print(my_parse_tree.pretty())

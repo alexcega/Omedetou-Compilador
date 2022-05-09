@@ -1,15 +1,15 @@
 //tokens
 START_PROGRAM   : "Start"
 FINISH_PROGRAM  : "Finish"
-VAR             : "var "
-WHILE           : "while"
-IF              : "if "
-ELSE            : "else "
-DEF             : "def"
-RETURN          : "return"
-CLASS           : "class"
-EXTENDS         : "extends"
-PRINT           : "print"
+VAR             : "Var "
+WHILE           : "While"
+IF              : "If "
+ELSE            : "Else "
+DEF             : "Def"
+RETURN          : "Return"
+CLASS           : "Class"
+EXTENDS         : "Extends"
+PRINT           : "Print"
 
 LEFT_CURRLY_BRACES      : /\{/
 RIGHT_CURRLY_BRACES     : /\}/ 
@@ -106,15 +106,17 @@ np_endwhile     :
 
 
 expresion   : exp+ expresion1?
-expresion1  : expresion_comparacion exp+
-expresion_comparacion  : GREATER_THAN 
-        | LESS_THAN 
-        | EQUAL_COMPARATION 
-        | NOT_EQUAL 
-        | GREATER_EQUAL 
-        | LESS_EQUAL
-        | OR
-        | AND
+expresion1  : expresion_comparacion exp+ np_comparacion np_comparacion_andor
+expresion_comparacion  : GREATER_THAN -> np_meter_mayorque
+        | LESS_THAN             -> np_meter_menorque
+        | EQUAL_COMPARATION     -> np_meter_igual_igual
+        | NOT_EQUAL             -> np_meter_no_igual
+        | GREATER_EQUAL         -> np_meter_mayor_igual
+        | LESS_EQUAL            -> np_meter_menor_igual
+        | OR                    -> np_meter_or
+        | AND                   -> np_meter_and
+np_comparacion: 
+np_comparacion_andor: 
 
 exp : termino+ np_sumarnumeros exp_mas_menos? 
 np_sumarnumeros: 
