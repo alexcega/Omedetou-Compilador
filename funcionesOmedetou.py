@@ -13,72 +13,37 @@ myDirFunctions = {}
 def errorValueDontExist(tree):
     print('Error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
 
-
-class instructions(Visitor):
-    #Prints# 
-    def escritura(self,tree):
-        Quads.append(['Print',None,None, pilaO.pop()['value']])
-    
-    def esc2(self, tree):
-        Quads.append(['Print',None,None, pilaO.pop()['value']])
-
-    # declaracion
-    def declaracion_normal(self,tree):
-        # print('pase')
-        myGlobalVars[tree.children[1].children[0].value] = {
-            'type' : tree.children[0].children[0].value,
-            'value' : None,
-            'scope': None
-        }
-        print('declaracion original sin valor')
-        print(myGlobalVars)
-        # print(tree.children[1].children[0])   # name     
-        # print(tree.children[0].children[0])   # type
-
-    # Asignacion
-    def asignacion(self, tree):
-        # try :
-            # print(tree.pretty())
-        myGlobalVars[tree.children[0].value]['value'] = pilaO.pop()['value']
-        Quads.append(['=' , myGlobalVars[tree.children[0].value]['value'], None,tree.children[0].value ])
-
-        # except KeyError:
-        #     errorValueDontExist(tree)
-        #     exit()
-        pass
-
+class operaciones(Visitor):
     def guardar_cte(self, tree):
-        print(tree)
+        # some = Parent().visit(tree)
+        # print('bonito', some.pretty())
+
         # exit()
         print('se guarda var cte', tree.children[0].value)
         pilaO.append({'value': tree.children[0].value, 'type':type(tree.children[0].value)})
         # print(tree)
 
-    def operacion(self, tree):
-        pass
-        # print('operacion ')
-        # print(tree.pretty())
     '''
     Inicio de puntos neuralgicos
     de operaciones aritmeticas
     '''
     def np_metermas(self,tree):
-        print('aqui se mete el mas')
+        print('aqui se mete el +')
         Poper.append('+')
 
-
     def np_metermenos(self,tree):
-        print('aqui se mete el menos')
+        print('aqui se mete el -')
         Poper.append('-')
 
     def np_meterpor(self,_tree):
-        print('aqui se mete el por')
+        print('aqui se mete el *')
         Poper.append('*')
 
     def np_meterentre(self,_tree):
         Poper.append('/')
         
     def np_sumarnumeros(self,tree):
+        print('vamos a sumar')
         print(Poper)
         print(pilaO)
         if Poper:
@@ -95,7 +60,7 @@ class instructions(Visitor):
                     pilaO.append({'value':result , 'type':type(result)})
                     Quads.append([operador, left['value'],right['value'], result])
                 else :
-                    result = right['value'] - left['value']
+                    result = (right['value'] - left['value']) * -1
                     pilaO.append({'value':result , 'type':type(result)})
                     Quads.append([operador, left['value'], right['value'], result])
     
@@ -117,8 +82,8 @@ class instructions(Visitor):
                     result =   left['value'] / right['value']
                     Quads.append([operador, left['value'], right['value'], result])
                     pilaO.append({'value':result , 'type':type(result)})
-    
-    '''
+
+        '''
     Puntos neuralgicos 
     de comparaciones
     '''
@@ -173,6 +138,36 @@ class instructions(Visitor):
                 Quads.append([operador, left['value'], right['value'], 't'+str(temp)])
                 pilaO.append({'value':'t'+str(temp) , 'type':type(True)})
                 temp+=1
+    
+    # NP de if, inicio y fin 
+    def np_falsoif(self, tree):
+        print('primero entro al if',pilaO)
+        condicion = pilaO.pop()
+        if condicion['type'] != bool:
+            print('Syntax Error, expected expresion')
+            exit()
+        else:
+            Quads.append(['Gotof',condicion['value'],None, tbd])
+            Psaltos.append(len(Quads)-1)
+
+    def np_finif(self, tree):
+        print('despues termino el if')
+        # operaciones().visit_topdown(tree)
+        print('al ellegar a finif pilao tiene',pilaO)
+        end = Psaltos.pop()
+        print('se rellena la linea:', end, 'con' , len(Quads)+1)
+        print('>> curr quads')
+        for qur in Quads:
+            print(qur)
+        Quads[end][3] = len(Quads)+1
+
+    # NP de else
+    def np_inicioelse(self, tree):
+        Quads.append(['Goto',None,None, tbd])
+        false = Psaltos.pop()
+        Psaltos.append(len(Quads)-1)
+        Quads[false][3] = len(Quads)+1
+
     # NP de while
     # inicio, condicion y fin
     def np_iniciowhile(self,tree):
@@ -192,29 +187,65 @@ class instructions(Visitor):
         Quads.append(['Goto', None, None, retorno])
         Quads[falso][3] = len(Quads)+1
 
-    # NP de if
-    def np_falsoif(self, tree):
-        condicion = pilaO.pop()
-        if condicion['type'] != bool:
-            print('Syntax Error, expected expresion')
-        else:
-            Quads.append(['Gotof',condicion['value'],None, tbd])
-            Psaltos.append(len(Quads)-1)
+    # posible registro del padre de current rule
+class Parent(Visitor):
+    def visit(self, tree):
+        print('parent')
+        for subtree in tree.children:
+            if isinstance(subtree, type(tree)):
+                assert not hasattr(subtree, 'parent')
+                subtree.parent = tree
 
-    def np_finif(self, tree):
-        end = Psaltos.pop()
-        print('se rellena la linea:', end)
-        print('curr quads')
-        for qur in Quads:
-            print(qur)
-        Quads[end][3] = len(Quads)+1
+# para los estatutos
+class instructions(Visitor):
+    #Prints# 
+    def programa(self, tree):
+        Quads.append(['Goto', None,None, tbd])
+        Psaltos.append(0)
 
-    # NP de else
-    def np_inicioelse(self, tree):
-        Quads.append(['Goto',None,None, tbd])
-        false = Psaltos.pop()
-        Psaltos.append(len(Quads)-1)
-        Quads[false][3] = len(Quads)+1
+    def start_main(self, tree):
+        relleno = Psaltos.pop()
+        Quads[relleno][3] = len(Quads) + 1
+    def escritura(self,tree):
+        print("vamos a escribir")
+        print(tree.pretty())
+        operaciones().visit_topdown(tree)
+        Quads.append(['Print',None,None, pilaO.pop()['value']])
+    
+    def esc2(self, tree):
+        operaciones().visit_topdown(tree)
+        Quads.append(['Print',None,None, pilaO.pop()['value']])
+
+    def unif(self,tree):
+        operaciones().visit_topdown(tree)
+
+    def unwhile(self,tree):
+        operaciones().visit_topdown(tree)
+    # declaracion
+    def declaracion_normal(self,tree):
+        # print('pase')
+        myGlobalVars[tree.children[1].children[0].value] = {
+            'type' : tree.children[0].children[0].value,
+            'value' : None,
+            'scope': None
+        }
+        print('declaracion original sin valor')
+        print(myGlobalVars)
+        # print(tree.children[1].children[0])   # name     
+        # print(tree.children[0].children[0])   # type
+
+    # Asignacion
+    def asignacion(self, tree):
+        # try :
+            # print(tree.pretty())
+        myGlobalVars[tree.children[0].value]['value'] = pilaO.pop()['value']
+        Quads.append(['=' , myGlobalVars[tree.children[0].value]['value'], None,tree.children[0].value ])
+
+        # except KeyError:
+        #     errorValueDontExist(tree)
+        #     exit()
+        pass
+
     
 
     # NP de Functions

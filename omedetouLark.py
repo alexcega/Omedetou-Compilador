@@ -66,14 +66,13 @@ print(my_parse_tree.pretty())
 
 
 
-class operaciones(Visitor):
-    pass
+
 
 print(my_parse_tree.pretty())
 print()
 
-instructions().visit(my_parse_tree)
-# instructions.visit_topdown(my_parse_tree)
+# instructions().visit(my_parse_tree)
+instructions().visit_topdown(my_parse_tree)
 
 
 print('## Mis cuadruplos')

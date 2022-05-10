@@ -1,6 +1,7 @@
 Start
-    While( 3 | 2){
-        Print(7)
+    Main(){ 
+        If( 5+5 < 7/2){
+        Print(  2- 3 & 2 * 8 )
     }
-    Print("hola shinji")
+}
 Finish

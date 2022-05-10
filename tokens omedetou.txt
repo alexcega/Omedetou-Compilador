@@ -1,15 +1,16 @@
 //tokens
 START_PROGRAM   : "Start"
 FINISH_PROGRAM  : "Finish"
-VAR             : "Var "
+VAR             : "Var"
 WHILE           : "While"
 IF              : "If"
-ELSE            : "Else "
+ELSE            : "Else"
 DEF             : "Def"
 RETURN          : "Return"
 CLASS           : "Class"
 EXTENDS         : "Extends"
 PRINT           : "Print"
+MAIN            : "Main"
 
 LEFT_CURRLY_BRACES      : /\{/
 RIGHT_CURRLY_BRACES     : /\}/ 
@@ -48,7 +49,7 @@ STRING_WORD    : "String"
 
 IDENTIFIER: /[a-z_][a-zA-Z0-9_]*/
 CONST_INT: /\d+/
-CONST_FLOAT: /\d+(\.\d+)?/
+CONST_FLOAT: /\d+(\.\d+)/
 CONST_BOOL: /True | False/ 
 CONST_STRING          : STRING
 
@@ -64,7 +65,10 @@ COMMENT : /#.*/
 start: programa
 
 programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
-programa2 : class* estatuto* 
+programa2 : class* function* start_main 
+
+start_main: MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque
+
 
 vars    : VAR varstype
 varstype    :  tipo vars3 -> declaracion_normal
@@ -88,6 +92,7 @@ estatuto    : asignacion -> igualar
         | function   -> unafuncion
         | exp -> operacion
         | function_call -> unallamadafuncion
+        | COMMENT    -> comentario
 
 escritura : PRINT LEFT_PARENTHESIS expresion esc2* RIGHT_PARENTHESIS NEW_LINE
 esc2: COMMA expresion 

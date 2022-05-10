@@ -1,0 +1,14 @@
+Generacion de cuadruplos de prints,
+Generacion de cuadruplos de ciclos
+Generacion de cuadruplos de if
+Generacion de cuadruplos de else
+Declaracion correcta de variables
+asignacion de variables correcta en diferente reglon
+esto es:
+var int minum
+minum = 1
+Falta revisar asignacion en un mismo renglon
+esto es:
+var int minum = 10
+
+lectura incrrecta al recorrer el arbol
