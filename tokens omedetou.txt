@@ -3,7 +3,7 @@ START_PROGRAM   : "Start"
 FINISH_PROGRAM  : "Finish"
 VAR             : "Var "
 WHILE           : "While"
-IF              : "If "
+IF              : "If"
 ELSE            : "Else "
 DEF             : "Def"
 RETURN          : "Return"
@@ -64,7 +64,7 @@ COMMENT : /#.*/
 start: programa
 
 programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
-programa2 : estatuto* class* 
+programa2 : class* estatuto* 
 
 vars    : VAR varstype
 varstype    :  tipo vars3 -> declaracion_normal
