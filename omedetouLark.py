@@ -19,7 +19,7 @@ from lark import Transformer
 # transformar los tipos de datos del arbol
 class T(Transformer):
     def entero(self, tok):
-        print(tok)
+        # print(tok)
         return tok[0].update(value=int(tok[0].value)) 
 
     def palabra(self,tok):
@@ -61,9 +61,7 @@ my_parse_tree = T().transform(my_parse_tree)
 # how to print all rules
 # for somee in my_parse_tree.iter_subtrees_topdown():
 #     print(somee.data)
-print(my_parse_tree.pretty())
-
-
+# print(my_parse_tree.pretty())
 
 
 

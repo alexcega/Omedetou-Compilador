@@ -4,7 +4,6 @@ Sergio Guasso A00826042
 02/05/2022
 '''
 
-import string
 OTypeError = 'TypeError'
 
 cuboSemantico = {

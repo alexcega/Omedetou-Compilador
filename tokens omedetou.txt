@@ -67,7 +67,8 @@ start: programa
 programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
 programa2 : class* function* start_main 
 
-start_main: MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque
+start_main: MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
+np_fin_funcion:
 
 
 vars    : VAR varstype
@@ -94,8 +95,9 @@ estatuto    : asignacion -> igualar
         | function_call -> unallamadafuncion
         | COMMENT    -> comentario
 
-escritura : PRINT LEFT_PARENTHESIS expresion esc2* RIGHT_PARENTHESIS NEW_LINE
-esc2: COMMA expresion 
+escritura : PRINT LEFT_PARENTHESIS expresion esc2* np_print RIGHT_PARENTHESIS NEW_LINE
+np_print: 
+esc2: COMMA np_print expresion 
 
 condicion  : IF LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS np_falsoif bloque  condicionelse? np_finif
 np_falsoif : 

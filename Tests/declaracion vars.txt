@@ -1,7 +1,11 @@
 Start
     Main(){ 
-        If( 5+5 < 7/2){
-        Print(  2- 3 & 2 * 8 )
+        If(1 < 2){
+            If( 3 | 5){
+                Print("llegamos")
+            }
+            Print( 7 | 1 , 4, "yupy")
+        #1
+        }
     }
-}
 Finish
