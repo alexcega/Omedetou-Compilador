@@ -1,11 +1,10 @@
 Start
     Main(){ 
-        If(1 < 2){
-            If( 3 | 5){
-                Print("llegamos")
-            }
-            Print( 7 | 1 , 4, "yupy")
-        #1
+        If( True  & True ){
+            Print( True + True )
+        }
+        Else{
+            Print("Alex")
         }
     }
 Finish

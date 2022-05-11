@@ -1,8 +1,8 @@
 Start
-    var int anum
-    anum = 10
-    while(anum > 0){
-        print(anum)
-        anum = anum - 1
+    Main(){ 
+        While(1 < 2){
+            Print("yupy")
+        #1
+        }
     }
 Finish

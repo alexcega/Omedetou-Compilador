@@ -2,18 +2,11 @@
 '''
 Alejandro Cedillo A00824742
 Sergio Guasso A00826042
-02/05/2022
+10/05/2022
 '''
-from cuboSemantico import cuboSemantico, getType
-from cuboSemantico import OTypeError
 from funcionesOmedetou import * 
 from lark import Lark
 from lark import Transformer
-
-'''
-<class 'lark.lexer.Token'>
-<class 'lark.tree.Tree'>
-'''
 
 
 # transformar los tipos de datos del arbol
@@ -34,14 +27,14 @@ class T(Transformer):
 
 my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
-#diagrama / arbol del 
+#diagrama / arbol 
 try : 
     my_input = open("Tests/declaracion vars.txt", 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
     print(EOFError)
 
-my_parse_tree = T().transform(my_parse_tree)
+# my_parse_tree = T().transform(my_parse_tree)
 
 # how to print all tokens
 # all_tokens = my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token))
@@ -63,13 +56,9 @@ my_parse_tree = T().transform(my_parse_tree)
 #     print(somee.data)
 # print(my_parse_tree.pretty())
 
-
-
-
 print(my_parse_tree.pretty())
 print()
 
-# instructions().visit(my_parse_tree)
 instructions().visit_topdown(my_parse_tree)
 
 
