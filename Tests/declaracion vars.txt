@@ -1,10 +1,7 @@
 Start
     Main(){ 
-        If( True  & True ){
-            Print( True + True )
-        }
-        Else{
-            Print("Alex")
-        }
+        Var int unnumero 
+        unnumero = 15
+        Var int dosnumero = unnumero
     }
 Finish

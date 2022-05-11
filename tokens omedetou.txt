@@ -69,21 +69,15 @@ programa2 : class* function* start_main
 start_main: MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
 np_fin_funcion:
 
-vars    : VAR tipo IDENTIFIER np_guardar_var EQUAL expresion    -> var_con_valor
+vars    : VAR tipo IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor   -> var_con_valor
         | VAR tipo IDENTIFIER                                   -> var_sin_valor
         | VAR tipo IDENTIFIER LEFT_BRACKET CONST_INT RIGHT_BRACKET         -> var_lista
         | VAR tipo IDENTIFIER LEFT_BRACKET CONST_INT RIGHT_BRACKET LEFT_BRACKET CONST_INT RIGHT_BRACKET -> var_matriz
-np_guardar_var:
+np_asiganar_valor:
+np_meter_igual:
 
-//vars    : VAR varstype
-//varstype    :  tipo vars3 -> declaracion_normal
-        //| IDENTIFIER IDENTIFIER NEW_LINE -> tipo_object
-//vars3   : asignacion -> asignar_var
-//        | IDENTIFIER varsarray? NEW_LINE  ->vars_sin_valor
-//varsarray   : LEFT_BRACKET CONST_INT RIGHT_BRACKET varsmatix? 
-//varsmatix   : LEFT_BRACKET CONST_INT RIGHT_BRACKET 
 
-asignacion      : IDENTIFIER EQUAL expresion NEW_LINE -> reasignar
+asignacion      : IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor NEW_LINE -> reasignar
                 | IDENTIFIER DOT IDENTIFIER  EQUAL expresion NEW_LINE ->reasignar_obj
 
 bloque: LEFT_CURRLY_BRACES b1? RIGHT_CURRLY_BRACES

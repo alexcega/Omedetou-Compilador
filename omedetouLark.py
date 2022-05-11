@@ -65,4 +65,7 @@ instructions().visit_topdown(my_parse_tree)
 print('## Mis cuadruplos')
 for myq in Quads:
     print(myq)
-print(myGlobalVars)
+
+for myGb, myval in myGlobalVars.items():
+    print(myGb, myval)
+# print(myGlobalVars)

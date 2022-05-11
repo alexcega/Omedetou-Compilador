@@ -12,7 +12,16 @@ myDirFunctions = {}
 
 # Errores#
 def errorValueDontExist(tree):
-    print('Error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
+    print('Name error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
+    exit()
+
+def errorType(operador, left, right):
+    print(OTypeError)
+    print(f"Wrong operation {operador} between '{left['type']}' and '{right['type']}'")
+    exit()
+def errorZero():
+    print("Zero division error")
+    exit()
 
     # posible registro del padre de current rule
 class Parent(Visitor):
@@ -55,9 +64,74 @@ class instructions(Visitor):
     def booleano(self, tree):
         pilaO.append({'value': tree.children[0].value, 'type': 'bool'})
 
+    def identificador(self,tree):
+        try: 
+            pilaO.append({
+                'value': tree.children[0].value,
+                'type' :myGlobalVars[tree.children[0].value]['type']
+                })
+        except KeyError:
+            errorValueDontExist()
+
+
     def np_print(self,tree):
         Quads.append(['Print',None,None, pilaO.pop()['value']])
 
+    '''
+    Inicio de puntos neuralgicos
+    de declaraciones
+    '''
+    def var_sin_valor(self, tree):
+            myGlobalVars[tree.children[2].value] = {
+                'type' : tree.children[1].children[0].value,
+                'value' : tbd,
+                'scope' : tbd
+            }
+    '''
+    Inicio de puntos neuralgicos
+    de asignaciones
+    '''
+    
+    def reasignar(self, tree):
+        print(tree)
+        print("este valor")
+        try:
+            pilaO.append({
+                'value' : tree.children[0].value,
+                'type' : myGlobalVars[tree.children[0].value]['type']
+            })
+            # print(myGlobalVars[tree.children[0].value]['type']) # tipo 
+            # print(tree.children[0].value) # identificador
+        except KeyError:
+            errorValueDontExist(tree)
+
+    def var_con_valor(self, tree):
+        myGlobalVars[tree.children[2].value] = {
+            'type' : tree.children[1].children[0].value,
+            'value' : tbd,
+            'scope' : tbd
+        }
+        pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
+
+    def np_asiganar_valor(self,tree):
+        if Poper:
+            # print(Poper)
+            if Poper[-1] == '=':
+                right = pilaO.pop()
+                left = pilaO.pop()
+                operador = Poper.pop()
+                # print(right,left,operador)
+                resultType =  getType(left,right,operador)
+                if resultType != OTypeError:
+                    # Meter el cuadrupo de la asignacion
+                    Quads.append([operador, right['value'],None, left['value']])
+                    # Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
+                    myGlobalVars[left['value']]['value'] =  right['value']
+                else:
+                    errorType(operador, left, right)
+
+    def np_meter_igual(self,tree):
+        Poper.append('=')
     '''
     Inicio de puntos neuralgicos
     de operaciones aritmeticas
@@ -93,29 +167,25 @@ class instructions(Visitor):
                     Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
                     temp += 1
                 else:
-                    print(OTypeError)
-                    print(f"Wrong operation {operador} between '{left['type']}' and '{right['type']}'")
-                    exit()
+                    errorType(operador, left, right)
     
     def np_multiplicarnumeros(self,tree):
-        # print('poper tiene', len(Poper))
         if Poper:
-            # print(Poper)
             if Poper[-1] == "*" or Poper[-1] == "/":
-                # print('vamos a multiplicar')
                 right = pilaO.pop()
                 left = pilaO.pop()
                 operador = Poper.pop()
                 resultType =  getType(left,right,operador)
+                if operador == "/":
+                    if(right['value'] == '0'):
+                        errorZero()
                 if resultType != OTypeError:
                     global temp
                     pilaO.append({'value':'t'+str(temp), 'type':resultType})
                     Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
                     temp += 1
                 else:
-                    print(OTypeError)
-                    print(f"Wrong operation {operador} between '{left['type']}' and '{right['type']}'")
-                    exit()
+                    errorType(operador, left, right)
 
     '''
     Inicio de puntos neuralgicos
@@ -147,11 +217,8 @@ class instructions(Visitor):
         Poper.append('>=')
         
     def np_comparacion(self, tree):
-        # print('poper tiene', len(Poper))
         if Poper:
-            # print(Poper)
             if  Poper[-1] in ['>','<','>=','<=','==','!=']:
-                # print('vamos a comparar')
                 right = pilaO.pop()
                 left = pilaO.pop()
                 operador = Poper.pop()
@@ -162,9 +229,7 @@ class instructions(Visitor):
                     Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
                     temp += 1
                 else:
-                    print(OTypeError)
-                    print(f"Wrong operation {operador} between '{left['type']}' and '{right['type']}'")
-                    exit()
+                    errorType(operador, left, right)
 
     '''
     Inicio de puntos neuralgicos
@@ -186,9 +251,7 @@ class instructions(Visitor):
                     Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
                     temp += 1
                 else:
-                    print(OTypeError)
-                    print(f"Wrong operation {operador} between '{left['type']}' and '{right['type']}'")
-                    exit()
+                    errorType(operador, left, right)
     
     ''' 
     Inicio de puntos neuralgicos de IF
@@ -240,38 +303,7 @@ class instructions(Visitor):
         Quads.append(['Goto', None, None, retorno])
         Quads[falso][3] = len(Quads)+1
 
-    '''
-    Inicio de puntos neuralgicos
-    de declaraciones
-    '''
-    def declaracion_normal(self,tree):
-        # print('pase')
-        print(tree)
-        # myGlobalVars[tree.children[1].children[0].value] = {
-        #     'type' : tree.children[0].children[0].value,
-        #     'value' : None,
-        #     'scope': None
-        # }
-        # print('declaracion original sin valor')
-        # print(myGlobalVars)
-        # print(tree.children[1].children[0])   # name     
-        # print(tree.children[0].children[0])   # type
 
-    '''
-    Inicio de puntos neuralgicos
-    de asignacioens
-    '''
-    # Asignacion
-    def asignacion(self, tree):
-        # try :
-            # print(tree.pretty())
-        myGlobalVars[tree.children[0].value]['value'] = pilaO.pop()['value']
-        Quads.append(['=' , myGlobalVars[tree.children[0].value]['value'], None,tree.children[0].value ])
-
-        # except KeyError:
-        #     errorValueDontExist(tree)
-        #     exit()
-        pass
 
     '''
     Inicio de puntos neuralgicos
