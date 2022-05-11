@@ -10,7 +10,7 @@ temp = 1
 myGlobalVars = {}
 myDirFunctions = {}
 
-# Errores#
+#! Errores
 def errorValueDontExist(tree):
     print('Name error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
     exit()
@@ -19,11 +19,17 @@ def errorType(operador, left, right):
     print(OTypeError)
     print(f"Wrong operation {operador} between '{left['type']}' and '{right['type']}'")
     exit()
+
 def errorZero():
     print("Zero division error")
     exit()
 
-    # posible registro del padre de current rule
+def errorDoubleDeclatration(tree):
+    print('Error at line', tree.children[2].line , ",",  tree.children[2].value, "already defined" )
+    exit()
+
+
+#? posible registro del padre de current rule
 class Parent(Visitor):
     def visit(self, tree):
         print('parent')
@@ -32,14 +38,14 @@ class Parent(Visitor):
                 assert not hasattr(subtree, 'parent')
                 subtree.parent = tree
 
-# para los estatutos
+#* para los estatutos
 class instructions(Visitor):
     '''
     Inicio de puntos neuralgicos de Main
     goto y relleno
     '''
     def programa(self, tree):
-        # Goto main
+        #* Goto main
         Quads.append(['Goto', None,None, tbd])
         Psaltos.append(0)
     
@@ -71,6 +77,7 @@ class instructions(Visitor):
                 'type' :myGlobalVars[tree.children[0].value]['type']
                 })
         except KeyError:
+            #! Error validation
             errorValueDontExist()
 
 
@@ -82,11 +89,26 @@ class instructions(Visitor):
     de declaraciones
     '''
     def var_sin_valor(self, tree):
+            if tree.children[2].value in myGlobalVars:
+                #! Error validation
+                errorDoubleDeclatration(tree)
+            
             myGlobalVars[tree.children[2].value] = {
                 'type' : tree.children[1].children[0].value,
                 'value' : tbd,
                 'scope' : tbd
             }
+
+    def var_con_valor(self, tree):
+        if tree.children[2].value in myGlobalVars:
+                errorDoubleDeclatration(tree)
+        myGlobalVars[tree.children[2].value] = {
+            'type' : tree.children[1].children[0].value,
+            'value' : tbd,
+            'scope' : tbd
+        }
+        pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
+
     '''
     Inicio de puntos neuralgicos
     de asignaciones
@@ -105,14 +127,7 @@ class instructions(Visitor):
         except KeyError:
             errorValueDontExist(tree)
 
-    def var_con_valor(self, tree):
-        myGlobalVars[tree.children[2].value] = {
-            'type' : tree.children[1].children[0].value,
-            'value' : tbd,
-            'scope' : tbd
-        }
-        pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
-
+    
     def np_asiganar_valor(self,tree):
         if Poper:
             # print(Poper)
@@ -136,20 +151,17 @@ class instructions(Visitor):
     Inicio de puntos neuralgicos
     de operaciones aritmeticas
     '''
+    # TODO push en una sola funcion
     def np_metermas(self,tree):
-        # print('aqui se mete el +')
         Poper.append('+')
 
     def np_metermenos(self,tree):
-        # print('aqui se mete el -')
         Poper.append('-')
 
     def np_meterpor(self,_tree):
-        # print('aqui se mete el *')
         Poper.append('*')
 
     def np_meterentre(self,_tree):
-        # print('aqui se mete el /')
         Poper.append('/')
         
     def np_sumarnumeros(self,tree):
@@ -178,6 +190,7 @@ class instructions(Visitor):
                 resultType =  getType(left,right,operador)
                 if operador == "/":
                     if(right['value'] == '0'):
+                        #! Error validation
                         errorZero()
                 if resultType != OTypeError:
                     global temp
@@ -185,13 +198,14 @@ class instructions(Visitor):
                     Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
                     temp += 1
                 else:
+                    #! Error validation
                     errorType(operador, left, right)
 
     '''
     Inicio de puntos neuralgicos
     de comparaciones
     '''
-    
+    # TODO push en una sola funcion
     def np_meter_mayorque(self,tree):
         Poper.append('>')
     
@@ -290,6 +304,7 @@ class instructions(Visitor):
 
     def np_truewhile(self, tree) :
         condicion = pilaO.pop()
+        #! Error validation
         if condicion['type'] != 'bool':
             print('Syntax Error, expected expresion')
             exit()
@@ -317,10 +332,9 @@ class instructions(Visitor):
     #   crear nombre de funcion en tabla de func
     #   guardar linea donde inicia
     #   guardar cantidad de parametros
-    #   ?guardar tipo
+    #   ? guardar tipo
     #   ? tipo de atributos
-    # # 
-
+    
     def np_fin_funcion(self, tree):
         Quads.append(['ENDFUNC',None,None,None])
         global temp

@@ -1,7 +1,5 @@
 Start
     Main(){ 
-        Var int unnumero 
-        unnumero = 15
-        Var int dosnumero = unnumero
+        Var int unnumero = 10
     }
 Finish

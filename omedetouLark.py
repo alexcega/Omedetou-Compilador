@@ -9,7 +9,7 @@ from lark import Lark
 from lark import Transformer
 
 
-# transformar los tipos de datos del arbol
+#* transformar los tipos de datos del arbol
 class T(Transformer):
     def entero(self, tok):
         # print(tok)
@@ -27,31 +27,31 @@ class T(Transformer):
 
 my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
-#diagrama / arbol 
+#* diagrama / arbol 
 try : 
-    my_input = open("Tests/declaracion vars.txt", 'r').read()
+    my_input = open("Tests/tablas.txt", 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
     print(EOFError)
 
-# my_parse_tree = T().transform(my_parse_tree)
+#? my_parse_tree = T().transform(my_parse_tree)
 
 # how to print all tokens
 # all_tokens = my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token))
 # print('alltokens \n', *all_tokens)
 
 
-# aqui comprobamos que se imprime correctamente el tipo de dato de los tokens, 
-# sigue en duda como commprobar cuando tengamos un string ya que todos los demas 
-# tokens en teoria son string
-# # 
+#* aqui comprobamos que se imprime correctamente el tipo de dato de los tokens, 
+#* sigue en duda como commprobar cuando tengamos un string ya que todos los demas 
+#* tokens en teoria son string
+#
 # for mint in my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token)):
 #     print(mint.value)
 #     print(type(mint.value))
 #     print()
 
 
-# how to print all rules
+#* how to print all rules
 # for somee in my_parse_tree.iter_subtrees_topdown():
 #     print(somee.data)
 # print(my_parse_tree.pretty())
@@ -65,7 +65,7 @@ instructions().visit_topdown(my_parse_tree)
 print('## Mis cuadruplos')
 for myq in Quads:
     print(myq)
-
+print('## Mis vars')
 for myGb, myval in myGlobalVars.items():
     print(myGb, myval)
 # print(myGlobalVars)
