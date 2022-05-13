@@ -1,7 +1,7 @@
 Start
     Main(){ 
         While(1 < 2){
-            Print("yupy")
+            Print( 1 + 2 /  ( 3 * 1))
         #1
         }
     }

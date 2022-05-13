@@ -7,10 +7,21 @@ Poper = []
 Quads = []
 Psaltos = []
 temp = 1
+currentFunction = None
 myGlobalVars = {}
-myDirFunctions = {}
 
-#! Errores
+
+#^ Direction Functions
+myDirFunctions = {}
+class Function():
+    def __init__(self, name, startLine, type):
+        self.name = name
+        self.startLine = startLine
+        self.type = type 
+    varsDic = {}
+
+
+#! Error Validation
 def errorValueDontExist(tree):
     print('Name error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
     exit()
@@ -38,7 +49,7 @@ class Parent(Visitor):
                 assert not hasattr(subtree, 'parent')
                 subtree.parent = tree
 
-#* para los estatutos
+#& Manejo de estatutos / Directorio de procedimientos
 class instructions(Visitor):
     '''
     Inicio de puntos neuralgicos de Main
@@ -53,6 +64,7 @@ class instructions(Visitor):
         relleno = Psaltos.pop()
         Quads[relleno][3] = len(Quads) + 1
 
+    #& Estatutos secuenciales
     '''
     Inicio de puntos neuralgicos de CTEs
     Guardar valores CTEs en pilaO
@@ -78,8 +90,17 @@ class instructions(Visitor):
                 })
         except KeyError:
             #! Error validation
-            errorValueDontExist()
+            errorValueDontExist(tree)
 
+    '''
+    Puntos neuralgicos Fondo falso
+    '''
+
+    def np_meterff(self, tree):
+        Poper.append('(')
+        
+    def np_sacarff(self, tree):
+        Poper.pop()
 
     def np_print(self,tree):
         Quads.append(['Print',None,None, pilaO.pop()['value']])
@@ -89,6 +110,7 @@ class instructions(Visitor):
     de declaraciones
     '''
     def var_sin_valor(self, tree):
+            # IF NOMBRE IN myDirFunctions[currentFunction].valDic
             if tree.children[2].value in myGlobalVars:
                 #! Error validation
                 errorDoubleDeclatration(tree)
@@ -149,8 +171,9 @@ class instructions(Visitor):
         Poper.append('=')
     '''
     Inicio de puntos neuralgicos
-    de operaciones aritmeticas
+    de expresiones aritmeticas
     '''
+
     # TODO push en una sola funcion
     def np_metermas(self,tree):
         Poper.append('+')
@@ -267,6 +290,8 @@ class instructions(Visitor):
                 else:
                     errorType(operador, left, right)
     
+    #& Estatutos Condicionales
+
     ''' 
     Inicio de puntos neuralgicos de IF
     NP inicio y fin 
@@ -319,7 +344,7 @@ class instructions(Visitor):
         Quads[falso][3] = len(Quads)+1
 
 
-
+    #& Codigo de funciones
     '''
     Inicio de puntos neuralgicos
     de Functions
@@ -328,13 +353,29 @@ class instructions(Visitor):
     #TODO implementacion NP de funciones
     #TODO directorio de funciones
     
-    # def np_iniciofunc(self, tree):
+    def function(self, tree):
     #   crear nombre de funcion en tabla de func
     #   guardar linea donde inicia
     #   guardar cantidad de parametros
     #   ? guardar tipo
     #   ? tipo de atributos
-    
+        # print('inicio funcion')
+        # print(tree)
+        tipo = tree.children[1].children[0].value
+        id = tree.children[2].value
+        if id in myDirFunctions:
+            errorDoubleDeclatration(tree)
+
+        #? Revisar que una funcion no se llame como una variable
+        myobj = Function(id,len(Quads), tipo)
+        myDirFunctions[id] = myobj
+        currentFunction = id
+        # print(tree.children[2].value)
+
+    def function_param(self, tree):
+        print('parametros   ')
+        print(tree)
+
     def np_fin_funcion(self, tree):
         Quads.append(['ENDFUNC',None,None,None])
         global temp

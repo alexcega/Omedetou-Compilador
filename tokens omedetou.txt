@@ -155,7 +155,7 @@ function_param : tipo IDENTIFIER function_params*
 function_return : RETURN var_cte 
 function_params : COMMA tipo IDENTIFIER 
 
-function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? RIGHT_PARENTHESIS NEW_LINE
+function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? RIGHT_PARENTHESIS
 fc_class : DOT IDENTIFIER 
 fc_param : expresion fc_params*
 fc_params : COMMA expresion 

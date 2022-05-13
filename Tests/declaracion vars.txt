@@ -1,5 +1,7 @@
 Start
     Main(){ 
-        Var int unnumero = 10
+        If( True  & True ){
+            Print( True + True )
+        }
     }
 Finish

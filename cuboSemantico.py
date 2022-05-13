@@ -6,6 +6,8 @@ Sergio Guasso A00826042
 
 OTypeError = 'TypeError'
 
+
+#& Cubo semantico, 
 cuboSemantico = {
     ###################### op1 INT
     'int' : {
@@ -484,3 +486,11 @@ def getType(oper1, oper2, operator):
     oper2 = oper2['type']
 
     return cuboSemantico[oper1][operator][oper2]
+
+
+
+
+# TODO
+#? Sumar un bool + numeros
+#? el tener una variable int y dividirla se redondea?
+
