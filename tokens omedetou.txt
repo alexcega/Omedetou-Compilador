@@ -64,8 +64,8 @@ COMMENT : /#.*/
 start: programa
 
 programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
-programa2 : class* function* start_main 
-
+programa2 : some_vars* class* function* start_main 
+some_vars : vars | asignacion
 start_main: MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
 np_fin_funcion:
 

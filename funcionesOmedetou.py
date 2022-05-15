@@ -56,7 +56,6 @@ class instructions(Visitor):
     Guardar valores CTEs en pilaO
     '''
     def entero(self,tree):
-        print(tree)
         pilaO.append({'value': tree.children[0].value, 'type': 'int'})
 
     def decimal(self, tree):
@@ -177,8 +176,6 @@ class instructions(Visitor):
         Poper.append('/')
         
     def np_sumarnumeros(self,tree):
-        # print('pilaO tiene')
-        # print(pilaO)
         if Poper:
             if Poper[-1] == "+" or  Poper[-1] == "-":
                 right = pilaO.pop()
@@ -264,7 +261,6 @@ class instructions(Visitor):
     '''
     def np_comparacion_andor(self, tree):
         if Poper:
-            # print(Poper)
             if  Poper[-1] in ['|','&']:
                 right = pilaO.pop()
                 left = pilaO.pop()
@@ -286,6 +282,7 @@ class instructions(Visitor):
     '''
     def np_falsoif(self, tree):
         condicion = pilaO.pop()
+        #! Error validation
         if condicion['type'] != 'bool':
             print('Syntax Error, expected expresion')
             exit()
@@ -341,9 +338,11 @@ class instructions(Visitor):
         id = tree.children[2].value
         #* validar que funcion no exista
         if id in myDirFunctions:
+            #! Error validation
             errorDoubleDeclatration(tree)
         #* validar que variable con mismo nombre no exista
         if id in myGlobalVars:
+            #! Error validation
             errorDoubleDeclatration(tree)
         myobj = Function(id,len(Quads), tipo)
         myDirFunctions[id] = myobj
@@ -351,12 +350,10 @@ class instructions(Visitor):
         currentFunction = id
 
     def function_param(self, tree):
-        print('un parametro')
-        print(tree)
         fType = tree.children[0].children[0].value
         fID = tree.children[1].value
-        print(tree.children[0].children[0].value) # tipo
-        print(tree.children[1].value)   # id
+        # print(tree.children[0].children[0].value) # tipo
+        # print(tree.children[1].value)   # id
         myDirFunctions[currentFunction].paramsDic[fID] = {
             'value': tbd,
             'type': fType}
@@ -365,7 +362,6 @@ class instructions(Visitor):
             'type': fType})
 
     def function_params(self, tree):
-        print('parametros ')
         for ch in tree.children:
             if ch == ',' : continue
             try: 
@@ -382,16 +378,16 @@ class instructions(Visitor):
                     'value': tbd,
                     'type': fType})
 
-        print('dame mis valores')
-        for v, k in myDirFunctions[currentFunction].paramsDic.items():
-            print(v,k)
-        print(len(myDirFunctions[currentFunction].paramsDic))
-        print()
-        for vval in myDirFunctions[currentFunction].paramsList:
-            print(vval)
+        # print('dame mis valores')
+        # for v, k in myDirFunctions[currentFunction].paramsDic.items():
+        #     print(v,k)
+        # print(len(myDirFunctions[currentFunction].paramsDic))
+        # print()
+        # for vval in myDirFunctions[currentFunction].paramsList:
+        #     print(vval)
 
     def np_fin_funcion(self, tree):
-        Quads.append(['ENDFUNC',None,None,None])
+        Quads.append(['Endfunc',None,None,None])
         global temp
         temp = 1
 
@@ -400,31 +396,18 @@ class instructions(Visitor):
     de Functions call
     '''
     def function_call (self, tree):
-        print('functino call')
-        # print(tree)
-
         # print(tree.children[2])
         # print(tree.children[0].value)  # name of the function
         if tree.children[0].value not in myDirFunctions:
             #! Error validation, function not defined
-            # print(tree.data)
             errorFuntionNotDefined(tree)
-            exit()
         Quads.append(['ERA', None, None, tree.children[0].value])
-        # print(myDirFunctions.keys())
-        # print(tree.pretty())
-        # print(tree.data)
-
 
     def np_check_param(self,tree):
         global currentParam
         cParam = pilaO[-1]
-        print('param type')
-        print(cParam)
         try:
             check = myDirFunctions[currentFunction].paramsList[currentParam]
-            print(check)
-            print('este es ', check['type'] , 'este otro', cParam['type'])
             if check['type'] != cParam['type']:
                 #! Error Validation
                 #* Validacion de tipos
@@ -435,17 +418,21 @@ class instructions(Visitor):
             #! Error validation
             #* Mas parametros dados de los que hay
             errorNumberOfParams(currentFunction, len(myDirFunctions[currentFunction].paramsDic), currentParam)
+    
+    def np_insert_param(self, tree):
+        Quads.append(['Param', None, None, pilaO.pop()['value']])
 
     def np_reset_count_params(self,tree):
         global currentParam
+        print(currentParam)
+        print(len(myDirFunctions[currentFunction].paramsDic))
         if currentParam != len(myDirFunctions[currentFunction].paramsDic):
             #! Error Validation
             #* menos parametros dados de los que hay
             errorNumberOfParamsLess(currentFunction, len(myDirFunctions[currentFunction].paramsDic), currentParam)
-        
         currentParam = 0
+        Quads.append(['Gosub',None,None, currentFunction])
 
-    def np_insert_param(self, tree):
-        Quads.append(['Param', None, None, pilaO.pop()['value']])
+
 
     #TODO Objetos

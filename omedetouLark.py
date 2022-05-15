@@ -29,7 +29,8 @@ my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #& Parser 
 try : 
-    my_input = open("Tests/test_default.txt", 'r').read()
+    myTest = 'test_tarea_func'
+    my_input = open("Tests/"+myTest + '.txt', 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
     print(EOFError)
@@ -39,14 +40,22 @@ except EOFError:
 print(my_parse_tree.pretty())
 print()
 
+
+print("\n## File: "+ myTest)
 #& Top Down Parsing
 instructions().visit_topdown(my_parse_tree)
 
 
 #& Cuadruplos
 print('\n## Mis cuadruplos')
+cont = 1
 for myq in Quads:
+    print(cont,'\t', end='')
+    cont+=1
     print(myq)
+    # for line in myq:
+    #     print(line, '\t' ,end='')
+    # print()
 print('\n## Mis vars')
 for myGb, myval in myGlobalVars.items():
     print(myGb, myval)
@@ -64,10 +73,7 @@ for k, v in myDirFunctions.items():
 # print('alltokens \n', *all_tokens)
 
 
-#* aqui comprobamos que se imprime correctamente el tipo de dato de los tokens, 
-#* sigue en duda como commprobar cuando tengamos un string ya que todos los demas 
-#* tokens en teoria son string
-#
+#* aqui comprobamos que se imprime correctamente el tipo de dato de los tokens
 # for mint in my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token)):
 #     print(mint.value)
 #     print(type(mint.value))

@@ -1,5 +1,9 @@
 Start
-    def unafuncion (){
-        
+    Def int sumDos( int uno, int dos){
+        Print ( uno + dos)
+    }
+
+    Main(){
+        sumDos( 1*8+7 , 2 ) 
     }
 Finish

@@ -1,5 +1,4 @@
 from cuboSemantico import OTypeError
-# TODO Generar valudacion de casos de pruebay formato 'test_...'
 #! Error Validation
 def errorValueDontExist(tree):
     print("Name error, no such variable with name '"+ tree.children[0].value + "' at line ", tree.children[0].line)
