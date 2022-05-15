@@ -89,7 +89,6 @@ estatuto    : asignacion -> igualar
         | ciclo      -> unwhile
         | vars       -> unavars
         | function   -> unafuncion
-        | exp -> operacion
         | function_call -> unallamadafuncion
         | COMMENT    -> comentario
 
@@ -150,15 +149,18 @@ factor_var  : var_cte -> guardar_cte
 class : LESS_THAN CLASS GREATER_THAN class_extended? IDENTIFIER bloque
 class_extended : IDENTIFIER EXTENDS 
 
-function  : DEF tipo IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function_return? RIGHT_CURRLY_BRACES 
+function  : DEF tipo IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function_return? RIGHT_CURRLY_BRACES np_fin_funcion
 function_param : tipo IDENTIFIER function_params*
 function_return : RETURN var_cte 
 function_params : COMMA tipo IDENTIFIER 
 
 function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? RIGHT_PARENTHESIS
 fc_class : DOT IDENTIFIER 
-fc_param : expresion fc_params*
-fc_params : COMMA expresion 
+fc_param : expresion np_check_param np_insert_param fc_params* np_reset_count_params
+np_check_param:
+np_insert_param:
+np_reset_count_params:
+fc_params : COMMA expresion np_check_param np_insert_param
 
 tipo: INT_WORD
 | FLOAT_WORD 

@@ -1,27 +1,30 @@
-globalFunctions = {}
+# globalFunctions = {}
 
 
-class Function():
-    def __init__(self, name, startLine, type):
-        self.name = name
-        self.startLine = startLine
-        self.type = type 
+# class Function():
+#     def __init__(self, name, startLine, type):
+#         self.name = name
+#         self.startLine = startLine
+#         self.type = type 
 
     
 
-class varsTable():
+# class varsTable():
     
     
-    pass
+#     pass
 
 
-name = 'getMin'
-if name in globalFunctions:
-    print('error')
-    exit()
-mynewFun = Function(name, 3, "bool")
-globalFunctions[name] = mynewFun
-mynewFun.varsDic['name'] = mynewFun.name
+# name = 'getMin'
+# if name in globalFunctions:
+#     print('error')
+#     exit()
+# mynewFun = Function(name, 3, "bool")
+# globalFunctions[name] = mynewFun
+# mynewFun.varsDic['name'] = mynewFun.name
 
-for k,v in globalFunctions.items():
-    print(k,v)
+# for k,v in globalFunctions.items():
+#     print(k,v)
+
+
+sumdos(tres)

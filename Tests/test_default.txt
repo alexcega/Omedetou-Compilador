@@ -1,11 +1,9 @@
 Start
     Def int sumDos( int uno, int dos){
-        Var int ans = uno + dos
+        Print ( uno + dos)
     }
 
-
     Main(){
-        Print( sumDos( 1 , 2 )  )
-
+        sumDos( 4 ) 
     }
 Finish

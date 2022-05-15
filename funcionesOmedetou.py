@@ -1,17 +1,19 @@
 from cuboSemantico import getType, OTypeError
 from lark import Visitor
-
+from validationErrors import *
 tbd = 'tbd'
 pilaO = []
 Poper = []
 Quads = []
 Psaltos = []
 temp = 1
+#TODO Cambiar currentFunction a pila para recursividad
 currentFunction = None
+currentParam = 0
 myGlobalVars = {}
 
 
-#^ Direction Functions
+#& Direction Functions
 myDirFunctions = {}
 class Function():
     def __init__(self, name, startLine, type):
@@ -19,25 +21,8 @@ class Function():
         self.startLine = startLine
         self.type = type 
     varsDic = {}
-
-
-#! Error Validation
-def errorValueDontExist(tree):
-    print('Name error, no such variable with name "', tree.children[0].value, '" at line ', tree.children[0].line)
-    exit()
-
-def errorType(operador, left, right):
-    print(OTypeError)
-    print(f"Wrong operation {operador} between '{left['type']}' and '{right['type']}'")
-    exit()
-
-def errorZero():
-    print("Zero division error")
-    exit()
-
-def errorDoubleDeclatration(tree):
-    print('Error at line', tree.children[2].line , ",",  tree.children[2].value, "already defined" )
-    exit()
+    paramsDic = {}
+    paramsList = []
 
 
 #? posible registro del padre de current rule
@@ -61,6 +46,7 @@ class instructions(Visitor):
         Psaltos.append(0)
     
     def start_main(self, tree):
+        #* Rellenar main
         relleno = Psaltos.pop()
         Quads[relleno][3] = len(Quads) + 1
 
@@ -83,14 +69,24 @@ class instructions(Visitor):
         pilaO.append({'value': tree.children[0].value, 'type': 'bool'})
 
     def identificador(self,tree):
+        #* revisar que este en local vars                
         try: 
             pilaO.append({
                 'value': tree.children[0].value,
-                'type' :myGlobalVars[tree.children[0].value]['type']
+                'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
                 })
         except KeyError:
-            #! Error validation
-            errorValueDontExist(tree)
+            #* revisar que este en params de funcion
+            try:
+                pilaO.append({
+                'value': tree.children[0].value,
+                'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
+                })
+            except:
+                # TODO revisar que este en global
+                #! Error validation
+                errorValueDontExist(tree)
+                
 
     '''
     Puntos neuralgicos Fondo falso
@@ -110,7 +106,6 @@ class instructions(Visitor):
     de declaraciones
     '''
     def var_sin_valor(self, tree):
-            # IF NOMBRE IN myDirFunctions[currentFunction].valDic
             if tree.children[2].value in myGlobalVars:
                 #! Error validation
                 errorDoubleDeclatration(tree)
@@ -135,10 +130,7 @@ class instructions(Visitor):
     Inicio de puntos neuralgicos
     de asignaciones
     '''
-    
     def reasignar(self, tree):
-        print(tree)
-        print("este valor")
         try:
             pilaO.append({
                 'value' : tree.children[0].value,
@@ -149,15 +141,12 @@ class instructions(Visitor):
         except KeyError:
             errorValueDontExist(tree)
 
-    
     def np_asiganar_valor(self,tree):
         if Poper:
-            # print(Poper)
             if Poper[-1] == '=':
                 right = pilaO.pop()
                 left = pilaO.pop()
                 operador = Poper.pop()
-                # print(right,left,operador)
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
                     # Meter el cuadrupo de la asignacion
@@ -169,11 +158,11 @@ class instructions(Visitor):
 
     def np_meter_igual(self,tree):
         Poper.append('=')
+        
     '''
     Inicio de puntos neuralgicos
     de expresiones aritmeticas
     '''
-
     # TODO push en una sola funcion
     def np_metermas(self,tree):
         Poper.append('+')
@@ -188,8 +177,8 @@ class instructions(Visitor):
         Poper.append('/')
         
     def np_sumarnumeros(self,tree):
-        print(Poper)
-        print(pilaO)
+        # print('pilaO tiene')
+        # print(pilaO)
         if Poper:
             if Poper[-1] == "+" or  Poper[-1] == "-":
                 right = pilaO.pop()
@@ -266,6 +255,7 @@ class instructions(Visitor):
                     Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
                     temp += 1
                 else:
+                    #! Error validation
                     errorType(operador, left, right)
 
     '''
@@ -273,8 +263,6 @@ class instructions(Visitor):
     de logic gates
     '''
     def np_comparacion_andor(self, tree):
-        
-        # print('poper tiene', len(Poper))
         if Poper:
             # print(Poper)
             if  Poper[-1] in ['|','&']:
@@ -288,10 +276,10 @@ class instructions(Visitor):
                     Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
                     temp += 1
                 else:
+                    #! Error validation
                     errorType(operador, left, right)
     
     #& Estatutos Condicionales
-
     ''' 
     Inicio de puntos neuralgicos de IF
     NP inicio y fin 
@@ -343,40 +331,121 @@ class instructions(Visitor):
         Quads.append(['Goto', None, None, retorno])
         Quads[falso][3] = len(Quads)+1
 
-
     #& Codigo de funciones
     '''
     Inicio de puntos neuralgicos
     de Functions
     '''
-
-    #TODO implementacion NP de funciones
-    #TODO directorio de funciones
-    
     def function(self, tree):
-    #   crear nombre de funcion en tabla de func
-    #   guardar linea donde inicia
-    #   guardar cantidad de parametros
-    #   ? guardar tipo
-    #   ? tipo de atributos
-        # print('inicio funcion')
-        # print(tree)
         tipo = tree.children[1].children[0].value
         id = tree.children[2].value
+        #* validar que funcion no exista
         if id in myDirFunctions:
             errorDoubleDeclatration(tree)
-
-        #? Revisar que una funcion no se llame como una variable
+        #* validar que variable con mismo nombre no exista
+        if id in myGlobalVars:
+            errorDoubleDeclatration(tree)
         myobj = Function(id,len(Quads), tipo)
         myDirFunctions[id] = myobj
+        global currentFunction
         currentFunction = id
-        # print(tree.children[2].value)
 
     def function_param(self, tree):
-        print('parametros   ')
+        print('un parametro')
         print(tree)
+        fType = tree.children[0].children[0].value
+        fID = tree.children[1].value
+        print(tree.children[0].children[0].value) # tipo
+        print(tree.children[1].value)   # id
+        myDirFunctions[currentFunction].paramsDic[fID] = {
+            'value': tbd,
+            'type': fType}
+        myDirFunctions[currentFunction].paramsList.append({
+            'value': tbd,
+            'type': fType})
+
+    def function_params(self, tree):
+        print('parametros ')
+        for ch in tree.children:
+            if ch == ',' : continue
+            try: 
+                fType = ch.children[0].value
+            except AttributeError:
+                fID = ch 
+                if fID in myDirFunctions[currentFunction].varsDic:
+                    #! Error validation
+                    errorDuplicateArgument(tree)
+                myDirFunctions[currentFunction].paramsDic[fID] = {
+                    'value': tbd,
+                    'type': fType}
+                myDirFunctions[currentFunction].paramsList.append({
+                    'value': tbd,
+                    'type': fType})
+
+        print('dame mis valores')
+        for v, k in myDirFunctions[currentFunction].paramsDic.items():
+            print(v,k)
+        print(len(myDirFunctions[currentFunction].paramsDic))
+        print()
+        for vval in myDirFunctions[currentFunction].paramsList:
+            print(vval)
 
     def np_fin_funcion(self, tree):
         Quads.append(['ENDFUNC',None,None,None])
         global temp
         temp = 1
+
+    '''
+    Inicio de puntos neuralgicos
+    de Functions call
+    '''
+    def function_call (self, tree):
+        print('functino call')
+        # print(tree)
+
+        # print(tree.children[2])
+        # print(tree.children[0].value)  # name of the function
+        if tree.children[0].value not in myDirFunctions:
+            #! Error validation, function not defined
+            # print(tree.data)
+            errorFuntionNotDefined(tree)
+            exit()
+        Quads.append(['ERA', None, None, tree.children[0].value])
+        # print(myDirFunctions.keys())
+        # print(tree.pretty())
+        # print(tree.data)
+
+
+    def np_check_param(self,tree):
+        global currentParam
+        cParam = pilaO[-1]
+        print('param type')
+        print(cParam)
+        try:
+            check = myDirFunctions[currentFunction].paramsList[currentParam]
+            print(check)
+            print('este es ', check['type'] , 'este otro', cParam['type'])
+            if check['type'] != cParam['type']:
+                #! Error Validation
+                #* Validacion de tipos
+                errorParamTypeMissmatch(check['type'], cParam['type'] , currentFunction, currentParam)
+            currentParam += 1
+            
+        except IndexError:
+            #! Error validation
+            #* Mas parametros dados de los que hay
+            errorNumberOfParams(currentFunction, len(myDirFunctions[currentFunction].paramsDic), currentParam)
+
+    def np_reset_count_params(self,tree):
+        global currentParam
+        if currentParam != len(myDirFunctions[currentFunction].paramsDic):
+            #! Error Validation
+            #* menos parametros dados de los que hay
+            errorNumberOfParamsLess(currentFunction, len(myDirFunctions[currentFunction].paramsDic), currentParam)
+        
+        currentParam = 0
+
+    def np_insert_param(self, tree):
+        Quads.append(['Param', None, None, pilaO.pop()['value']])
+
+    #TODO Objetos
