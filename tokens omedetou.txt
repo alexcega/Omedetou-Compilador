@@ -135,11 +135,10 @@ termino_por_entre   : ASTERISK  -> np_meterpor
                     | SLASH     -> np_meterentre
 
 factor  : factor_fondofalso 
-        | factor2
+        | factor_var
 factor_fondofalso : LEFT_PARENTHESIS np_meterff expresion RIGHT_PARENTHESIS np_sacarff
 np_meterff:
 np_sacarff:
-factor2 :  factor_var
 
 factor_var  : var_cte -> guardar_cte
         | IDENTIFIER DOT IDENTIFIER -> var_de_obj
