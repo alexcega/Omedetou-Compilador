@@ -29,8 +29,8 @@ my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #& Parser 
 try : 
-    myTest = 'test_tarea_func'
-    my_input = open("Tests/"+myTest + '.txt', 'r').read()
+    myTest = 'test_while_while'
+    my_input = open("Tests/" + myTest + '.txt', 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
     print(EOFError)
@@ -50,7 +50,7 @@ instructions().visit_topdown(my_parse_tree)
 print('\n## Mis cuadruplos')
 cont = 1
 for myq in Quads:
-    print(cont,'\t', end='')
+    print('\t',cont,'\t- ', end='')
     cont+=1
     print(myq)
     # for line in myq:

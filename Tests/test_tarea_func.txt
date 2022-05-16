@@ -30,7 +30,7 @@ Start
         i = 2
         k = i + 1
         f = 3.14
-        while ( i > 0) {
+        While ( i > 0) {
             Print( dos ( i + k, f * 3 ) + 3 )
             Print( i , j*2, f*2 + 1.5)
             i = i - k

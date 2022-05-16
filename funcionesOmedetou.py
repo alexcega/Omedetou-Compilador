@@ -90,7 +90,6 @@ class instructions(Visitor):
     '''
     Puntos neuralgicos Fondo falso
     '''
-
     def np_meterff(self, tree):
         Poper.append('(')
         
@@ -105,6 +104,7 @@ class instructions(Visitor):
     de declaraciones
     '''
     def var_sin_valor(self, tree):
+        if currentFunction == None :
             if tree.children[2].value in myGlobalVars:
                 #! Error validation
                 errorDoubleDeclatration(tree)
@@ -112,7 +112,16 @@ class instructions(Visitor):
             myGlobalVars[tree.children[2].value] = {
                 'type' : tree.children[1].children[0].value,
                 'value' : tbd,
-                'scope' : tbd
+                'scope' : 'global'
+            }
+        else: 
+            if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
+                #! Error validation
+                errorDoubleDeclatration(tree)
+            myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
+                'type' : tree.children[1].children[0].value,
+                'value' : tbd,
+                'scope' : 'local'
             }
 
     def var_con_valor(self, tree):
