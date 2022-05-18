@@ -11,6 +11,7 @@ CLASS           : "Class"
 EXTENDS         : "Extends"
 PRINT           : "Print"
 MAIN            : "Main"
+VOID            : "Void"
 
 LEFT_CURRLY_BRACES      : /\{/
 RIGHT_CURRLY_BRACES     : /\}/ 
@@ -64,12 +65,13 @@ COMMENT : /#.*/
 start: programa
 
 programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
-programa2 : some_vars* class* function* start_main 
-some_vars : vars | asignacion
-start_main: MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
+programa2 : some_vars*  class* function* start_main 
+some_vars : vars np_limpiar_temps| asignacion np_limpiar_temps
+np_limpiar_temps: 
+start_main: VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
 np_fin_funcion:
 
-vars    : VAR tipo IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor   -> var_con_valor
+vars    : VAR tipo IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor  NEW_LINE -> var_con_valor
         | VAR tipo IDENTIFIER                                   -> var_sin_valor
         | VAR tipo IDENTIFIER LEFT_BRACKET CONST_INT RIGHT_BRACKET         -> var_lista
         | VAR tipo IDENTIFIER LEFT_BRACKET CONST_INT RIGHT_BRACKET LEFT_BRACKET CONST_INT RIGHT_BRACKET -> var_matriz
@@ -109,7 +111,7 @@ np_truewhile    :
 np_endwhile     :
 
 
-expresion   : exp+ expresion1?
+expresion   : exp expresion1?
 expresion1  : expresion_comparacion exp+ np_comparacion np_comparacion_andor
 expresion_comparacion  : GREATER_THAN -> np_meter_mayorque
         | LESS_THAN             -> np_meter_menorque
@@ -122,15 +124,15 @@ expresion_comparacion  : GREATER_THAN -> np_meter_mayorque
 np_comparacion: 
 np_comparacion_andor: 
 
-exp : termino+ np_sumarnumeros exp_mas_menos? 
+exp : termino np_sumarnumeros ex1? 
 np_sumarnumeros: 
-//ex1 : exp_mas_menos exp 
+ex1 : exp_mas_menos exp 
 exp_mas_menos   : PLUS -> np_metermas
                 | MINUS -> np_metermenos               
 
-termino : factor np_multiplicarnumeros termino_por_entre?
+termino : factor np_multiplicarnumeros t1?
 np_multiplicarnumeros:
-//t1 : termino_por_entre termino 
+t1 : termino_por_entre termino 
 termino_por_entre   : ASTERISK  -> np_meterpor
                     | SLASH     -> np_meterentre
 
@@ -148,7 +150,7 @@ factor_var  : var_cte -> guardar_cte
 class : LESS_THAN CLASS GREATER_THAN class_extended? IDENTIFIER bloque
 class_extended : IDENTIFIER EXTENDS 
 
-function  : DEF tipo IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES estatuto function_return? RIGHT_CURRLY_BRACES np_fin_funcion
+function  : DEF (tipo|VOID) IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES (estatuto* function_return?)+ RIGHT_CURRLY_BRACES np_fin_funcion
 function_param : tipo IDENTIFIER function_params*
 function_return : RETURN expresion 
                 | RETURN LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS 

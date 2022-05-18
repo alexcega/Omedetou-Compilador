@@ -1,0 +1,7 @@
+Start
+Var int numero = 10
+
+Main () {
+    Print( numero  + 10)
+}
+Finish

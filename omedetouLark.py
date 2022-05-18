@@ -29,7 +29,7 @@ my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #& Parser 
 try : 
-    myTest = 'test_while_while'
+    myTest = 'test_funcion_reasignacion'
     my_input = open("Tests/" + myTest + '.txt', 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
@@ -56,7 +56,7 @@ for myq in Quads:
     # for line in myq:
     #     print(line, '\t' ,end='')
     # print()
-print('\n## Mis vars')
+print('\n## Mis vars globales')
 for myGb, myval in myGlobalVars.items():
     print(myGb, myval)
 # print(myGlobalVars)
@@ -64,7 +64,12 @@ for myGb, myval in myGlobalVars.items():
 print('\n## Mis funciones')
 for k, v in myDirFunctions.items():
     print(k,v)
-#
+    for kk, vv in v.varsDic.items():
+        print('\t',kk,vv)
+
+# for vals in myDirFunctions.values():
+    
+
 # Measure-Command {python omedetouLark.py}
 
 

@@ -24,7 +24,6 @@ class Function():
     paramsDic = {}
     paramsList = []
 
-
 #? posible registro del padre de current rule
 class Parent(Visitor):
     def visit(self, tree):
@@ -40,6 +39,15 @@ class instructions(Visitor):
     Inicio de puntos neuralgicos de Main
     goto y relleno
     '''
+    def np_limpiar_temps(self, tree):
+        '''
+        una vez terminado las declaraciones globales es necesario 
+        resetear los teporales gastados, 
+        como son varialbes globales no cuenta con un endfunc
+        '''
+        global temp
+        temp = 1
+
     def programa(self, tree):
         #* Goto main
         Quads.append(['Goto', None,None, tbd])
@@ -49,6 +57,14 @@ class instructions(Visitor):
         #* Rellenar main
         relleno = Psaltos.pop()
         Quads[relleno][3] = len(Quads) + 1
+        myobj = Function('main',len(Quads), 'void')
+        myDirFunctions['main'] = myobj
+        global currentFunction
+        currentFunction = 'main'
+        print('main')
+        print(myDirFunctions)
+
+
 
     #& Estatutos secuenciales
     '''
@@ -68,23 +84,30 @@ class instructions(Visitor):
         pilaO.append({'value': tree.children[0].value, 'type': 'bool'})
 
     def identificador(self,tree):
-        #* revisar que este en local vars                
-        try: 
+        #* revisar en global vars
+        if currentFunction == None :
             pilaO.append({
                 'value': tree.children[0].value,
-                'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
+                'type' : myGlobalVars[tree.children[0].value]['type']
                 })
-        except KeyError:
-            #* revisar que este en params de funcion
-            try:
+        else: 
+            #* revisar que este en local vars                
+            try: 
                 pilaO.append({
-                'value': tree.children[0].value,
-                'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
-                })
-            except:
-                # TODO revisar que este en global
-                #! Error validation
-                errorValueDontExist(tree)
+                    'value': tree.children[0].value,
+                    'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
+                    })
+            except KeyError:
+                #* revisar que este en params de funcion
+                try:
+                    pilaO.append({
+                    'value': tree.children[0].value,
+                    'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
+                    })
+                except:
+                    # TODO revisar que este en global
+                    #! Error validation
+                    errorValueDontExist(tree)
                 
 
     '''
@@ -125,14 +148,29 @@ class instructions(Visitor):
             }
 
     def var_con_valor(self, tree):
-        if tree.children[2].value in myGlobalVars:
+        #* Declaraciones globales
+        if currentFunction == None:
+            if tree.children[2].value in myGlobalVars:
+                    errorDoubleDeclatration(tree)
+            #* else
+            myGlobalVars[tree.children[2].value] = {
+                'type' : tree.children[1].children[0].value,
+                'value' : tbd,
+                'scope' : 'global'
+            }
+            pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
+        else:
+            print('aqii test')
+            print(tree.children[2].value)
+            if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
+                #! Error validation
                 errorDoubleDeclatration(tree)
-        myGlobalVars[tree.children[2].value] = {
-            'type' : tree.children[1].children[0].value,
-            'value' : tbd,
-            'scope' : tbd
-        }
-        pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
+            myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
+                'type' : tree.children[1].children[0].value,
+                'value' : tbd,
+                'scope' : 'local'
+            }
+            pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
 
     '''
     Inicio de puntos neuralgicos
@@ -157,10 +195,17 @@ class instructions(Visitor):
                 operador = Poper.pop()
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
-                    # Meter el cuadrupo de la asignacion
-                    Quads.append([operador, right['value'],None, left['value']])
-                    # Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
-                    myGlobalVars[left['value']]['value'] =  right['value']
+                    if currentFunction == None:
+                        # Meter el cuadrupo de la asignacion
+                        Quads.append([operador, right['value'],None, left['value']])
+                        # Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
+                        #* Asignar el valor
+                        myGlobalVars[left['value']]['value'] =  right['value']
+                    else:
+                        Quads.append([operador, right['value'],None, left['value']])
+                        print(left['value'])
+                        print(myDirFunctions[currentFunction].paramsDic)
+                        # myDirFunctions[currentFunction][left['value']]['value'] =  right['value']
                 else:
                     errorType(operador, left, right)
 
@@ -343,7 +388,11 @@ class instructions(Visitor):
     de Functions
     '''
     def function(self, tree):
-        tipo = tree.children[1].children[0].value
+        try:
+            tipo = tree.children[1].children[0].value
+            
+        except AttributeError : #* si tiene error de atributo es por que la funcion es void
+            tipo = 'void'
         id = tree.children[2].value
         #* validar que funcion no exista
         if id in myDirFunctions:
@@ -441,7 +490,5 @@ class instructions(Visitor):
             errorNumberOfParamsLess(currentFunction, len(myDirFunctions[currentFunction].paramsDic), currentParam)
         currentParam = 0
         Quads.append(['Gosub',None,None, currentFunction])
-
-
 
     #TODO Objetos
