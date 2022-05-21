@@ -4,14 +4,14 @@ Var int numero
 numero = 1 + 9
 Var int  num = 10
 
-Def Void fun(){
+Def Void funcion(){
     Var int valor = 5
     Print(1+2)
 }
 
 Void Main(){
     Var int dos = 15 
-    Print(1 + 10)
+    Print(1 + valor)
 }
 
 

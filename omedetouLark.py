@@ -4,6 +4,7 @@ Alejandro Cedillo A00824742
 Sergio Guasso A00826042
 10/05/2022
 '''
+from pip import main
 from funcionesOmedetou import * 
 from lark import Lark
 from lark import Transformer

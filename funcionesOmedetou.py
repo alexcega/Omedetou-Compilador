@@ -60,6 +60,7 @@ class instructions(Visitor):
         myobj = Function('main',len(Quads), 'void')
         myDirFunctions['main'] = myobj
         global currentFunction
+        #*Decir que llegamos a main
         currentFunction = 'main'
         print('main')
         print(myDirFunctions)
@@ -84,30 +85,28 @@ class instructions(Visitor):
         pilaO.append({'value': tree.children[0].value, 'type': 'bool'})
 
     def identificador(self,tree):
-        #* revisar en global vars
-        if currentFunction == None :
+        #* revisar que este en local vars                
+        try: 
             pilaO.append({
                 'value': tree.children[0].value,
-                'type' : myGlobalVars[tree.children[0].value]['type']
+                'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
                 })
-        else: 
-            #* revisar que este en local vars                
-            try: 
+        except KeyError:
+            #* revisar que este en params de funcion
+            try:
                 pilaO.append({
-                    'value': tree.children[0].value,
-                    'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
-                    })
-            except KeyError:
-                #* revisar que este en params de funcion
-                try:
+                'value': tree.children[0].value,
+                'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
+                })
+            except:
+                # TODO revisar que este en global
+                if currentFunction == None :
                     pilaO.append({
-                    'value': tree.children[0].value,
-                    'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
-                    })
-                except:
-                    # TODO revisar que este en global
-                    #! Error validation
-                    errorValueDontExist(tree)
+                        'value': tree.children[0].value,
+                        'type' : myGlobalVars[tree.children[0].value]['type']
+                        })
+                #! Error validation
+                errorValueDontExist(tree)
                 
 
     '''
@@ -160,15 +159,18 @@ class instructions(Visitor):
             }
             pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
         else:
-            print('aqii test')
-            print(tree.children[2].value)
+            #* Declaraciones locales
+            print('>>>>\t', end='')
+            print('aqui local test de ', currentFunction)
+            print('valor a revisar:',tree.children[2].value)
             if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
                 #! Error validation
                 errorDoubleDeclatration(tree)
             myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
                 'type' : tree.children[1].children[0].value,
                 'value' : tbd,
-                'scope' : 'local'
+                'scope' : 'local',      
+                'pertenece a' : currentFunction ##~   BORRAR ???
             }
             pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
 
@@ -195,15 +197,17 @@ class instructions(Visitor):
                 operador = Poper.pop()
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
+                    #* Revisar en global
                     if currentFunction == None:
-                        # Meter el cuadrupo de la asignacion
+                        #* Meter el cuadrupo de la asignacion
                         Quads.append([operador, right['value'],None, left['value']])
                         # Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
                         #* Asignar el valor
                         myGlobalVars[left['value']]['value'] =  right['value']
                     else:
+                        #*Funcion a la que pertenece
                         Quads.append([operador, right['value'],None, left['value']])
-                        print(left['value'])
+                        # print(left['value'])
                         print(myDirFunctions[currentFunction].paramsDic)
                         # myDirFunctions[currentFunction][left['value']]['value'] =  right['value']
                 else:
@@ -388,12 +392,13 @@ class instructions(Visitor):
     de Functions
     '''
     def function(self, tree):
+        id = tree.children[2].value
         try:
             tipo = tree.children[1].children[0].value
-            
+
         except AttributeError : #* si tiene error de atributo es por que la funcion es void
             tipo = 'void'
-        id = tree.children[2].value
+            
         #* validar que funcion no exista
         if id in myDirFunctions:
             #! Error validation
@@ -402,8 +407,16 @@ class instructions(Visitor):
         if id in myGlobalVars:
             #! Error validation
             errorDoubleDeclatration(tree)
+        #* Crear su tabla de variables
         myobj = Function(id,len(Quads), tipo)
         myDirFunctions[id] = myobj
+
+        #^ Parche Guadalupano
+        if tipo != 'void':
+            myGlobalVars[id] = {
+            'value': tbd,
+            'type': tipo,
+            'scope': 'funcion'}
         global currentFunction
         currentFunction = id
 
@@ -448,6 +461,7 @@ class instructions(Visitor):
         Quads.append(['Endfunc',None,None,None])
         global temp
         temp = 1
+        # TODO Resetear los temporales: booleanos, enteros, etc.
 
     '''
     Inicio de puntos neuralgicos
@@ -491,4 +505,7 @@ class instructions(Visitor):
         currentParam = 0
         Quads.append(['Gosub',None,None, currentFunction])
 
-    #TODO Objetos
+    #TODO Dir de memoria @guasso
+    #TODO Objetos @alex
+    #TODO Correcciones de variables funciones @alex
+    #TODO Matrix @Guasso
