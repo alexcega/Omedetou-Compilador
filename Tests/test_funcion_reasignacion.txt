@@ -4,6 +4,10 @@ Var int numero
 numero = 1 + 9
 Var int  num = 10
 
+Def Void some(){
+    Var int test = 0
+}
+
 Def Void funcion(){
     Var int valor = 5
     Print(1+2)
