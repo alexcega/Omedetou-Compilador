@@ -1,5 +1,8 @@
 Start
-    Main(){ 
+    Def Void imprimir(){
+        Print(2)
+    }
+    Void Main(){ 
         While(1 < 2){
             While(  3 - 2 < 5) {
                 Print("HOLA ")

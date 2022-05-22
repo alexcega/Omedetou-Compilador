@@ -4,11 +4,10 @@ Alejandro Cedillo A00824742
 Sergio Guasso A00826042
 10/05/2022
 '''
-from pip import main
-from funcionesOmedetou import * 
+from funcionesOmedetou import *
 from lark import Lark
 from lark import Transformer
-
+from test import myTest
 
 #~ transformar los tipos de datos del arbol
 class T(Transformer):
@@ -30,8 +29,7 @@ my_parser = Lark(open("tokens omedetou.txt", 'r').read())
 
 #& Parser 
 try : 
-    myTest = 'test_funcion_reasignacion'
-    my_input = open("Tests/" + myTest + '.txt', 'r').read()
+    my_input = open("Tests/" + myTest , 'r').read()
     my_parse_tree = my_parser.parse(my_input)
 except EOFError:
     print(EOFError)

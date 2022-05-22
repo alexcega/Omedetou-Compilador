@@ -1,9 +1,10 @@
 Start
     Def int sumDos( int uno, int dos){
-        Print ( uno + dos)
+        Print(1*5)
+        Return (uno + dos)
     }
 
-    Main(){
-        sumDos( 4 ) 
+    Void Main(){
+        Print(sumDos( 4 )) 
     }
 Finish

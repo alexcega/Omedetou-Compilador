@@ -152,8 +152,10 @@ class_extended : IDENTIFIER EXTENDS
 
 function  : DEF (tipo|VOID) IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES (estatuto* function_return?)+ RIGHT_CURRLY_BRACES np_fin_funcion
 function_param : tipo IDENTIFIER function_params*
-function_return : RETURN expresion 
-                | RETURN LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS 
+function_return : RETURN expresion np_guadalupe
+                | RETURN LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS np_guadalupe
+
+np_guadalupe: 
 function_params : COMMA tipo IDENTIFIER 
 
 function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? RIGHT_PARENTHESIS
