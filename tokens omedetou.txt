@@ -75,6 +75,7 @@ vars    : VAR tipo IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor  
         | VAR tipo IDENTIFIER                                   -> var_sin_valor
         | VAR tipo IDENTIFIER LEFT_BRACKET CONST_INT RIGHT_BRACKET         -> var_lista
         | VAR tipo IDENTIFIER LEFT_BRACKET CONST_INT RIGHT_BRACKET LEFT_BRACKET CONST_INT RIGHT_BRACKET -> var_matriz
+        | VAR IDENTIFIER IDENTIFIER -> var_objeto
 np_asiganar_valor:
 np_meter_igual:
 
@@ -143,11 +144,12 @@ np_meterff:
 np_sacarff:
 
 factor_var  : var_cte -> guardar_cte
-        | IDENTIFIER DOT IDENTIFIER -> var_de_obj
+        | IDENTIFIER DOT IDENTIFIER -> guardar_var_de_obj
 
 
 
-class : LESS_THAN CLASS GREATER_THAN class_extended? IDENTIFIER bloque
+class : LESS_THAN CLASS GREATER_THAN class_extended? IDENTIFIER bloque np_fin_clase->inicializar_clase
+np_fin_clase: 
 class_extended : IDENTIFIER EXTENDS 
 
 function  : DEF (tipo|VOID) IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES (estatuto* function_return?)+ RIGHT_CURRLY_BRACES np_fin_funcion

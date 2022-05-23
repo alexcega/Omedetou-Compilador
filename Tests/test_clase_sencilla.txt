@@ -1,0 +1,16 @@
+Start
+
+<Class> pato {
+    Var int uno = 1
+    Var int dos = 2
+    Print( uno + 2 )
+}
+
+
+Void Main(){
+    Var pato donald
+    Var int cuatro = 4
+    Print(donald.uno)
+    Print(cuatro)
+}
+Finish

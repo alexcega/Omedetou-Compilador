@@ -39,7 +39,15 @@ except EOFError:
 print(my_parse_tree.pretty())
 print()
 
+class Parentes(Visitor):
+    def __default__(self, tree):
+        for subtree in tree.children:
+            if isinstance(subtree, type(tree)):
+                if not hasattr(subtree, 'parent'):
+                    subtree.parent = tree
+my_parse_tree = Parentes().visit(my_parse_tree)
 
+# print(my_parse_tree.children)
 print("\n## File: "+ myTest)
 #& Top Down Parsing
 instructions().visit_topdown(my_parse_tree)
@@ -66,7 +74,12 @@ for k, v in myDirFunctions.items():
     for kk, vv in v.varsDic.items():
         print('\t',kk,vv)
 
-# for vals in myDirFunctions.values():
+print('\n# Mis objetos')
+for k,v in myObjects.items():
+    print(k,v)
+    for kk, vv in v.objectVarsDic.items():
+        print('\t',kk,vv)
+
     
 
 # Measure-Command {python omedetouLark.py}

@@ -22,6 +22,17 @@ def errorZero():
     print("Zero division error")
     exit()
 
+def errorDoubleDeclarationObject(tree):
+    print(code[tree.children[0].line-1],end='')
+    for x in range(len(code[tree.children[0].line-1])):
+        if x != tree.children[0].column-1:
+            print(' ', end='')
+        else: 
+            print('^', end='')
+    print()
+    print('Error at line', tree.children[3].line , ",",  tree.children[3].value, "already defined" )
+    exit()
+
 def errorDoubleDeclatration(tree):
     print(code[tree.children[0].line-1],end='')
     for x in range(len(code[tree.children[0].line-1])):
@@ -59,10 +70,21 @@ def errorParamTypeMissmatch(val1, val2, fun, par):
     print("Error, wrong type at function: '" + str(fun) +"' at "+str(par+1) + "° param\n  conversion bewtween " + str(val1) + " and " + str(val2))
     exit()
 
-def errorNumberOfParams(fun, fparams, fcparams):
-    print("Error at function '" + fun+ "', requires " +str(fparams), 'arguments', 'but ', str(fcparams+1) , 'were provided' )
+def errorNumberOfParams(fun,funC, fparams, fcparams):
+    print("Error in " + fun +", Extra params Error at function '" + funC+ "', requires " +str(fparams), 'arguments', 'but ', str(fcparams+1) , 'were provided' )
     exit()
 
-def errorNumberOfParamsLess(fun, fparams, fcparams):
-    print("Error at function '" + fun+ "', requires " +str(fparams), 'arguments', 'but ', str(fcparams) , 'were provided' )
+def errorNumberOfParamsLess(fun,funC, fparams, fcparams):
+    print("Error in " + fun +", Less params Error at function '" + funC+ "', requires " +str(fparams), 'arguments', 'but ', str(fcparams) , 'were provided' )
+    exit()
+
+def errorNotSuchObject(tree):
+    print(code[tree.children[1].line-1],end='')
+    for x in range(len(code[tree.children[2].line-1])):
+        if x != tree.children[1].column-1:
+            print(' ', end='')
+        else: 
+            print('^', end='')
+    print()
+    print("Error at line", str(tree.children[1].line) + ", object '" + tree.children[1].value + "'", 'not defined')
     exit()

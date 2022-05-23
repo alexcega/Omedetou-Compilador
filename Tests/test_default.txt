@@ -5,6 +5,6 @@ Start
     }
 
     Void Main(){
-        Print(sumDos( 4 )) 
+        Print(sumDos( 6,7 )) 
     }
 Finish

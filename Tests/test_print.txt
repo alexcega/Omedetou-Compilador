@@ -1,4 +1,7 @@
 Start
-    print("hola" , "adios")
-    print("hola" + "mundo")
+    Void Main(){
+        If ( 2 > 3) {
+            Print("hola")
+        }
+    }
 Finish
