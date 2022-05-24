@@ -1,9 +1,13 @@
 Start
 
+Var String global = "Estoy en global"
 <Class> pato {
     Var int uno = 1
     Var int dos = 2
-    Print( uno + 2 )
+    
+    Def Void dondeEstoy(){
+        Print("Funcion de quien?")
+    }
 }
 
 

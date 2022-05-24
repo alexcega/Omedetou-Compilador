@@ -1,4 +1,3 @@
-from ast import Try
 from cuboSemantico import getType, OTypeError
 from lark import Visitor
 from validationErrors import *
@@ -596,6 +595,7 @@ class instructions(Visitor):
         global currentObject
         currentObject = None
 
+    #* Declaracion inicial de objeto
     def var_objeto(self,tree):
         print(tree.children[1])
         print(tree.children[2])
@@ -610,7 +610,7 @@ class instructions(Visitor):
             errorNotSuchObject(tree)
 
     def guardar_var_de_obj(self,tree):
-        print('atriburo de objk')
+        print('atriburo de obj')
         # print(tree.children[0]) #nombre de objeto
         print(tree.children[2])     # atributo de objeto
         # print(myDirFunctions[currentFunction].varsDic)
