@@ -3,16 +3,60 @@ Proyecto de compilador para la materia de Compiladores enero - junio 2022
 Se hace uso de la libreria Lark para la gramatica tokens parser y lexer
 Hacemos uso de un _Visitor_ como parte de la libreria para recorrer nuestro árbol 
 para inicial instala la libreria con el comando:
+
 `pip install lark`
 
 Para ejecutar el programa usar:
+
 `python omedetouLark.py`
+
+*Recomendado visualizar codigo con la extension [colorful comments](https://marketplace.visualstudio.com/items?itemName=ParthR2031.colorful-comments)*
+
+Si lo desea puede cambiar el input a parsear por uno de los contenidos en [/Tests](Tests)
 
 Compilador en base a programacion orientada a objetos con soporte de acceso a sus funciones y atributos
 
 Equipo:
 * [Alejandro Cedillo](https://github.com/alexcega) A00824742
 * [Sergio Guasso](https://github.com/Guasso) A00826042
+
+## Tokens
+| Nombre      | Signo |
+| ----------- | :-----------: |
+| START      | Start       |
+| FINISH   | Finish        |
+| VAR      | Var       |
+| WHILE      | While       |
+| IF   | If        |
+| ELSE      | Else       |
+| DEF   | Def        |
+| RETURN      | Return       |
+| CLASS   | Class        |
+| PRINT      | Print       |
+ | MAIN   | Main        |
+ | LEFT_CURRLY_BRACES   | { 
+|RIGHT_CURRLY_BRACES      | }       |
+| LEFT_PARENTHESIS   | (        |
+| RIGHT_PARENTHESIS      | )       |
+| LEFT_BRACKET   | \[        |
+| RIGHT_BRACKET      | ]       |
+| COMMA   | ,        |
+| COLON      | :       |
+ | DOT   | .        |
+ | NEW_LINE   | \n 
+|   LESS_THAN    |    <    |
+| GREATER_THAN   |    >     |
+| NOT_EQUAL   | (        |
+| RIGHT_PARENTHESIS      | )       |
+| EQUAL_COMPARATION  | ==        |
+| EQUAL      | =       |
+| OR   | \|        |
+| AND      |    &    |
+ | PLUS   | +        |
+ | MINUS   | -     | 
+|   ASTERISK    | *       |
+| SLASH   |  /        |
+| COMMENT   | #        |
 
 ## Tipos de datos
 * Int
@@ -51,10 +95,21 @@ Generacion de codigo de estatutos condicionales
 * Validacion de gotof
 * Validacion de ciclos anidados
 
-## ❔Fase 5 
+## ✅Fase 5 
 Generacion de codigo de funciones
 * Directorio de funciones
 * Creacion de objeto clase
 * Variables locales
-* Parche Guadalupano (Declaracion de funcion en globalVars )
+* Parche Guadalupano (Declaracion de funcion en globalVars)
 * Recursion
+
+##  ❓Fase 6 
+Mapa de memoria / Maquina virtual
+* ❓Estatutos secuenciales en MV
+* ❓Expresiones aritmeticas en MV
+* ✅Creacion de directorio de objetos
+* ✅Creacion de objeto para linkear Tabla de Variables y directorio de funciones en objetos
+* ❓Mapa de memoria
+
+
+
