@@ -1,30 +1,16 @@
-# globalFunctions = {}
+from collections import OrderedDict
+
+od = OrderedDict()
+
+od['a'] = 1
+od['b'] = 2
+od['c'] = 3
+od['d'] = 4
 
 
-# class Function():
-#     def __init__(self, name, startLine, type):
-#         self.name = name
-#         self.startLine = startLine
-#         self.type = type 
 
-    
+od[list(od.items())[0][0]] = 'ahora'
+# tamp = list(od.items())
+print(od)
 
-# class varsTable():
-    
-    
-#     pass
-
-
-# name = 'getMin'
-# if name in globalFunctions:
-#     print('error')
-#     exit()
-# mynewFun = Function(name, 3, "bool")
-# globalFunctions[name] = mynewFun
-# mynewFun.varsDic['name'] = mynewFun.name
-
-# for k,v in globalFunctions.items():
-#     print(k,v)
-
-
-sumdos(tres)
+# print(od.items()[1])

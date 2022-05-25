@@ -2,6 +2,7 @@ from cuboSemantico import getType, OTypeError
 from lark import Visitor
 from validationErrors import *
 from copy import deepcopy
+from collections import OrderedDict
 from memoryManager import *
 tbd = 'tbd'
 pilaO = []
@@ -28,7 +29,7 @@ class Function():
         self.startLine = startLine
         self.type = type 
         self.varsDic = {}
-        self.paramsDic = {}
+        self.paramsDic = OrderedDict()
         self.paramsList = []
 
 
@@ -109,8 +110,10 @@ class instructions(Visitor):
             except KeyError:
                 #* revisar que este en params de funcion
                 try:
+                    # print(currentFunctionCall)
+                    # myDirFunctions[currentFunctionCall]
                     pilaO.append({
-                    'address': tree.children[0].value,
+                    'address': myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['address'],
                     'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
                     })
                 except KeyError:
@@ -150,6 +153,7 @@ class instructions(Visitor):
     Puntos neuralgicos Escritura
     '''
     def np_print(self,tree):
+        print('sera este primero')
         print(pilaO[-1])
         Quads.append(['Print',None,None, pilaO.pop()['address']])
 
@@ -275,8 +279,10 @@ class instructions(Visitor):
                             myGlobalVars[left['address']]['address'] =  currentMemory
                         else:
                             #*Funcion a la que pertenece
-                            Quads.append([operador, right,None, left['value']])
+                            currentMemory = apartarMemoriaLocal(resultType)
+                            Quads.append([operador, right, None, currentMemory])
                             myDirFunctions[currentFunction].varsDic[left['address']]['value'] =  right['address']
+                            myDirFunctions[currentFunction].varsDic[left['address']]['address'] =  currentMemory
                     else:
                         #! Error validaiton
                         errorType(operador, left, right)
@@ -380,7 +386,9 @@ class instructions(Visitor):
                 if resultType != OTypeError:
                     global temp
 
-                    pilaO.append({'address':'t'+str(temp), 'type':resultType})
+                    pilaO.append({
+                        'address':'t'+str(temp),
+                        'type':resultType})
                     Quads.append([operador, left['address'],right['address'], 't'+str(temp)])
                     temp += 1
                 else:
@@ -501,10 +509,12 @@ class instructions(Visitor):
         # print(tree.children[1].value)   # id
         myDirFunctions[currentFunction].paramsDic[fID] = {
             'value': tbd,
-            'type': fType}
+            'type': fType,
+            'address': tbd}
         myDirFunctions[currentFunction].paramsList.append({
             'value': tbd,
-            'type': fType})
+            'type': fType,
+            'address': tbd})
 
     def function_params(self, tree):
         for ch in tree.children:
@@ -518,16 +528,14 @@ class instructions(Visitor):
                     errorDuplicateArgument(tree)
                 myDirFunctions[currentFunction].paramsDic[fID] = {
                     'value': tbd,
-                    'type': fType}
+                    'type': fType,
+                    'address': tbd}
                 myDirFunctions[currentFunction].paramsList.append({
                     'value': tbd,
-                    'type': fType})
-
+                    'type': fType,
+                    'address': tbd})
     def np_guadalupe(self,tree):
-
-        # print(tree.pretty())
-        # print('quiero ver',tree.parent.parent.parent.parent)
-        pg =pilaO.pop()['value']
+        pg =pilaO.pop()['address']
         Quads.append(['Return',None,None, pg])
         myGlobalVars[currentFunction]['value'] = pg
 
@@ -573,27 +581,43 @@ class instructions(Visitor):
                 #* Mas parametros dados de los que hay
                 #TODO Correccion de llamado, cuando se pasa por una ya no cuenta lso demas 
                 #TODO por lo que si se pasa por 5 y recibe 2, solo marcara hasta el 3
-                errorNumberOfParams( currentFunction,currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), currentParam)
+                errorNumberOfParams(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), currentParam)
     
     def np_insert_param(self, tree):
-        Quads.append(['Param', None, None, pilaO.pop()['value']])
+        direcccion = pilaO.pop()['address']
+        print('direccion', direcccion)
+        print('o este')
+        #* llamar 
+        #* ver https://stackoverflow.com/questions/10058140/accessing-items-in-an-collections-ordereddict-by-index
+        myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[currentParam-1][0]]['address'] = direcccion
+        # print('debo tener la misma de arriba', myDirFunctions[currentFunctionCall].paramsDic['address'])
+        Quads.append(['Param', None, None, direcccion])
 
     def np_reset_count_params(self,tree):
         global currentParam, temp
         if currentParam != len(myDirFunctions[currentFunctionCall].paramsList):
             #! Error Validation
             #* menos parametros dados de los que hay
-            errorNumberOfParamsLess(currentFunction,currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsList), currentParam)
+            errorNumberOfParamsLess(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsList), currentParam)
         currentParam = 0
-        print('vemos',myGlobalVars[currentFunctionCall])
+
+        # print('vemos',myGlobalVars[currentFunctionCall])
+        #* mandar a llamar funcion
         Quads.append(['Gosub',None,None, currentFunctionCall])
-        pilaO.append({
-            'value': 't'+str(temp),
-            'type': myGlobalVars[currentFunctionCall]['type']
-            })
-        Quads.append(['=', currentFunctionCall, None, 't'+str(temp)])
-        # myGlobalVars[currentFunctionCall]['value']
-        temp += 1
+
+        #* Agregar valore de parche guadalupano
+        try:
+            memo = apartarMemoria(myGlobalVars[currentFunctionCall]['type'])
+            pilaO.append({
+                'address': memo,
+                'type': myGlobalVars[currentFunctionCall]['type']
+                })
+            Quads.append(['=', currentFunctionCall, None, memo])
+            # myGlobalVars[currentFunctionCall]['value']
+            temp += 1
+        #* key error es por que la funcion es void, no hay que hacer nada mas
+        except KeyError:
+            pass
         #TODO @Guasso, cambiar temps
         # try:
         #     myGlobalVars[currentFunctionCall]
@@ -650,7 +674,7 @@ class instructions(Visitor):
                 print("AQUI")
                 print( myDirFunctions[currentFunction].varsDic[tree.children[0]])
                 pilaO.append({
-                            'value': tree.children[2].value,
+                            'address': tree.children[2].value,
                             'type' : myDirFunctions[currentFunction].varsDic[tree.children[0]].objectVarsDic[tree.children[2].value]['type']
                 })
 

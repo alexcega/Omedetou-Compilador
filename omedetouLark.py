@@ -36,7 +36,7 @@ except EOFError:
 
 # my_parse_tree = T().transform(my_parse_tree)
 
-print(my_parse_tree.pretty())
+# print(my_parse_tree.pretty())
 print()
 
 class Parentes(Visitor):
@@ -71,6 +71,8 @@ for myGb, myval in myGlobalVars.items():
 print('\n## Mis funciones')
 for k, v in myDirFunctions.items():
     print(k,v)
+    for kk, vv in v.paramsDic.items():
+        print('\t',kk,vv)
     for kk, vv in v.varsDic.items():
         print('\t',kk,vv)
 
