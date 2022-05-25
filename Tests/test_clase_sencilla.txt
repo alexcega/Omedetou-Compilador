@@ -5,9 +5,9 @@ Var String global = "Estoy en global"
     Var int uno = 1
     Var int dos = 2
     
-    Def Void dondeEstoy(){
-        Print("Funcion de quien?")
-    }
+    #Def Void dondeEstoy(){
+    #    Print("Funcion de quien?")
+    #}
 }
 
 

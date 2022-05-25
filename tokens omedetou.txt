@@ -51,7 +51,7 @@ STRING_WORD    : "String"
 IDENTIFIER: /[a-z_][a-zA-Z0-9_]*/
 CONST_INT: /\d+/
 CONST_FLOAT: /\d+(\.\d+)/
-CONST_BOOL: /True | False/ 
+CONST_BOOL: "True" | "False"
 CONST_STRING          : STRING
 
 COMMENT : /#.*/
@@ -65,10 +65,11 @@ COMMENT : /#.*/
 start: programa
 
 programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
-programa2 : some_vars*  class* function* start_main 
-some_vars : vars np_limpiar_temps| asignacion np_limpiar_temps
+programa2 : some_vars* np_main (class*|COMMENT) (function*|COMMENT) start_main 
+np_main : 
+some_vars : vars np_limpiar_temps| asignacion np_limpiar_temps | COMMENT
 np_limpiar_temps: 
-start_main: VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
+start_main:  VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
 np_fin_funcion:
 
 vars    : VAR tipo IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor  NEW_LINE -> var_con_valor

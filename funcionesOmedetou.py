@@ -2,6 +2,7 @@ from cuboSemantico import getType, OTypeError
 from lark import Visitor
 from validationErrors import *
 from copy import deepcopy
+from memoryManager import *
 tbd = 'tbd'
 pilaO = []
 Poper = []
@@ -13,6 +14,7 @@ currentFunction = None
 currentFunctionCall = None
 currentObject = None
 currentParam = 0
+currentMemory = None
 myGlobalVars = {}
 
 
@@ -53,10 +55,10 @@ class instructions(Visitor):
         global temp
         temp = 1
 
-    def programa(self, tree):
+    def np_main(self, tree):
         #* Goto main
         Quads.append(['Goto', None,None, tbd])
-        Psaltos.append(0)
+        Psaltos.append(len(Quads)-1)
     
     def start_main(self, tree):
         #* Rellenar main
@@ -73,24 +75,34 @@ class instructions(Visitor):
     Inicio de puntos neuralgicos de CTEs
     Guardar valores CTEs en pilaO
     '''
+
+
     def entero(self,tree):
-        pilaO.append({'value': tree.children[0].value, 'type': 'int'})
+        espacio = apartarMemoriaConst('int')
+        mainMemory[espacio] = tree.children[0].value
+        pilaO.append({'address': espacio, 'type': 'int'})
 
     def decimal(self, tree):
-        pilaO.append({'value': tree.children[0].value, 'type': 'float'})
-
-    def palabra(self, tree):
-        pilaO.append({'value': tree.children[0].value, 'type': 'String'})
+        espacio = apartarMemoriaConst('float')
+        mainMemory[espacio] = tree.children[0].value
+        pilaO.append({'address': espacio, 'type': 'float'})
 
     def booleano(self, tree):
-        pilaO.append({'value': tree.children[0].value, 'type': 'bool'})
+        espacio = apartarMemoriaConst('bool')
+        mainMemory[espacio] = tree.children[0].value
+        pilaO.append({'address': espacio, 'type': 'bool'})
+
+    def palabra(self, tree):
+        espacio = apartarMemoriaConst('String')
+        mainMemory[espacio] = tree.children[0].value
+        pilaO.append({'address': espacio, 'type': 'String'})
 
     def identificador(self,tree):
         if currentObject == None:
             #* revisar que este en local vars                
             try: 
                 pilaO.append({
-                    'value': tree.children[0].value,
+                    'address': tree.children[0].value,
                     'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
                     })
                 # errorValueDontExist(tree)
@@ -98,14 +110,15 @@ class instructions(Visitor):
                 #* revisar que este en params de funcion
                 try:
                     pilaO.append({
-                    'value': tree.children[0].value,
+                    'address': tree.children[0].value,
                     'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
                     })
                 except KeyError:
                     #* Revisar si esta en global
+                    #& aprovado para MV
                     try:
                         pilaO.append({
-                            'value': tree.children[0].value,
+                            'address': myGlobalVars[tree.children[0].value]['address'],
                             'type' : myGlobalVars[tree.children[0].value]['type']
                             })
                     except KeyError:
@@ -116,7 +129,7 @@ class instructions(Visitor):
             try:
                 #* buscar en objetos
                 pilaO.append({
-                    'value': tree.children[0].value,
+                    'address': tree.children[0].value,
                     'type' :myObjects[currentObject].objectVarsDic[tree.children[0].value]['type']
                 })
             except KeyError:
@@ -137,7 +150,8 @@ class instructions(Visitor):
     Puntos neuralgicos Escritura
     '''
     def np_print(self,tree):
-        Quads.append(['Print',None,None, pilaO.pop()['value']])
+        print(pilaO[-1])
+        Quads.append(['Print',None,None, pilaO.pop()['address']])
 
     '''
     Inicio de puntos neuralgicos
@@ -152,7 +166,8 @@ class instructions(Visitor):
             myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
                 'type' : tree.children[1].children[0].value,
                 'value' : tbd,
-                'scope' : 'local'
+                'scope' : 'local',
+                'address' : tbd
             }
         else:
             if tree.children[2].value in myGlobalVars:
@@ -163,11 +178,15 @@ class instructions(Visitor):
             myGlobalVars[tree.children[2].value] = {
                 'type' : tree.children[1].children[0].value,
                 'value' : tbd,
-                'scope' : 'global'
+                'scope' : 'global',
+                'address'  : tbd
             }
 
     def var_con_valor(self, tree):
-        pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
+        pilaO.append({
+            'address':tree.children[2].value, 
+            'type': tree.children[1].children[0].value
+        })
         #* Cuando current object es none es por que no estamos en un objeto
         if currentFunction != None:
             #* Declaraciones locales
@@ -178,9 +197,9 @@ class instructions(Visitor):
                 myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
                     'type' : tree.children[1].children[0].value,
                     'value' : tbd,
-                    'scope' : 'local'
+                    'scope' : 'local',
+                    'address' : tbd
                 }
-                # pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
         else:
             try:
                 #* variables de objetos
@@ -189,9 +208,9 @@ class instructions(Visitor):
                 myObjects[currentObject].objectVarsDic[tree.children[2].value] = {
                     'type' : tree.children[1].children[0].value,
                     'value' : tbd,
-                    'scope' : 'local'
+                    'scope' : 'local',
+                    'address' : tbd
                 }
-                # pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
             except KeyError:
                 #* Declaraciones globales
                 if tree.children[2].value in myGlobalVars:
@@ -200,11 +219,9 @@ class instructions(Visitor):
                 myGlobalVars[tree.children[2].value] = {
                     'type' : tree.children[1].children[0].value,
                     'value' : tbd,
-                    'scope' : 'global'
+                    'scope' : 'global',
+                    'address' : tbd
                 }
-                # pilaO.append({'value':tree.children[2].value, 'type': tree.children[1].children[0].value})
-
-                
 
     '''
     Inicio de puntos neuralgicos
@@ -214,20 +231,21 @@ class instructions(Visitor):
         #* Buscar en local
         try: 
             pilaO.append({
-                'value': tree.children[0].value,
+                'address': tree.children[0].value,
                 'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
                 })
         except KeyError:
             #* Buscar en parametros
             try:
-                pilaO.append({'value': tree.children[0].value,
+                pilaO.append({
+                    'address': tree.children[0].value,
                     'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
                     })
             except:
                 #* Buscar en global
                 try:
                     pilaO.append({
-                        'value' : tree.children[0].value,
+                        'address' : tree.children[0].value,
                         'type' : myGlobalVars[tree.children[0].value]['type']
                     })
                     # print(myGlobalVars[tree.children[0].value]['type']) # tipo 
@@ -246,17 +264,19 @@ class instructions(Visitor):
                     if resultType != OTypeError:
                         #* Revisar en global
                         if currentFunction == None:
+                            #* espacio de memoria
+                            global currentMemory
+                            currentMemory = apartarMemoria(resultType)
                             #* Meter el cuadrupo de la asignacion
-                            Quads.append([operador, right['value'],None, left['value']])
+                            Quads.append([operador, right,None, currentMemory])
                             #* Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
                             #* Asignar el valor
-                            myGlobalVars[left['value']]['value'] =  right['value']
+                            myGlobalVars[left['address']]['value'] =  right['address']
+                            myGlobalVars[left['address']]['address'] =  currentMemory
                         else:
                             #*Funcion a la que pertenece
-                            Quads.append([operador, right['value'],None, left['value']])
-                            # print(left['value'])
-                            # print(myDirFunctions[currentFunction].paramsDic)
-                            # myDirFunctions[currentFunction][left['value']]['value'] =  right['value']
+                            Quads.append([operador, right,None, left['value']])
+                            myDirFunctions[currentFunction].varsDic[left['address']]['value'] =  right['address']
                     else:
                         #! Error validaiton
                         errorType(operador, left, right)
@@ -264,7 +284,7 @@ class instructions(Visitor):
                     #* Buscar en objetos
                     if currentFunction == None:
                         Quads.append([operador, right['value'],None, left['value']])
-                        myObjects[currentObject].objectVarsDic[left['value']]['value'] =  right['value']
+                        myObjects[currentObject].objectVarsDic[left['address']]['value'] =  right['address']
     def np_meter_igual(self,tree):
         Poper.append('=')
         
@@ -294,8 +314,8 @@ class instructions(Visitor):
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
                     global temp
-                    pilaO.append({'value':'t'+str(temp), 'type':resultType})
-                    Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
+                    pilaO.append({'address':'t'+str(temp), 'type':resultType})
+                    Quads.append([operador, left, right, 't'+str(temp)])
                     temp += 1
                 else:
                     errorType(operador, left, right)
@@ -313,9 +333,10 @@ class instructions(Visitor):
                         errorZero()
                 if resultType != OTypeError:
                     global temp
-                    pilaO.append({'value':'t'+str(temp), 'type':resultType})
-                    Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
-                    temp += 1
+                    currentTempMemory = apartarMemoriaTemporal(resultType)
+                    pilaO.append({'address':currentTempMemory, 'type':resultType})
+                    Quads.append([operador, left, right, currentTempMemory])
+                    # temp += 1
                 else:
                     #! Error validation
                     errorType(operador, left, right)
@@ -358,8 +379,9 @@ class instructions(Visitor):
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
                     global temp
-                    pilaO.append({'value':'t'+str(temp), 'type':resultType})
-                    Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
+
+                    pilaO.append({'address':'t'+str(temp), 'type':resultType})
+                    Quads.append([operador, left['address'],right['address'], 't'+str(temp)])
                     temp += 1
                 else:
                     #! Error validation
@@ -378,8 +400,8 @@ class instructions(Visitor):
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
                     global temp
-                    pilaO.append({'value':'t'+str(temp), 'type':resultType})
-                    Quads.append([operador, left['value'],right['value'], 't'+str(temp)])
+                    pilaO.append({'address':'t'+str(temp), 'type':resultType})
+                    Quads.append([operador, left['address'],right['address'], 't'+str(temp)])
                     temp += 1
                 else:
                     #! Error validation
@@ -510,10 +532,13 @@ class instructions(Visitor):
         myGlobalVars[currentFunction]['value'] = pg
 
     def np_fin_funcion(self, tree):
-        Quads.append(['Endfunc',None,None,None])
-        global temp
-        temp = 1
-        # TODO Resetear los temporales: booleanos, enteros, etc.
+        if currentFunction != 'main':
+            Quads.append(['Endfunc',None,None,None])
+            global temp
+            temp = 1
+            # TODO Resetear los temporales: booleanos, enteros, etc.
+        else:
+            Quads.append(['Endprogram',None,None,None])
 
     '''
     Inicio de puntos neuralgicos
@@ -632,8 +657,6 @@ class instructions(Visitor):
 
     #TODO Dir de memoria @guasso
     #TODO Matrix @Guasso
-
-
 
 
 #? posible registro del padre de current rule

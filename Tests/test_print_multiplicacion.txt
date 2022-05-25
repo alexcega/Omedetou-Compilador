@@ -1,0 +1,14 @@
+Start
+    Var int dos_por_dos = 2 * 2
+    Var bool boleano = False
+    Var String palabra = "hola"
+    
+    Def Void imprime(){
+       Print( palabra , dos_por_dos)
+    }
+    Void Main(){ 
+        Print( "mimain" )
+        Print(dos_por_dos )
+        Print(dos_por_dos + 1)
+    }
+Finish

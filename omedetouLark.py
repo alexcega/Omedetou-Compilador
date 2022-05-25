@@ -34,7 +34,7 @@ try :
 except EOFError:
     print(EOFError)
 
-#? my_parse_tree = T().transform(my_parse_tree)
+# my_parse_tree = T().transform(my_parse_tree)
 
 print(my_parse_tree.pretty())
 print()

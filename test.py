@@ -1,1 +1,1 @@
-myTest = 'test_clase_sencilla.txt'
+myTest = 'test_print_multiplicacion.txt'

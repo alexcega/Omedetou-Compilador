@@ -1,7 +1,13 @@
 Start
-    Main(){ 
-        If( True  & True ){
-            Print( True + True )
+
+    Var int numeroGlobal = 10 * 1 + 11 
+    Var int numerodosGlobal = 11 * 8 - 1 
+    
+    Void Main(){ 
+        Var int algo = 10 * 1 + 11 
+        Var int alga = 11 * 8 - 1 
+        If( numeroGlobal  > numerodosGlobal ){
+            Print( "Entramos" )
         }
     }
 Finish
