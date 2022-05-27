@@ -1,14 +1,13 @@
 Start
-    #Var int dos_por_dos = 2 * 2
-    #Var bool boleano = False
-    #Var String palabra = "hola"
+    Var float punto = 10.0
     
-    Def Void imprime(String palabra , int numero){
-       Print( palabra , numero)
-    }
     Void Main(){ 
-        Var float pes = 10.5
-        imprime("Una funcion", 10)
-        Print( "mimain" )
+        Var float decimal = 10 / 2
+        If (10 > 1){
+            Print("10 mayor que uno")
+        }
+        Else{
+            Print("esto esta mal")
+        }
     }
 Finish

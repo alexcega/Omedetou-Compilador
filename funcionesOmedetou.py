@@ -103,11 +103,12 @@ class instructions(Visitor):
             #* revisar que este en local vars                
             try: 
                 pilaO.append({
-                    'address': tree.children[0].value,
+                    'address': myDirFunctions[currentFunction].varsDic[tree.children[0].value]['address'],
                     'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
                     })
                 # errorValueDontExist(tree)
             except KeyError:
+                #& MV
                 #* revisar que este en params de funcion
                 try:
                     # print(currentFunctionCall)
@@ -153,8 +154,6 @@ class instructions(Visitor):
     Puntos neuralgicos Escritura
     '''
     def np_print(self,tree):
-        print('sera este primero')
-        print(pilaO[-1])
         Quads.append(['Print',None,None, pilaO.pop()['address']])
 
     '''
@@ -234,6 +233,7 @@ class instructions(Visitor):
     def reasignar(self, tree):
         #* Buscar en local
         try: 
+            print('local reasignacion')
             pilaO.append({
                 'address': tree.children[0].value,
                 'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
@@ -319,9 +319,10 @@ class instructions(Visitor):
                 operador = Poper.pop()
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
+                    currentTempMemory = apartarMemoriaTemporal(resultType)
                     global temp
-                    pilaO.append({'address':'t'+str(temp), 'type':resultType})
-                    Quads.append([operador, left, right, 't'+str(temp)])
+                    pilaO.append({'address':currentTempMemory, 'type':resultType})
+                    Quads.append([operador, left, right, currentTempMemory])
                     temp += 1
                 else:
                     errorType(operador, left, right)
@@ -334,15 +335,14 @@ class instructions(Visitor):
                 operador = Poper.pop()
                 resultType =  getType(left,right,operador)
                 if operador == "/":
-                    if(right['value'] == '0'):
+                    #TODO borrar esto y moverlo a la mv
+                    if(right['address'] == '0'):
                         #! Error validation
                         errorZero()
                 if resultType != OTypeError:
-                    global temp
                     currentTempMemory = apartarMemoriaTemporal(resultType)
                     pilaO.append({'address':currentTempMemory, 'type':resultType})
                     Quads.append([operador, left, right, currentTempMemory])
-                    # temp += 1
                 else:
                     #! Error validation
                     errorType(operador, left, right)
@@ -384,13 +384,10 @@ class instructions(Visitor):
                 operador = Poper.pop()
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
-                    global temp
-
-                    pilaO.append({
-                        'address':'t'+str(temp),
-                        'type':resultType})
-                    Quads.append([operador, left['address'],right['address'], 't'+str(temp)])
-                    temp += 1
+                    
+                    currentTempMemory = apartarMemoriaTemporal(resultType)
+                    pilaO.append({'address':currentTempMemory, 'type':resultType})
+                    Quads.append([operador, left, right, currentTempMemory])
                 else:
                     #! Error validation
                     errorType(operador, left, right)
@@ -407,10 +404,9 @@ class instructions(Visitor):
                 operador = Poper.pop()
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
-                    global temp
-                    pilaO.append({'address':'t'+str(temp), 'type':resultType})
-                    Quads.append([operador, left['address'],right['address'], 't'+str(temp)])
-                    temp += 1
+                    currentTempMemory = apartarMemoriaTemporal(resultType)
+                    pilaO.append({'address':currentTempMemory, 'type':resultType})
+                    Quads.append([operador, left, right, currentTempMemory])
                 else:
                     #! Error validation
                     errorType(operador, left, right)
@@ -427,7 +423,7 @@ class instructions(Visitor):
             print('Syntax Error, expected expresion')
             exit()
         else:
-            Quads.append(['Gotof',condicion['value'],None, tbd])
+            Quads.append(['Gotof',condicion['address'],None, tbd])
             Psaltos.append(len(Quads)-1)
 
     def np_finif(self, tree):
