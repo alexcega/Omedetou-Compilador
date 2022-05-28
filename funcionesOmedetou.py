@@ -86,6 +86,8 @@ class instructions(Visitor):
     def decimal(self, tree):
         espacio = apartarMemoriaConst('float')
         mainMemory[espacio] = tree.children[0].value
+        print('memorai constante de ', espacio)
+        print(mainMemory[espacio])
         pilaO.append({'address': espacio, 'type': 'float'})
 
     def booleano(self, tree):
@@ -268,21 +270,41 @@ class instructions(Visitor):
                     if resultType != OTypeError:
                         #* Revisar en global
                         if currentFunction == None:
-                            #* espacio de memoria
-                            global currentMemory
-                            currentMemory = apartarMemoria(resultType)
-                            #* Meter el cuadrupo de la asignacion
-                            Quads.append([operador, right,None, currentMemory])
-                            #* Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
-                            #* Asignar el valor
-                            myGlobalVars[left['address']]['value'] =  right['address']
-                            myGlobalVars[left['address']]['address'] =  currentMemory
+                        #! GLOBAL
+                            if myGlobalVars[left['address']]['address'] == 'tbd':
+                                #* Apartar nuevo de memoria por valor nuevo
+                                global currentMemory
+                                currentMemory = apartarMemoria(resultType)
+                                #* Meter el cuadrupo de la asignacion
+                                Quads.append([operador, right,None, currentMemory])
+                                #* Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
+                                #* Asignar el valor
+                                # print("revisar mv main", right['address'])
+                                # print(mainMemory[right['address']])
+                                myGlobalVars[left['address']]['value'] =  right['address']
+                                myGlobalVars[left['address']]['address'] =  currentMemory
+                            else:
+                            #* reasignar
+                                myGlobalVars[left['address']]['value'] =  right['address']
                         else:
-                            #*Funcion a la que pertenece
-                            currentMemory = apartarMemoriaLocal(resultType)
-                            Quads.append([operador, right, None, currentMemory])
-                            myDirFunctions[currentFunction].varsDic[left['address']]['value'] =  right['address']
-                            myDirFunctions[currentFunction].varsDic[left['address']]['address'] =  currentMemory
+                        #! LOCAL
+                            try: #* Asignar valores propios
+                                #*Funcion a la que pertenece
+                                if myDirFunctions[currentFunction].varsDic[left['address']]['address'] == 'tbd':
+                                    currentMemory = apartarMemoriaLocal(resultType)
+                                    Quads.append([operador, right, None, currentMemory])
+                                    myDirFunctions[currentFunction].varsDic[left['address']]['value'] =  right['address']
+                                    myDirFunctions[currentFunction].varsDic[left['address']]['address'] =  currentMemory
+                                else:
+                                    #* reasignar valor local en local
+                                    myDirFunctions[currentFunction].varsDic[left['address']]['value'] =  right['address']
+                                    Quads.append([operador, right,None, myDirFunctions[currentFunction].varsDic[left['address']]['address']])
+                            except KeyError:
+                                #* reasignar valores pero de algo global en local
+                                print('quiero reasignar')
+                                if myGlobalVars[left['address']]['address'] != 'tbd':
+                                    Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
+                                    myGlobalVars[left['address']]['value'] =  right['address']
                     else:
                         #! Error validaiton
                         errorType(operador, left, right)
@@ -455,7 +477,7 @@ class instructions(Visitor):
             print('Syntax Error, expected expresion')
             exit()
         else:
-            Quads.append(['Gotof',condicion['value'], None, tbd])
+            Quads.append(['Gotof',condicion['address'], None, tbd])
             Psaltos.append(len(Quads)-1)
     
     def np_endwhile(self, tree) :
@@ -601,7 +623,7 @@ class instructions(Visitor):
         #* mandar a llamar funcion
         Quads.append(['Gosub',None,None, currentFunctionCall])
 
-        #* Agregar valore de parche guadalupano
+        #* Agregar valor en de parche guadalupano
         try:
             memo = apartarMemoria(myGlobalVars[currentFunctionCall]['type'])
             pilaO.append({

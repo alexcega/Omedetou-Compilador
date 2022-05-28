@@ -128,7 +128,6 @@ while Quads[index][0] != 'Endprogram':
             elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
                 mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])>=bool(mm[Quads[index][2]['address']])
             
-
         elif Quads[index][0] == '<=':
             if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
                 mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<=int(mm[Quads[index][2]['address']])

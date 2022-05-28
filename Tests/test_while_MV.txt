@@ -1,0 +1,13 @@
+Start
+    Var float punto = 5.0 
+    Var float vaca = 6.0 
+    
+    Void Main(){ 
+        Var float perro = 10.0 
+        While ( perro > 0 ){
+            Print(perro)
+            perro = perro - 1
+        }
+       
+    }
+Finish

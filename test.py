@@ -1,1 +1,1 @@
-myTest = 'test_print_multiplicacion.txt'
+myTest = 'test_fib_uno.txt'

@@ -1,13 +1,14 @@
 Start
-    Var float punto = 10.0
+    Var float punto = 5.0 
+    Var float vaca = 6.0 
     
     Void Main(){ 
-        Var float decimal = 10 / 2
-        If (10 > 1){
-            Print("10 mayor que uno")
-        }
-        Else{
-            Print("esto esta mal")
-        }
+        Var float perro = 11.0 
+        vaca = 10.0
+        perro = 6.9
+        Print(punto)
+        Print(vaca)
+        Print(perro)
+        Print( perro  * vaca)
     }
 Finish

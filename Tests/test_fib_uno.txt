@@ -1,0 +1,31 @@
+Start
+    Var float punto = 5.0 
+    Var float vaca = 6.0 
+    
+    Void Main(){ 
+        Var int num_deseado = 12
+        Var float aux = 0.0
+        Var float fib = 0.0
+        Var float fib2 = 1.0
+        If (num_deseado == 0){
+            Print(fib)
+        }
+        Else{
+            If (num_deseado == 1){
+                Print(fib2)
+            }
+            Else{
+
+                While ( num_deseado - 2 > 0  ) {
+                    aux = fib + fib2
+                    fib = fib2
+                    fib2 = aux
+                    num_deseado = num_deseado - 1
+                }
+                Print(fib2)
+            }
+        }
+        
+
+    }
+Finish
