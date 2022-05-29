@@ -1,1 +1,1 @@
-myTest = 'test_fib_uno.txt'
+myTest = 'test_read.txt'

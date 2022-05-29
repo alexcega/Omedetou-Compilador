@@ -151,7 +151,37 @@ class instructions(Visitor):
     def np_sacarff(self, tree):
         Poper.pop()
 
+    '''
+    Puntos neuralgicos Lectura
+    '''
+    def read_value(self, tree):
+        print(tree)
+        identificador = tree.children[2].value
+        if currentFunction != None:
+            #* Local
+            try :
+                #* Vars locales
+                print("aqui var")
+                Quads.append(['Read', ['local', currentFunction],identificador,myDirFunctions[currentFunction].varsDic[identificador]['address']])
+            except KeyError:
+                try:
+                    #* Params locales
+                    print("aqui param")
+                    Quads.append(['Read', ['param', currentFunction],identificador,myDirFunctions[currentFunction].paramsDic[identificador]['address']])
+                except KeyError:
+                    try:
+                        #* leer en local una variable global
+                        Quads.append(['Read', 'global',identificador, myGlobalVars[identificador]['address']])
+                    except KeyError:
+                        errorRead(tree)
 
+        else:
+            #*global
+            try :
+                print("aqui global")
+                Quads.append(['Read', 'global',identificador, myGlobalVars[identificador]['address']])
+            except KeyError:
+                errorRead(tree)
     '''
     Puntos neuralgicos Escritura
     '''

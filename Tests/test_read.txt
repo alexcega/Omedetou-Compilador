@@ -1,0 +1,10 @@
+Start
+    Var float punto = 5.0 
+    Var float vaca = 6.0 
+    Var int perro = 9
+    Void Main(){ 
+        Var int rana = 1
+        Read(rana)
+        Print(rana)
+    }
+Finish

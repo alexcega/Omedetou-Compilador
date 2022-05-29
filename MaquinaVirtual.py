@@ -214,6 +214,89 @@ while Quads[index][0] != 'Endprogram':
         # except TypeError:
         #     print(Quads[index][3])
 
+    elif Quads[index][0] == 'Read':
+        if Quads[index][1] == 'global':
+            eltype = myGlobalVars[Quads[index][2][1]]['type']
+            getinput = input('>')
+            if eltype == 'float':
+                try:
+                    mm[Quads[index][3]] = float(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'int':
+                try:
+                    mm[Quads[index][3]] = int(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'bool':
+                try:
+                    mm[Quads[index][3]] = bool(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'string':
+                try:
+                    mm[Quads[index][3]] = getinput
+                except:
+                    print('Error de conversion')
+                    exit()
+        elif Quads[index][1][0] == 'local':
+            eltype = myDirFunctions[Quads[index][1][1]].varsDic[Quads[index][2]]['type']
+            getinput = input('>')
+            if eltype == 'float':
+                try:
+                    mm[Quads[index][3]] = float(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'int':
+                try:
+                    mm[Quads[index][3]] = int(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'bool':
+                try:
+                    mm[Quads[index][3]] = bool(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'string':
+                try:
+                    mm[Quads[index][3]] = getinput
+                except:
+                    print('Error de conversion')
+                    exit()
+
+        elif Quads[index][1][0] == 'param':
+            eltype = myDirFunctions[Quads[index][1][1]].varsParam[Quads[index][2]]['type']
+            getinput = input('>')
+            if eltype == 'float':
+                try:
+                    mm[Quads[index][3]] = float(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'int':
+                try:
+                    mm[Quads[index][3]] = int(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'bool':
+                try:
+                    mm[Quads[index][3]] = bool(getinput)
+                except:
+                    print('Error de conversion entre', eltype, 'y', type(getinput))
+                    exit()
+            if eltype == 'string':
+                try:
+                    mm[Quads[index][3]] = getinput
+                except:
+                    print('Error de conversion')
+                    exit()
 
     elif Quads[index][0] == 'Goto':
         index = Quads[index][3] - 1

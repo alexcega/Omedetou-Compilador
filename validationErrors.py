@@ -78,6 +78,7 @@ def errorNumberOfParamsLess(fun,funC, fparams, fcparams):
     print("Error in " + fun +", Less params Error at function '" + funC+ "', requires " +str(fparams), 'arguments', 'but ', str(fcparams) , 'were provided' )
     exit()
 
+#TODO revisar indices
 def errorNotSuchObject(tree):
     print(code[tree.children[1].line-1],end='')
     for x in range(len(code[tree.children[2].line-1])):
@@ -87,4 +88,16 @@ def errorNotSuchObject(tree):
             print('^', end='')
     print()
     print("Error at line", str(tree.children[1].line) + ", object '" + tree.children[1].value + "'", 'not defined')
+    exit()
+
+
+def errorRead(tree):
+    print(code[tree.children[2].line-1],end='')
+    for x in range(len(code[tree.children[2].line-1])):
+        if x != tree.children[1].column:
+            print(' ', end='')
+        else: 
+            print('^', end='')
+    print()
+    print("Name error, no such variable with name '"+ tree.children[2].value + "' at line ", tree.children[2].line)
     exit()

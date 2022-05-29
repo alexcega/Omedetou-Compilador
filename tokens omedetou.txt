@@ -12,6 +12,7 @@ EXTENDS         : "Extends"
 PRINT           : "Print"
 MAIN            : "Main"
 VOID            : "Void"
+READ            : "Read"        
 
 LEFT_CURRLY_BRACES      : /\{/
 RIGHT_CURRLY_BRACES     : /\}/ 
@@ -94,7 +95,10 @@ estatuto    : asignacion -> igualar
         | vars       -> unavars
         | function   -> unafuncion
         | function_call -> unallamadafuncion
+        | read_value    -> lectura
         | COMMENT    -> comentario
+
+read_value: READ LEFT_PARENTHESIS IDENTIFIER RIGHT_PARENTHESIS
 
 escritura : PRINT LEFT_PARENTHESIS expresion esc2* np_print RIGHT_PARENTHESIS NEW_LINE
 np_print: 
