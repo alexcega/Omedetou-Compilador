@@ -6,9 +6,12 @@ Start
     Def Void imprime(String palabra , int numero){
        Print( palabra , numero)
     }
+    Def Void imprime2 (String word, int ent){
+        Print( word, ent)
+    }
     Void Main(){ 
         Var float pes = 10.5
-        imprime("Una funcion", 10)
+        imprime("Una funcion",1)
         Print( "mimain" )
     }
 Finish

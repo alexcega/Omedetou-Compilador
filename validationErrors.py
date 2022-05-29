@@ -1,3 +1,4 @@
+from tkinter.tix import Tree
 from cuboSemantico import OTypeError
 from test import myTest
 code = open("Tests/" +myTest).readlines()
@@ -70,11 +71,16 @@ def errorParamTypeMissmatch(val1, val2, fun, par):
     print("Error, wrong type at function: '" + str(fun) +"' at "+str(par+1) + "° param\n  conversion bewtween " + str(val1) + " and " + str(val2))
     exit()
 
-def errorNumberOfParams(fun,funC, fparams, fcparams):
-    print("Error in " + fun +", Extra params Error at function '" + funC+ "', requires " +str(fparams), 'arguments', 'but ', str(fcparams+1) , 'were provided' )
+def errorNumberOfParams(fun,funC, fparams, tree):
+    print(code[tree.children[0].line - 1])
+    params = 1
+    for ch in code[tree.children[0].line - 1]:
+        if ch == ",": params +=1
+    print("Error in " + fun +", Extra params Error at function '" + funC+ "', requires " +str(fparams), 'arguments', 'but ', str(params) , 'were provided' )
     exit()
 
-def errorNumberOfParamsLess(fun,funC, fparams, fcparams):
+def errorNumberOfParamsLess(fun,funC, fparams, fcparams, tree):
+    print(code[tree.children[0].line - 1])
     print("Error in " + fun +", Less params Error at function '" + funC+ "', requires " +str(fparams), 'arguments', 'but ', str(fcparams) , 'were provided' )
     exit()
 

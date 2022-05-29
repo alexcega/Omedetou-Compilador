@@ -9,12 +9,12 @@ pilaO = []
 Poper = []
 Quads = []
 Psaltos = []
-temp = 1
 #TODO Cambiar currentFunction a pila para recursividad
 currentFunction = None
 currentFunctionCall = None
 currentObject = None
 currentParam = 0
+countParam = None
 currentMemory = None
 myGlobalVars = {}
 
@@ -30,8 +30,6 @@ class Function():
         self.type = type 
         self.varsDic = {}
         self.paramsDic = OrderedDict()
-        self.paramsList = []
-
 
 myObjects = {}
 class Objetos():
@@ -53,8 +51,7 @@ class instructions(Visitor):
         resetear los teporales gastados, 
         como son varialbes globales no cuenta con un endfunc
         '''
-        global temp
-        temp = 1
+        pass
 
     def np_main(self, tree):
         #* Goto main
@@ -372,10 +369,8 @@ class instructions(Visitor):
                 resultType =  getType(left,right,operador)
                 if resultType != OTypeError:
                     currentTempMemory = apartarMemoriaTemporal(resultType)
-                    global temp
                     pilaO.append({'address':currentTempMemory, 'type':resultType})
                     Quads.append([operador, left, right, currentTempMemory])
-                    temp += 1
                 else:
                     errorType(operador, left, right)
     
@@ -555,14 +550,11 @@ class instructions(Visitor):
         fID = tree.children[1].value
         # print(tree.children[0].children[0].value) # tipo
         # print(tree.children[1].value)   # id
+        dondeva =  apartarMemoriaLocal(fType)
         myDirFunctions[currentFunction].paramsDic[fID] = {
             'value': tbd,
             'type': fType,
-            'address': tbd}
-        myDirFunctions[currentFunction].paramsList.append({
-            'value': tbd,
-            'type': fType,
-            'address': tbd})
+            'address': dondeva}
 
     def function_params(self, tree):
         for ch in tree.children:
@@ -574,14 +566,12 @@ class instructions(Visitor):
                 if fID in myDirFunctions[currentFunction].varsDic:
                     #! Error validation
                     errorDuplicateArgument(tree)
+                dondeva =  apartarMemoriaLocal(fType)
                 myDirFunctions[currentFunction].paramsDic[fID] = {
                     'value': tbd,
                     'type': fType,
-                    'address': tbd}
-                myDirFunctions[currentFunction].paramsList.append({
-                    'value': tbd,
-                    'type': fType,
-                    'address': tbd})
+                    'address': dondeva}
+
     def np_guadalupe(self,tree):
         pg =pilaO.pop()['address']
         Quads.append(['Return',None,None, pg])
@@ -590,8 +580,13 @@ class instructions(Visitor):
     def np_fin_funcion(self, tree):
         if currentFunction != 'main':
             Quads.append(['Endfunc',None,None,None])
-            global temp
-            temp = 1
+            for varname, value in myDirFunctions[currentFunction].varsDic.items():
+                clearMemory(value['type'], value['address'])
+            # myDirFunctions[currentFunction].varsDic.clear()
+
+            for varname, value in myDirFunctions[currentFunction].paramsDic.items():
+                clearMemory(value['type'], value['address'])
+            # myDirFunctions[currentFunction].varsDic.clear()
             # TODO Resetear los temporales: booleanos, enteros, etc.
         else:
             Quads.append(['Endprogram',None,None,None])
@@ -601,9 +596,10 @@ class instructions(Visitor):
     de Functions call
     '''
     def function_call (self, tree):
-        global currentFunctionCall
+        global currentFunctionCall, countParam
+        countParam = tree
         currentFunctionCall = tree.children[0].value
-        # print(tree.children[2])
+        # print(tree)
         # print(tree.children[0].value)  # name of the function
         if tree.children[0].value not in myDirFunctions:
             #! Error validation, function not defined
@@ -611,10 +607,10 @@ class instructions(Visitor):
         Quads.append(['Era', None, None, tree.children[0].value])
 
     def np_check_param(self,tree):
-        global currentParam
+        global currentParam, countParam
         cParam = pilaO[-1]
         try:
-            check = myDirFunctions[currentFunctionCall].paramsList[currentParam]
+            check = myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[currentParam][0]]
             if check['type'] != cParam['type']:
                 #! Error Validation
                 #* Validacion de tipos
@@ -624,12 +620,12 @@ class instructions(Visitor):
             
         except IndexError:
             #* Tenemos aqui cuidado cuendo la funcion no tiene parametros, ahi siempre es index error
-            if  len(myDirFunctions[currentFunctionCall].paramsList) > 0:
+            if  len(myDirFunctions[currentFunctionCall].paramsDic) > 0:
                 #! Error validation
                 #* Mas parametros dados de los que hay
                 #TODO Correccion de llamado, cuando se pasa por una ya no cuenta lso demas 
                 #TODO por lo que si se pasa por 5 y recibe 2, solo marcara hasta el 3
-                errorNumberOfParams(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), currentParam)
+                errorNumberOfParams(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), countParam)
     
     def np_insert_param(self, tree):
         direcccion = pilaO.pop()['address']
@@ -642,11 +638,11 @@ class instructions(Visitor):
         Quads.append(['Param', None, None, direcccion])
 
     def np_reset_count_params(self,tree):
-        global currentParam, temp
-        if currentParam != len(myDirFunctions[currentFunctionCall].paramsList):
+        global currentParam, countParam
+        if currentParam != len(myDirFunctions[currentFunctionCall].paramsDic):
             #! Error Validation
             #* menos parametros dados de los que hay
-            errorNumberOfParamsLess(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsList), currentParam)
+            errorNumberOfParamsLess(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), currentParam, countParam)
         currentParam = 0
 
         # print('vemos',myGlobalVars[currentFunctionCall])
@@ -662,7 +658,6 @@ class instructions(Visitor):
                 })
             Quads.append(['=', currentFunctionCall, None, memo])
             # myGlobalVars[currentFunctionCall]['value']
-            temp += 1
         #* key error es por que la funcion es void, no hay que hacer nada mas
         except KeyError:
             pass

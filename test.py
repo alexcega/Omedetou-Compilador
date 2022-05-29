@@ -1,1 +1,1 @@
-myTest = 'test_read.txt'
+myTest = 'test_funcion_imprimir_params.txt'

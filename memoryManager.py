@@ -110,3 +110,17 @@ def apartarMemoriaConst(tipo):
     checkCounter(miRango)
     mainMemory[indice] = -1
     return indice
+
+def clearMemory(tipo, direccion):
+    miRango = None
+    if tipo == 'int':
+        miRango = rangoLocalInt
+    elif tipo == 'float':
+        miRango = rangoLocalFloat
+    elif tipo == 'bool':
+        miRango = rangoLocalBool
+    elif tipo == 'String':
+        miRango = rangoLocalStirng
+    miRango.cont -= 1 
+    mainMemory[direccion] = None
+    
