@@ -73,8 +73,6 @@ class instructions(Visitor):
     Inicio de puntos neuralgicos de CTEs
     Guardar valores CTEs en pilaO
     '''
-
-
     def entero(self,tree):
         espacio = apartarMemoriaConst('int')
         mainMemory[espacio] = tree.children[0].value
@@ -83,8 +81,6 @@ class instructions(Visitor):
     def decimal(self, tree):
         espacio = apartarMemoriaConst('float')
         mainMemory[espacio] = tree.children[0].value
-        print('memorai constante de ', espacio)
-        print(mainMemory[espacio])
         pilaO.append({'address': espacio, 'type': 'float'})
 
     def booleano(self, tree):
@@ -262,7 +258,6 @@ class instructions(Visitor):
     def reasignar(self, tree):
         #* Buscar en local
         try: 
-            print('local reasignacion')
             pilaO.append({
                 'address': tree.children[0].value,
                 'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
@@ -284,6 +279,7 @@ class instructions(Visitor):
                     # print(myGlobalVars[tree.children[0].value]['type']) # tipo 
                     # print(tree.children[0].value) # identificador
                 except :
+                    print(tree)
                     errorValueDontExist(tree)
 
     def np_asiganar_valor(self,tree):
@@ -328,10 +324,16 @@ class instructions(Visitor):
                                     Quads.append([operador, right,None, myDirFunctions[currentFunction].varsDic[left['address']]['address']])
                             except KeyError:
                                 #* reasignar valores pero de algo global en local
-                                print('quiero reasignar')
+                                # print('quiero reasignar')
                                 if myGlobalVars[left['address']]['address'] != 'tbd':
                                     Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
                                     myGlobalVars[left['address']]['value'] =  right['address']
+                                else:
+                                    currentMemory = apartarMemoria(resultType)
+                                    myGlobalVars[left['address']]['address'] =  currentMemory
+                                    Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
+                                    myGlobalVars[left['address']]['value'] =  right['address']
+
                     else:
                         #! Error validaiton
                         errorType(operador, left, right)
@@ -381,11 +383,6 @@ class instructions(Visitor):
                 left = pilaO.pop()
                 operador = Poper.pop()
                 resultType =  getType(left,right,operador)
-                if operador == "/":
-                    #TODO borrar esto y moverlo a la mv
-                    if(right['address'] == '0'):
-                        #! Error validation
-                        errorZero()
                 if resultType != OTypeError:
                     currentTempMemory = apartarMemoriaTemporal(resultType)
                     pilaO.append({'address':currentTempMemory, 'type':resultType})
@@ -538,10 +535,12 @@ class instructions(Visitor):
 
         #^ Parche Guadalupano
         if tipo != 'void':
+            newmemo = apartarMemoria(tipo)
             myGlobalVars[id] = {
             'value': tbd,
             'type': tipo,
-            'scope': 'funcion'}
+            'scope': 'funcion',
+            'address': newmemo}
         global currentFunction
         currentFunction = id
 
@@ -575,7 +574,8 @@ class instructions(Visitor):
     def np_guadalupe(self,tree):
         pg =pilaO.pop()['address']
         Quads.append(['Return',None,None, pg])
-        myGlobalVars[currentFunction]['value'] = pg
+        
+        # myGlobalVars[currentFunction]['address'] = pg
 
     def np_fin_funcion(self, tree):
         if currentFunction != 'main':
@@ -629,13 +629,11 @@ class instructions(Visitor):
     
     def np_insert_param(self, tree):
         direcccion = pilaO.pop()['address']
-        print('direccion', direcccion)
-        print('o este')
         #* llamar 
         #* ver https://stackoverflow.com/questions/10058140/accessing-items-in-an-collections-ordereddict-by-index
-        myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[currentParam-1][0]]['address'] = direcccion
+        myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[currentParam-1][0]]['value'] = direcccion
         # print('debo tener la misma de arriba', myDirFunctions[currentFunctionCall].paramsDic['address'])
-        Quads.append(['Param', None, None, direcccion])
+        Quads.append(['Param', currentParam, None, direcccion])
 
     def np_reset_count_params(self,tree):
         global currentParam, countParam
@@ -644,19 +642,27 @@ class instructions(Visitor):
             #* menos parametros dados de los que hay
             errorNumberOfParamsLess(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), currentParam, countParam)
         currentParam = 0
-
-        # print('vemos',myGlobalVars[currentFunctionCall])
         #* mandar a llamar funcion
         Quads.append(['Gosub',None,None, currentFunctionCall])
 
         #* Agregar valor en de parche guadalupano
         try:
-            memo = apartarMemoria(myGlobalVars[currentFunctionCall]['type'])
-            pilaO.append({
-                'address': memo,
-                'type': myGlobalVars[currentFunctionCall]['type']
-                })
-            Quads.append(['=', currentFunctionCall, None, memo])
+            # if myGlobalVars[currentFunctionCall]['address'] == 'tbd':
+                memo = apartarMemoriaTemporal(myGlobalVars[currentFunctionCall]['type'])
+                pilaO.append({
+                    'address': memo,
+                    'type': myGlobalVars[currentFunctionCall]['type']
+                    })
+                Quads.append(['=', {'address': myGlobalVars[currentFunctionCall]['address'],'type': myGlobalVars[currentFunctionCall]['type']}, currentFunctionCall, memo])
+            # else:
+            #     pilaO.append({
+            #         'address': myGlobalVars[currentFunctionCall]['address'],
+            #         'type': myGlobalVars[currentFunctionCall]['type']
+            #         })
+            #     Quads.append(['=', {'address': myGlobalVars[currentFunctionCall]['address'],'type': myGlobalVars[currentFunctionCall]['type']}, currentFunctionCall, myGlobalVars[currentFunctionCall]['address']])
+
+
+            
             # myGlobalVars[currentFunctionCall]['value']
         #* key error es por que la funcion es void, no hay que hacer nada mas
         except KeyError:
@@ -666,7 +672,6 @@ class instructions(Visitor):
         #     myGlobalVars[currentFunctionCall]
 
     #TODO Objetos @alex
-    #TODO Correcciones de variables funciones @alex
     #& Codigo de Objetos
     '''
     Puntos Neuralgicos de Objetos
@@ -721,8 +726,6 @@ class instructions(Visitor):
                             'type' : myDirFunctions[currentFunction].varsDic[tree.children[0]].objectVarsDic[tree.children[2].value]['type']
                 })
 
-
-    #TODO Dir de memoria @guasso
     #TODO Matrix @Guasso
 
 

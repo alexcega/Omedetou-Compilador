@@ -3,11 +3,15 @@ Start
         Print(2)
     }
     Void Main(){ 
-        While(1 < 2){
-            While(  3 - 2 < 5) {
-                Print("HOLA ")
+        Var int num = 1
+
+        While(num <= 10){
+            Var int temp = 1
+            While( temp <= 10) {
+                Print(temp * num)
+                temp = temp + 1
             }
-            Print( 1 + 2 /  ( 3 * 1))
+            num = num + 1
         #1
         }
     }

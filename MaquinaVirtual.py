@@ -4,7 +4,8 @@ from memoryManager import mainMemory as mm
 index = 0
 j = 0 
 cont = 0
-
+currentFunctionCall = None
+regreso = 0 
 for celda in mm:
     if j % 10 == 0 : 
         print() 
@@ -36,6 +37,9 @@ while Quads[index][0] != 'Endprogram':
                 mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])*float(mm[Quads[index][2]['address']])
 
         elif Quads[index][0] == '/' :
+            if mm[Quads[index][2]['address']] == '0':
+                # raise ZeroDivisionError ('Zero division error')
+                errorZero()
             if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
                 mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])/int(mm[Quads[index][2]['address']])
 
@@ -209,10 +213,8 @@ while Quads[index][0] != 'Endprogram':
                 mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']]) and bool(mm[Quads[index][2]['address']])
             
     elif Quads[index][0] == 'Print':
-        # try:
-            print(mm[Quads[index][3]])
-        # except TypeError:
-        #     print(Quads[index][3])
+        # print('estoy imprimiendo la ', Quads[index][3])
+        print(mm[Quads[index][3]])
 
     elif Quads[index][0] == 'Read':
         if Quads[index][1] == 'global':
@@ -307,12 +309,30 @@ while Quads[index][0] != 'Endprogram':
             index = Quads[index][3] - 1
             continue
     
+    elif Quads[index][0] == 'Era':
+        currentFunctionCall = Quads[index][3]
+    
+    elif Quads[index][0] == 'Param':
+        # print('que es esto',mm[Quads[index][3]])
+        # print('y esto',myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1][0]]['address'])
+        mm[myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1][0]]['address']] = mm[Quads[index][3]]
+
+    elif Quads[index][0] == 'Gosub':
+        # print("empieza en" ,myDirFunctions[currentFunctionCall].startLine)
+        regreso = index
+        index = myDirFunctions[currentFunctionCall].startLine 
+        # print('regreso',regreso)
+        continue
+
+    elif Quads[index][0] == 'Return':
+        mm[myGlobalVars[currentFunctionCall]['address']] = mm[Quads[index][3]]
+
+    elif Quads[index][0] == 'Endfunc':
+        index = regreso
     index += 1
     # elif Quads[index][0]
 
 cont = 0
-# for some in mm:
-#     print (cont,'-', some)
 for celda in mm:
     if j == 10 : 
         print() 

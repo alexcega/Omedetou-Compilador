@@ -111,6 +111,7 @@ def apartarMemoriaConst(tipo):
     mainMemory[indice] = -1
     return indice
 
+#^ Siempre es de los locales
 def clearMemory(tipo, direccion):
     miRango = None
     if tipo == 'int':

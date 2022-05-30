@@ -85,7 +85,7 @@ np_meter_igual:
 asignacion      : IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor NEW_LINE -> reasignar
                 | IDENTIFIER DOT IDENTIFIER  EQUAL expresion NEW_LINE ->reasignar_obj
 
-bloque: LEFT_CURRLY_BRACES b1? RIGHT_CURRLY_BRACES
+bloque: LEFT_CURRLY_BRACES (b1?|function_return)+ RIGHT_CURRLY_BRACES
 b1 : estatuto b1*
 
 estatuto    : asignacion -> igualar

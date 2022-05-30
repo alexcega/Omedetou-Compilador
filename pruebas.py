@@ -1,16 +1,9 @@
-from collections import OrderedDict
+def regresa(a):
+    if a > 0 :
+        print(a)
+        return regresa(a - 1)
+    else:
+        return 0
+    
 
-od = OrderedDict()
-
-od['a'] = 1
-od['b'] = 2
-od['c'] = 3
-od['d'] = 4
-
-
-
-od[list(od.items())[0][0]] = 'ahora'
-# tamp = list(od.items())
-print(od)
-
-# print(od.items()[1])
+print(regresa(8))

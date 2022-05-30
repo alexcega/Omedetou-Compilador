@@ -1,4 +1,3 @@
-from tkinter.tix import Tree
 from cuboSemantico import OTypeError
 from test import myTest
 code = open("Tests/" +myTest).readlines()

@@ -1,0 +1,16 @@
+Start
+    # Como aseguro un return?   
+
+    Def int menosuno (int b){
+        If (b >= 0){
+            Print(b)   
+            Return(menosuno(b-1))
+        }
+        Else{
+            Return 0 
+        }
+    }
+    Void Main(){ 
+        Print(menosuno(10))
+    }
+Finish

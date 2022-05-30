@@ -1,17 +1,17 @@
 Start
-    #Var int dos_por_dos = 2 * 2
-    #Var bool boleano = False
-    #Var String palabra = "hola"
-    
-    Def Void imprime(String palabra , int numero){
-       Print( palabra , numero)
+    Var float value = 5.6
+
+    Def Void imprime(String palabra, int uno){
+        Var int jokeis = 10
+        Print(jokeis)
+        Print(value/jokeis)
     }
-    Def Void imprime2 (String word, int ent){
-        Print( word, ent)
+
+    Def Void imprime2 (int word, int dos){
+        Print( word * dos)
     }
+
     Void Main(){ 
-        Var float pes = 10.5
-        imprime("Una funcion",1)
-        Print( "mimain" )
+        imprime("Una funcion", 3)
     }
 Finish

@@ -1,0 +1,15 @@
+Start
+    Var int value = 5
+    Var int cola 
+    cola = 99 
+    Void Main(){ 
+    
+    Var int valor 
+        Print(cola)
+        cola = 10
+        valor= 0 
+        Print(cola)
+        Print(valor)
+        Print(cola / valor)
+    }
+Finish
