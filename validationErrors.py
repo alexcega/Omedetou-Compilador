@@ -95,7 +95,29 @@ def errorNotSuchObject(tree):
     print("Error at line", str(tree.children[1].line) + ", object '" + tree.children[1].value + "'", 'not defined')
     exit()
 
+def errorObjectName(tree):
+    print(code[tree.children[0].line-1], end='')
+    for x in range(len(code[tree.children[0].line-1])):
+        if x != tree.children[0].column-1:
+            print(' ', end='')
+        else: 
+            print('^', end='')
+    print()
+    print("Error at line", str(tree.children[0].line) + ", object '" + tree.children[0].value + "'", 'not defined')
+    
+    exit()
 
+def errorObjectAtribute(tree):
+    print(code[tree.children[2].line-1], end='')
+    for x in range(len(code[tree.children[2].line-1])):
+        if x != tree.children[2].column-1:
+            print(' ', end='')
+        else: 
+            print('^', end='')
+    print()
+    print("Error at line", str(tree.children[2].line) + ", atribute '" + tree.children[2].value + "'", 'not defined')
+    
+    exit()
 def errorRead(tree):
     print(code[tree.children[2].line-1],end='')
     for x in range(len(code[tree.children[2].line-1])):

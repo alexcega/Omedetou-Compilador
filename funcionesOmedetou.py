@@ -136,6 +136,7 @@ class instructions(Visitor):
             #TODO revisar esto
             try:
                 #* buscar en objetos
+                print('pato?',tree.children[0].value)
                 pilaO.append({
                     'address': tree.children[0].value,
                     'type' :myObjects[currentObject].objectVarsDic[tree.children[0].value]['type']
@@ -157,18 +158,15 @@ class instructions(Visitor):
     Puntos neuralgicos Lectura
     '''
     def read_value(self, tree):
-        print(tree)
         identificador = tree.children[2].value
         if currentFunction != None:
             #* Local
             try :
                 #* Vars locales
-                print("aqui var")
                 Quads.append(['Read', ['local', currentFunction],identificador,myDirFunctions[currentFunction].varsDic[identificador]['address']])
             except KeyError:
                 try:
                     #* Params locales
-                    print("aqui param")
                     Quads.append(['Read', ['param', currentFunction],identificador,myDirFunctions[currentFunction].paramsDic[identificador]['address']])
                 except KeyError:
                     try:
@@ -180,7 +178,6 @@ class instructions(Visitor):
         else:
             #*global
             try :
-                print("aqui global")
                 Quads.append(['Read', 'global',identificador, myGlobalVars[identificador]['address']])
             except KeyError:
                 errorRead(tree)
@@ -227,16 +224,30 @@ class instructions(Visitor):
         #* Cuando current object es none es por que no estamos en un objeto
         if currentFunction != None:
             #* Declaraciones locales
-            if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
-                #! Error validation
-                errorDoubleDeclatration(tree)
-            else:
-                myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
-                    'type' : tree.children[1].children[0].value,
-                    'value' : tbd,
-                    'scope' : 'local',
-                    'address' : tbd
-                }
+            if currentObject == None:
+                if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
+                    #! Error validation
+                    errorDoubleDeclatration(tree)
+                else:
+                    myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
+                        'type' : tree.children[1].children[0].value,
+                        'value' : tbd,
+                        'scope' : 'local',
+                        'address' : tbd
+                    }
+            else: 
+                #* Variable de funcion de objeto
+                if tree.children[2].value in myObjects[currentObject].funciones[currentFunction].varsDic:
+                    #! Error validation
+                    errorDoubleDeclatration(tree)
+                else:
+                    myObjects[currentObject].funciones[currentFunction].varsDic[tree.children[2].value] = {
+                        'type' : tree.children[1].children[0].value,
+                        'value' : tbd,
+                        'scope' : 'local',
+                        'address' : tbd
+                    }
+
         else:
             try:
                 #* variables de objetos
@@ -245,7 +256,7 @@ class instructions(Visitor):
                 myObjects[currentObject].objectVarsDic[tree.children[2].value] = {
                     'type' : tree.children[1].children[0].value,
                     'value' : tbd,
-                    'scope' : 'local',
+                    'scope' : 'objeto local',
                     'address' : tbd
                 }
             except KeyError:
@@ -320,8 +331,14 @@ class instructions(Visitor):
                     # print(myGlobalVars[tree.children[0].value]['type']) # tipo 
                     # print(tree.children[0].value) # identificador
                 except :
-                    print(tree)
-                    errorValueDontExist(tree)
+                    #* Buscar en objetos
+                    try:
+                        pilaO.append({
+                            'address' : tree.children[0].value,
+                            'type' : myObjects[currentObject].objectVarsDic[tree.children[0].value]['type']
+                        })
+                    except:
+                        errorValueDontExist(tree)
 
     def np_asiganar_valor(self,tree):
         if Poper:
@@ -334,9 +351,9 @@ class instructions(Visitor):
                     if resultType != OTypeError:
                         #* Revisar en global
                         if currentFunction == None:
-                        #! GLOBAL
+                        #^ GLOBAL
+                            #* Apartar nuevo de memoria por valor nuevo
                             if myGlobalVars[left['address']]['address'] == 'tbd':
-                                #* Apartar nuevo de memoria por valor nuevo
                                 global currentMemory
                                 currentMemory = apartarMemoria(resultType)
                                 #* Meter el cuadrupo de la asignacion
@@ -351,7 +368,7 @@ class instructions(Visitor):
                             #* reasignar
                                 myGlobalVars[left['address']]['value'] =  right['address']
                         else:
-                        #! LOCAL
+                        #^ LOCAL
                             try: #* Asignar valores propios
                                 #*Funcion a la que pertenece
                                 if myDirFunctions[currentFunction].varsDic[left['address']]['address'] == 'tbd':
@@ -379,10 +396,46 @@ class instructions(Visitor):
                         #! Error validaiton
                         errorType(operador, left, right)
                 else:
-                    #* Buscar en objetos
-                    if currentFunction == None:
-                        Quads.append([operador, right['value'],None, left['value']])
-                        myObjects[currentObject].objectVarsDic[left['address']]['value'] =  right['address']
+                    #^ Buscar en objetos
+                    if resultType != OTypeError:
+                        if currentFunction == None:
+                            #* Crear memoria nueva
+                            if myObjects[currentObject].objectVarsDic[left['address']]['address'] == 'tbd':
+                                myObjects[currentObject].objectVarsDic[left['address']]['address'] =  right['address']
+                                currentMemory = apartarMemoriaLocal(resultType)
+                                #* Meter el cuadrupo de la asignacion
+                                Quads.append([operador, right,None, currentMemory])
+                                #* Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
+                                #* Asignar el valor
+                                myObjects[currentObject].objectVarsDic[left['address']]['value'] =  right['address']
+                                myObjects[currentObject].objectVarsDic[left['address']]['address'] =  currentMemory
+                            else:
+                            #* reasignar
+                                myObjects[currentObject].objectVarsDic[left['address']]['value'] =  right['address']
+                        else:
+                            #* crear memoria para una variable de una funcion en objeto
+                            try: #* Asignar valores propios
+                                    #*Funcion a la que pertenece
+                                    if myObjects[currentObject].funciones[currentFunction].varsDic[left['address']]['address'] == 'tbd':
+                                        currentMemory = apartarMemoriaLocal(resultType)
+                                        Quads.append([operador, right, None, currentMemory])
+                                        myObjects[currentObject].funciones[currentFunction].varsDic[left['address']]['value'] = right['address']
+                                        myObjects[currentObject].funciones[currentFunction].varsDic[left['address']]['address'] =  currentMemory
+                                    else:
+                                        #* reasignar valor local en local
+                                        myObjects[currentObject].funciones[currentFunction].varsDic[left['address']]['value'] = right['address']
+                                        Quads.append([operador, right, None, myObjects[currentObject].funciones[currentFunction].varsDic[left['address']]['address']])
+                            except KeyError:
+                                #* reasignar valores pero de algo global en local de objeto 
+                                if myGlobalVars[left['address']]['address'] != 'tbd':
+                                    Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
+                                    myGlobalVars[left['address']]['value'] =  right['address']
+                                else:
+                                    currentMemory = apartarMemoria(resultType)
+                                    myGlobalVars[left['address']]['address'] =  currentMemory
+                                    Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
+                                    myGlobalVars[left['address']]['value'] =  right['address']
+                                
     def np_meter_igual(self,tree):
         Poper.append('=')
 
@@ -594,28 +647,48 @@ class instructions(Visitor):
         except AttributeError : #* si tiene error de atributo es por que la funcion es void
             tipo = 'void'
             
-        #* validar que funcion no exista
-        if id in myDirFunctions:
-            #! Error validation
-            errorDoubleDeclatration(tree)
-        #* validar que variable con mismo nombre no exista
-        if id in myGlobalVars:
-            #! Error validation
-            errorDoubleDeclatration(tree)
-        #* Crear su tabla de variables
-        myobj = Function(id,len(Quads), tipo)
-        myDirFunctions[id] = myobj
+        if currentObject == None:
+            #* validar que funcion no exista en funciones normales
+            if id in myDirFunctions:
+                #! Error validation
+                errorDoubleDeclatration(tree)
+            #* validar que variable con mismo nombre no exista
+            if id in myGlobalVars:
+                #! Error validation
+                errorDoubleDeclatration(tree)
+            #* Crear su tabla de variables
+            myobj = Function(id,len(Quads), tipo)
+            myDirFunctions[id] = myobj
 
-        #^ Parche Guadalupano
-        if tipo != 'void':
-            newmemo = apartarMemoria(tipo)
-            myGlobalVars[id] = {
-            'value': tbd,
-            'type': tipo,
-            'scope': 'funcion',
-            'address': newmemo}
-        global currentFunction
-        currentFunction = id
+            #^ Parche Guadalupano
+            if tipo != 'void':
+                newmemo = apartarMemoria(tipo)
+                myGlobalVars[id] = {
+                'value': tbd,
+                'type': tipo,
+                'scope': 'funcion',
+                'address': newmemo}
+            global currentFunction
+            currentFunction = id
+        else:
+            #* Validar que funcion no exista en objeto
+            if id in myObjects[currentObject].funciones:
+                errorDoubleDeclatration(tree)
+            if id in myGlobalVars:
+                #! Error validation
+                errorDoubleDeclatration(tree)
+            myobj = Function(id,len(Quads), tipo)
+            myObjects[currentObject].funciones[id] = myobj
+
+            #^ Parche Guadalupano En Objetos
+            if tipo != 'void':
+                newmemo = apartarMemoria(tipo)
+                myObjects[currentObject].objectVarsDic[id] = {
+                'value': tbd,
+                'type': tipo,
+                'scope': 'funcion',
+                'address': newmemo}
+            currentFunction = id
 
     def function_param(self, tree):
         fType = tree.children[0].children[0].value
@@ -623,10 +696,18 @@ class instructions(Visitor):
         # print(tree.children[0].children[0].value) # tipo
         # print(tree.children[1].value)   # id
         dondeva =  apartarMemoriaLocal(fType)
-        myDirFunctions[currentFunction].paramsDic[fID] = {
-            'value': tbd,
-            'type': fType,
-            'address': dondeva}
+        #* Normal funcion
+        if currentObject == None:
+            myDirFunctions[currentFunction].paramsDic[fID] = {
+                'value': tbd,
+                'type': fType,
+                'address': dondeva}
+        else:
+        #* Funcion de objeto
+            myObjects[currentObject].funciones[currentFunction].paramsDic[fID] = {
+                'value': tbd,
+                'type': fType,
+                'address': dondeva}
 
     def function_params(self, tree):
         for ch in tree.children:
@@ -653,13 +734,20 @@ class instructions(Visitor):
     def np_fin_funcion(self, tree):
         if currentFunction != 'main':
             Quads.append(['Endfunc',None,None,None])
-            for varname, value in myDirFunctions[currentFunction].varsDic.items():
-                clearMemory(value['type'], value['address'])
-            # myDirFunctions[currentFunction].varsDic.clear()
+            try:
+                for varname, value in myDirFunctions[currentFunction].varsDic.items():
+                    clearMemory(value['type'], value['address'])
+                # myDirFunctions[currentFunction].varsDic.clear()
 
-            for varname, value in myDirFunctions[currentFunction].paramsDic.items():
-                clearMemory(value['type'], value['address'])
-            # myDirFunctions[currentFunction].varsDic.clear()
+                for varname, value in myDirFunctions[currentFunction].paramsDic.items():
+                    clearMemory(value['type'], value['address'])
+            #* Funciones en objetos
+            except:
+                for varname, value in myObjects[currentObject].funciones[currentFunction].varsDic.items():
+                    clearMemory(value['type'], value['address'])
+                for varname, value in myObjects[currentObject].funciones[currentFunction].paramsDic.items():
+                    clearMemory(value['type'], value['address'])
+                
             # TODO Resetear los temporales: booleanos, enteros, etc.
         else:
             Quads.append(['Endprogram',None,None,None])
@@ -672,11 +760,11 @@ class instructions(Visitor):
         global currentFunctionCall, countParam
         countParam = tree
         currentFunctionCall = tree.children[0].value
-        # print(tree)
         # print(tree.children[0].value)  # name of the function
         if tree.children[0].value not in myDirFunctions:
-            #! Error validation, function not defined
-            errorFuntionNotDefined(tree)
+            if tree.children[0].value not in myObjects[currentObject].funciones:
+                #! Error validation, function not defined
+                errorFuntionNotDefined(tree)
         Quads.append(['Era', None, None, tree.children[0].value])
 
     def np_check_param(self,tree):
@@ -767,9 +855,6 @@ class instructions(Visitor):
 
     #* Declaracion inicial de objeto
     def var_objeto(self,tree):
-        print(tree.children[1])
-        print(tree.children[2])
-        print(myObjects)
         if tree.children[1] in myObjects:
             #* objeto
             myDirFunctions[currentFunction].varsDic[tree.children[2].value] = deepcopy(myObjects[tree.children[1]])
@@ -781,23 +866,25 @@ class instructions(Visitor):
 
     def guardar_var_de_obj(self,tree):
         print('atriburo de obj')
-        # print(tree.children[0]) #nombre de objeto
-        print(tree.children[2])     # atributo de objeto
+        # print(tree.children[0])  #nombre de objeto
+        # print(tree.children[2])     # atributo de objeto
         # print(myDirFunctions[currentFunction].varsDic)
-        if tree.children[0] not in myDirFunctions[currentFunction].varsDic:
-            print('no estoy')
+        if tree.children[0].value not in myDirFunctions[currentFunction].varsDic:
+            #! Error validation, objeto no existente
+            errorObjectName(tree)
+
+        # nombre tipo objeto myDirFunctions[currentFunction].varsDic[tree.children[0]].name
+        if tree.children[2].value not in myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic:
+            #! Error validation, atributo de objeto no existente
+            errorObjectAtribute(tree)
         else:
-            # print('quiero ver')
-            # print( myDirFunctions[currentFunction].varsDic[tree.children[0]].objectVarsDic)
-            if tree.children[2] not in myDirFunctions[currentFunction].varsDic[tree.children[0]].objectVarsDic :
-                print('yo no tengo ese atributo')
-            else:
-                print("AQUI")
-                print( myDirFunctions[currentFunction].varsDic[tree.children[0]])
-                pilaO.append({
-                            'address': tree.children[2].value,
-                            'type' : myDirFunctions[currentFunction].varsDic[tree.children[0]].objectVarsDic[tree.children[2].value]['type']
-                })
+            # myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic[tree.children[2].value]['address']
+            print("AQUI")
+            print( myDirFunctions[currentFunction].varsDic[tree.children[0]])
+            pilaO.append({
+                'address': myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic[tree.children[2].value]['address'],
+                'type' : myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic[tree.children[2].value]['type']
+            })
 
     #TODO Matrix @Guasso
 

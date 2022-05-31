@@ -18,6 +18,7 @@ print('\n\n')
 
 print("MAQUINA VIRTUAL \n")
 while Quads[index][0] != 'Endprogram':
+    print("index actual", index)
     if Quads[index][0] in '*/+-!>==<=|&':
         if Quads[index][0] == '*' :
             # if Quads[index][0] < mm.
@@ -315,20 +316,27 @@ while Quads[index][0] != 'Endprogram':
     elif Quads[index][0] == 'Param':
         # print('que es esto',mm[Quads[index][3]])
         # print('y esto',myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1][0]]['address'])
+        print('tenemos',mm[Quads[index][3]])
         mm[myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1][0]]['address']] = mm[Quads[index][3]]
 
     elif Quads[index][0] == 'Gosub':
         # print("empieza en" ,myDirFunctions[currentFunctionCall].startLine)
-        regreso = index
+        # print("Estamos en la", index)
+        regreso = index + 1
+        print("tenemos que volver a ",regreso)
         index = myDirFunctions[currentFunctionCall].startLine 
-        # print('regreso',regreso)
-        continue
+        print("y vamos a la", index)
+        # print('regreso',regreso)  
+        exit()
+        
 
     elif Quads[index][0] == 'Return':
         mm[myGlobalVars[currentFunctionCall]['address']] = mm[Quads[index][3]]
 
     elif Quads[index][0] == 'Endfunc':
+        print('se acabo')
         index = regreso
+        continue
     index += 1
     # elif Quads[index][0]
 

@@ -1,0 +1,22 @@
+Start
+    <Class> pato {
+        Var int cuack = 10
+        Var int meme = 45
+        Var String nombre = "vacas"
+        Def Void uno(int sofia){
+            Var String vfo = "VFO"
+            Print("verdades")
+        }
+    }
+
+    Def Void dos (int dos){
+        Var int vaca = 15
+    }
+
+    Void Main(){ 
+        Var pato plumas
+        Print(plumas.cuack)
+        Var int hi = 2
+        Print("uwu")
+    }
+Finish

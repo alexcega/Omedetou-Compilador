@@ -71,18 +71,30 @@ for myGb, myval in myGlobalVars.items():
 print('\n## Mis funciones')
 for k, v in myDirFunctions.items():
     print(k,v)
+    print('\t # Parametros')
     for kk, vv in v.paramsDic.items():
         print('\t',kk,vv)
+    print('\t # Variables')
     for kk, vv in v.varsDic.items():
         print('\t',kk,vv)
 
 print('\n# Mis objetos')
 for k,v in myObjects.items():
+
     print(k,v)
+    print('\t # Variables objeto de', k )
     for kk, vv in v.objectVarsDic.items():
         print('\t',kk,vv)
 
-    
+    print('\n\t # Funciones')
+    for k2k, v2v in v.funciones.items():
+        print('\t',k2k,v2v)
+        print('\t\t # Parametros')
+        for kkk, vvv in v2v.paramsDic.items():
+            print('\t\t',kkk,vvv)
+        print('\t\t # Variables')
+        for kkk, vvv in v2v.varsDic.items():
+            print('\t\t',kkk,vvv)
 
 # Measure-Command {python omedetouLark.py}
 

@@ -1,0 +1,16 @@
+Start
+
+    Def Void imprime(bool seguir){
+        If (seguir == True) {
+            imprime(False)
+        }
+        Else{
+            Print("uno")
+            Print("Ahora soy falso")
+        }
+    }
+
+    Void Main(){ 
+        imprime(True)
+    }
+Finish
