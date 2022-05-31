@@ -461,15 +461,18 @@ class instructions(Visitor):
         if contDim > 1 :
             aux2 = pilaO.pop()
             aux1 = pilaO.pop()
+            #
+            # Aparta memmoria con*#
+            #   apartarMemoriaTemporal(tipo de dato)
             Quads.append(["+", aux1, aux2, "currentTempMemory"])
-        print("sexoanal")
+        print("test")
         print(pilaO)
-        print("sexoanal")
+        print("test")
 
-    def np_arr_bracket2(self,tree):
-        aux1 = pilaO.pop()
-        Quads.append(["+", aux1, aux2, "currentTempMemory"])
-        Quads.append(["+", aux1, aux2, "currentTempMemory"])
+    # def np_arr_bracket2(self,tree):
+    #     aux1 = pilaO.pop()
+    #     Quads.append(["+", aux1, aux2, "currentTempMemory"])
+    #     Quads.append(["+", aux1, aux2, "currentTempMemory"])
 
     '''
     Inicio de puntos neuralgicos
