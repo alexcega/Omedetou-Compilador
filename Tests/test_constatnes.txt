@@ -1,0 +1,14 @@
+Start
+    Void Main(){ 
+        Print(1)
+        Print(1)
+        Print(1)
+        Print(1)
+        Print(1)
+        Print(1)
+        Print(1)
+        Print(1)
+        Print(1)
+        Print(1)
+    }
+Finish

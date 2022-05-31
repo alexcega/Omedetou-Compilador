@@ -1,1 +1,1 @@
-myTest = 'test_print_voidfunc.txt'
+myTest = 'test_constatnes.txt'

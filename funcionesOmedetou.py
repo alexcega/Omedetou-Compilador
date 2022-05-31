@@ -23,6 +23,7 @@ countParam = None
 currentMemory = None
 currentObjectFC= None
 myGlobalVars = {}
+myConstantes = {}
 
 
 #& Direction Functions
@@ -81,24 +82,60 @@ class instructions(Visitor):
     Guardar valores CTEs en pilaO
     '''
     def entero(self,tree):
-        espacio = apartarMemoriaConst('int')
-        mainMemory[espacio] = tree.children[0].value
-        pilaO.append({'address': espacio, 'type': 'int'})
+        #* buscar en tabla de constantes
+        try :
+            pilaO.append({
+                'address': myConstantes[tree.children[0].value],
+                'type' : 'int'
+            })
+        except KeyError:
+        #* Crear memoria nueva
+            espacio = apartarMemoriaConst('int')
+            mainMemory[espacio] = tree.children[0].value
+            myConstantes[tree.children[0].value] = espacio
+            pilaO.append({'address': espacio, 'type': 'int'})
 
     def decimal(self, tree):
-        espacio = apartarMemoriaConst('float')
-        mainMemory[espacio] = tree.children[0].value
-        pilaO.append({'address': espacio, 'type': 'float'})
+        #* buscar en tabla de constantes
+        try :
+            pilaO.append({
+                'address': myConstantes[tree.children[0].value],
+                'type' : 'float'
+            })
+        except KeyError:
+        #* Crear memoria nueva
+            espacio = apartarMemoriaConst('float')
+            mainMemory[espacio] = tree.children[0].value
+            myConstantes[tree.children[0].value] = espacio
+            pilaO.append({'address': espacio, 'type': 'float'})
 
     def booleano(self, tree):
-        espacio = apartarMemoriaConst('bool')
-        mainMemory[espacio] = tree.children[0].value
-        pilaO.append({'address': espacio, 'type': 'bool'})
+        #* buscar en tabla de constantes
+        try :
+            pilaO.append({
+                'address': myConstantes[tree.children[0].value],
+                'type' : 'bool'
+            })
+        except KeyError:
+        #* Crear memoria nueva
+            espacio = apartarMemoriaConst('bool')
+            mainMemory[espacio] = tree.children[0].value
+            myConstantes[tree.children[0].value] = espacio
+            pilaO.append({'address': espacio, 'type': 'bool'})
 
     def palabra(self, tree):
-        espacio = apartarMemoriaConst('String')
-        mainMemory[espacio] = tree.children[0].value
-        pilaO.append({'address': espacio, 'type': 'String'})
+        #* buscar en tabla de constantes
+        try :
+            pilaO.append({
+                'address': myConstantes[tree.children[0].value],
+                'type' : 'String'
+            })
+        except KeyError:
+        #* Crear memoria nueva
+            espacio = apartarMemoriaConst('String')
+            mainMemory[espacio] = tree.children[0].value
+            myConstantes[tree.children[0].value] = espacio
+            pilaO.append({'address': espacio, 'type': 'String'})
 
     def identificador(self,tree):
         if currentObject == None:
@@ -873,7 +910,6 @@ class instructions(Visitor):
                     })
                 Quads.append(['=', {'address': myGlobalVars[currentFunctionCall]['address'],'type': myGlobalVars[currentFunctionCall]['type']}, currentFunctionCall, memo])
             else:
-
                 #* apartar memoria del tipo de dato que es la funcion del objeto
                 tipoFuncionObjeto = myDirFunctions[currentFunction].varsDic[currentObjectFC].objectVarsDic[currentFunctionCall]['type']
                 memo = apartarMemoriaLocal(tipoFuncionObjeto)
