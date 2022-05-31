@@ -325,14 +325,19 @@ while Quads[index][0] != 'Endprogram':
         regreso = index + 1
         # print("tenemos que volver a ",regreso)
         try:
-            index = myDirFunctions[currentFunctionCall].startLine 
+            index = myDirFunctions[currentFunctionCall].startLine -1
         except KeyError:
             index = myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].startLine - 1
         # print("y vamos a la", index)
-        # print('regreso',regreso)  
+        # print('regreso',regreso)
 
     elif Quads[index][0] == 'Return':
-        mm[myGlobalVars[currentFunctionCall]['address']] = mm[Quads[index][3]]
+        try :
+            mm[myGlobalVars[currentFunctionCall]['address']] = mm[Quads[index][3]]
+        except KeyError:
+            curfun = Quads[index][1]
+            obj = Quads[index][2]
+            mm[myObjects[obj].objectVarsDic[curfun]['address']] = mm[Quads[index][3]]
         index = regreso
         continue
 

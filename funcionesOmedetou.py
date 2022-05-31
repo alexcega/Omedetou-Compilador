@@ -76,6 +76,7 @@ class instructions(Visitor):
         #*Decir que llegamos a main
         currentFunction = 'main'
 
+    #* Para guardar valores variables de de objetos
     def np_inicio_vars_obj(self, tree):
         relleno = Psaltos.pop()
         Quads[relleno][3] = len(Quads) + 1
@@ -156,18 +157,16 @@ class instructions(Visitor):
                     })
                 # errorValueDontExist(tree)
             except KeyError:
-                #& MV
                 #* revisar que este en params de funcion
                 try:
                     # print(currentFunctionCall)
                     # myDirFunctions[currentFunctionCall]
                     pilaO.append({
-                    'address': myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['address'],
-                    'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
+                        'address': myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['address'],
+                        'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
                     })
                 except KeyError:
                     #* Revisar si esta en global
-                    #& aprovado para MV
                     try:
                         pilaO.append({
                             'address': myGlobalVars[tree.children[0].value]['address'],
@@ -179,15 +178,35 @@ class instructions(Visitor):
         else:
             #TODO revisar esto
             try:
-                #* buscar en objetos
-                print('pato?',tree.children[0].value)
+                #* buscar en local de la funcion objetos
                 pilaO.append({
-                    'address': tree.children[0].value,
-                    'type' :myObjects[currentObject].objectVarsDic[tree.children[0].value]['type']
-                })
+                        'address' : myObjects[currentObject].funciones[currentFunction].varsDic[tree.children[0].value]['address'],
+                        'type': myObjects[currentObject].funciones[currentFunction].varsDic[tree.children[0].value]['type']
+                    })
             except KeyError:
-                errorValueDontExist(tree)
-
+                #* Buscar en parametros de funcion de objeto
+                try:
+                    pilaO.append({
+                            'address' : myObjects[currentObject].funciones[currentFunction].paramsDic[tree.children[0].value]['address'],
+                            'type': myObjects[currentObject].funciones[currentFunction].paramsDic[tree.children[0].value]['type']
+                        })
+                except KeyError:
+                    try:
+                        #* Buscar en locales de objeto
+                        pilaO.append({
+                            'address': myObjects[currentObject].objectVarsDic[tree.children[0].value]['address'],
+                            'type' :myObjects[currentObject].objectVarsDic[tree.children[0].value]['type']
+                        })
+                    except KeyError:
+                        #* Revisar si esta en global
+                        try:
+                            pilaO.append({
+                                'address': myGlobalVars[tree.children[0].value]['address'],
+                                'type' : myGlobalVars[tree.children[0].value]['type']
+                                })
+                        except KeyError:
+                            #! Error validation
+                            errorValueDontExist(tree)
 
     '''
     Puntos neuralgicos Fondo falso
@@ -786,7 +805,12 @@ class instructions(Visitor):
 
     def np_guadalupe(self,tree):
         pg =pilaO.pop()['address']
-        Quads.append(['Return',None,None, pg])
+        if currentObject == None:
+            Quads.append(['Return',None,None, pg])
+        else:
+            print(currentObject)
+            # exit()
+            Quads.append(['Return',currentFunction,currentObject, pg])
         # myGlobalVars[currentFunction]['address'] = pg
 
     def np_fin_funcion(self, tree):
@@ -911,7 +935,6 @@ class instructions(Visitor):
         #^ Agregar valor en de parche guadalupano
         try:
             if currentObjectFC == None:
-            # if myGlobalVars[currentFunctionCall]['address'] == 'tbd':
                 memo = apartarMemoriaTemporal(myGlobalVars[currentFunctionCall]['type'])
                 pilaO.append({
                     'address': memo,
@@ -946,7 +969,6 @@ class instructions(Visitor):
         # try:
         #     myGlobalVars[currentFunctionCall]
 
-    #TODO Objetos @alex
     #& Codigo de Objetos
     '''
     Puntos Neuralgicos de Objetos

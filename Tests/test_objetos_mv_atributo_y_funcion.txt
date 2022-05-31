@@ -1,24 +1,26 @@
 Start
     <Class> pato {
-        Var int cuack = 10
-        Var int meme = 45
-        Var String nombre = "vacas"
         Def Void uno(int cancion){
             Print("se sabe")
         }
-    }
 
-    <Class> perro {
-        Def Void ladrar(){
-            Print("bark")
+        Def bool sePudo(bool creesQuePase){
+            If (creesQuePase == True){
+                Return True
+            }
+            Else{
+                Return False
+            }
         }
     }
-    
+
+    Def String habla(){
+        Return "inicio"
+    }
     Void Main(){ 
-        Var int anio = 1999
-        Print(anio)
+        Print(habla())
         Var pato donald
-        Print(donald.cuack)
         donald.uno(1)
+        Print(donald.sePudo(True))
     }
 Finish
