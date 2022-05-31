@@ -1,0 +1,6 @@
+Start
+Var int myarr[7]
+Void Main () {
+    
+}
+Finish

@@ -36,7 +36,7 @@ except EOFError:
 
 # my_parse_tree = T().transform(my_parse_tree)
 
-# print(my_parse_tree.pretty())
+print(my_parse_tree.pretty())
 print()
 
 class Parentes(Visitor):

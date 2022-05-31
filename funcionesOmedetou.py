@@ -9,6 +9,11 @@ pilaO = []
 Poper = []
 Quads = []
 Psaltos = []
+pilaDim = []
+contDim = 0
+isArray = False
+R = 0
+limSuperior = 0
 #TODO Cambiar currentFunction a pila para recursividad
 currentFunction = None
 currentFunctionCall = None
@@ -77,6 +82,10 @@ class instructions(Visitor):
         espacio = apartarMemoriaConst('int')
         mainMemory[espacio] = tree.children[0].value
         pilaO.append({'address': espacio, 'type': 'int'})
+
+        print("PilaO en entero")
+        print(pilaO)
+        print("PilaO en entero")
 
     def decimal(self, tree):
         espacio = apartarMemoriaConst('float')
@@ -250,6 +259,38 @@ class instructions(Visitor):
                     'scope' : 'global',
                     'address' : tbd
                 }
+        
+    def var_arreglo(self,tree):
+        if currentFunction != None : 
+            # Revisas si esta dentro de la funcion actual
+            if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
+                #! Error validation
+                errorDoubleDeclatration(tree)
+            myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
+                'type' : tree.children[1].children[0].value,
+                'value' : tbd,
+                'scope' : 'local',
+                'address' : tbd
+            }
+        else:
+            if tree.children[2].value in myGlobalVars:
+                #! Error validation
+                errorDoubleDeclatration(tree)
+            
+            #* Si esta en global
+            myGlobalVars[tree.children[2].value] = {
+                'type' : tree.children[1].children[0].value,
+                'value' : tbd,
+                'scope' : 'global',
+                'address'  : tbd
+        }
+        
+
+        pilaO.append({
+            'address':tree.children[2].value, 
+            'type': tree.children[1].children[0].value
+        })
+        # print(pilaO)
 
     '''
     Inicio de puntos neuralgicos
@@ -344,7 +385,39 @@ class instructions(Visitor):
                         myObjects[currentObject].objectVarsDic[left['address']]['value'] =  right['address']
     def np_meter_igual(self,tree):
         Poper.append('=')
+
+    def np_arr_bracket1(self,tree):
+        global contDim,isArray, R
+        contDim = 1
+        isArray = True
+        R = 1
+        print(pilaO)
+        aux = pilaO.pop()
+        # print(aux['address']) 
+        pilaDim.append((aux['address'], contDim))
+        # print(pilaDim)
+
+    # def np_arr_dim(self,tree):
+    #     limSuperior = pilaO.pop()
         
+        
+
+    def np_arr_expresion(self,tree):
+        Quads.append(["ver", 0, pilaO.pop(), "currentTempMemory"])
+        
+        if contDim > 1 :
+            aux2 = pilaO.pop()
+            aux1 = pilaO.pop()
+            Quads.append(["+", aux1, aux2, "currentTempMemory"])
+        print("sexoanal")
+        print(pilaO)
+        print("sexoanal")
+
+    def np_arr_bracket2(self,tree):
+        aux1 = pilaO.pop()
+        Quads.append(["+", aux1, aux2, "currentTempMemory"])
+        Quads.append(["+", aux1, aux2, "currentTempMemory"])
+
     '''
     Inicio de puntos neuralgicos
     de expresiones aritmeticas

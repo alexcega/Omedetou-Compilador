@@ -1,1 +1,1 @@
-myTest = 'test_funcion_return.txt'
+myTest = 'test_arr_1dim.txt'
