@@ -36,7 +36,7 @@ def errorDoubleDeclarationObject(tree):
 def errorDoubleDeclatration(tree):
     print(code[tree.children[0].line-1],end='')
     for x in range(len(code[tree.children[0].line-1])):
-        if x != tree.children[0].column-1:
+        if x != tree.children[2].column-1:
             print(' ', end='')
         else: 
             print('^', end='')
@@ -47,7 +47,7 @@ def errorDoubleDeclatration(tree):
 def errorDuplicateArgument(tree):
     print(code[tree.children[0].line-1],end='')
     for x in range(len(code[tree.children[0].line-1])):
-        if x != tree.children[0].column-1:
+        if x != tree.children[2].column-1:
             print(' ', end='')
         else: 
             print('^', end='')

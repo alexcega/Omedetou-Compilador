@@ -183,7 +183,12 @@ class instructions(Visitor):
     Puntos neuralgicos Escritura
     '''
     def np_print(self,tree):
-        Quads.append(['Print',None,None, pilaO.pop()['address']])
+        # try:
+            Quads.append(['Print',None,None, pilaO.pop()['address']])
+        # except IndexError:
+        #     #! Validation Error, imprimir una funcion void
+        #     print('Error, can not print a void function')
+        #     exit()
 
     '''
     Inicio de puntos neuralgicos
@@ -677,7 +682,7 @@ class instructions(Visitor):
 
             #^ Parche Guadalupano En Objetos
             if tipo != 'void':
-                newmemo = apartarMemoria(tipo)
+                newmemo = apartarMemoriaLocal(tipo)
                 myObjects[currentObject].objectVarsDic[id] = {
                 'value': tbd,
                 'type': tipo,
@@ -711,19 +716,31 @@ class instructions(Visitor):
                 fType = ch.children[0].value
             except AttributeError:
                 fID = ch 
-                if fID in myDirFunctions[currentFunction].varsDic:
-                    #! Error validation
-                    errorDuplicateArgument(tree)
-                dondeva =  apartarMemoriaLocal(fType)
-                myDirFunctions[currentFunction].paramsDic[fID] = {
-                    'value': tbd,
-                    'type': fType,
-                    'address': dondeva}
+                try:
+                    if fID in myDirFunctions[currentFunction].paramsDic:
+                        #! Error Validation, name of parameter repeted
+                        errorDuplicateArgument(tree)
+                    dondeva =  apartarMemoriaLocal(fType)
+                    myDirFunctions[currentFunction].paramsDic[fID] = {
+                        'value': tbd,
+                        'type': fType,
+                        'address': dondeva}
+                except KeyError:
+                    # print(myObjects[currentObject].funciones[currentFunction].paramsDic)
+                    # exit()
+                    if fID in  myObjects[currentObject].funciones[currentFunction].paramsDic:
+                        #! Error Validation, name of parameter repeted
+                        errorDuplicateArgument(tree)
+                    dondeva =  apartarMemoriaLocal(fType)
+                    myObjects[currentObject].funciones[currentFunction].paramsDic[fID] = {
+                        'value': tbd,
+                        'type': fType,
+                        'address': dondeva}
+
 
     def np_guadalupe(self,tree):
         pg =pilaO.pop()['address']
         Quads.append(['Return',None,None, pg])
-        
         # myGlobalVars[currentFunction]['address'] = pg
 
     def np_fin_funcion(self, tree):
@@ -787,7 +804,7 @@ class instructions(Visitor):
             if check['type'] != cParam['type']:
                 #! Error Validation, error de tipos
                 #* Validacion de tipos
-                errorParamTypeMissmatch(check['type'], cParam['type'] , currentFunction, currentParam)
+                errorParamTypeMissmatch(check['type'], cParam['type'] , currentFunctionCall, currentParam)
             else:
                 currentParam += 1
             
@@ -798,14 +815,19 @@ class instructions(Visitor):
                 errorNumberOfParams(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), countParam)
 
         except KeyError:
-            #* funcion de objeto
-            check = myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic.items())[currentParam][0]]
-            if check['type'] != cParam['type']:
-                #! Error Validation, error de tipos
-                #* Validacion de tipos
-                errorParamTypeMissmatch(check['type'], cParam['type'] , currentFunction, currentParam)
-            else:
-                currentParam += 1
+            try:
+                #* funcion de objeto
+                check = myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic.items())[currentParam][0]]
+                if check['type'] != cParam['type']:
+                    #! Error Validation, error de tipos
+                    #* Validacion de tipos
+                    errorParamTypeMissmatch(check['type'], cParam['type'] , currentFunctionCall, currentParam)
+                else:
+                    currentParam += 1
+            except IndexError:
+                if len(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic) > 0:
+                    #! Error validation,  Mas parametros dados de los que hay
+                    errorNumberOfParams(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic), countParam)
 
     def np_insert_param(self, tree):
         direcccion = pilaO.pop()['address']
@@ -821,7 +843,7 @@ class instructions(Visitor):
         Quads.append(['Param', currentParam, None, direcccion])
 
     def np_reset_count_params(self,tree):
-        global currentParam, countParam
+        global currentParam, countParam, currentObjectFC
         #* funcion normal
         try:
             if currentParam != len(myDirFunctions[currentFunctionCall].paramsDic):
@@ -832,10 +854,17 @@ class instructions(Visitor):
             #* mandar a llamar funcion
             Quads.append(['Gosub',None,None, currentFunctionCall])
         except KeyError:
+            #* menor parametros en funcion de obj
+            if currentParam != len(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic):
+                #! Error Validation
+                #* menos parametros dados de los que hay
+                errorNumberOfParamsLess(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic), currentParam, countParam)
+            currentParam = 0
             Quads.append(['Gosub',None,None, currentFunctionCall])
 
-        #* Agregar valor en de parche guadalupano
+        #^ Agregar valor en de parche guadalupano
         try:
+            if currentObjectFC == None:
             # if myGlobalVars[currentFunctionCall]['address'] == 'tbd':
                 memo = apartarMemoriaTemporal(myGlobalVars[currentFunctionCall]['type'])
                 pilaO.append({
@@ -843,6 +872,21 @@ class instructions(Visitor):
                     'type': myGlobalVars[currentFunctionCall]['type']
                     })
                 Quads.append(['=', {'address': myGlobalVars[currentFunctionCall]['address'],'type': myGlobalVars[currentFunctionCall]['type']}, currentFunctionCall, memo])
+            else:
+
+                #* apartar memoria del tipo de dato que es la funcion del objeto
+                tipoFuncionObjeto = myDirFunctions[currentFunction].varsDic[currentObjectFC].objectVarsDic[currentFunctionCall]['type']
+                memo = apartarMemoriaLocal(tipoFuncionObjeto)
+                pilaO.append({
+                    'address': memo,
+                    'type':tipoFuncionObjeto
+                })
+                Quads.append( ['=', { 
+                    'address': myDirFunctions[currentFunction].varsDic[currentObjectFC].objectVarsDic[currentFunctionCall]['address'], 
+                    'type' : tipoFuncionObjeto 
+                    },currentFunctionCall , memo])
+                currentObjectFC = None
+            
             # else:
             #     pilaO.append({
             #         'address': myGlobalVars[currentFunctionCall]['address'],

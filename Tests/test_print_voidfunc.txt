@@ -1,22 +1,22 @@
 Start
     <Class> pato {
-        Var int cuack = 10
-        Var int meme = 45
-        Var String nombre = "vacas"
-        
         Def Void grasnar(int die, bool diez, int yano){
             Var String vfo = "VFO"
             Print("hola")
         }
+        
+        Def bool bonito(){
+            Return 9>10
+        }
     }
 
-    Def Void dos (int dos, bool fue){
-        Var int vaca = 15
+    Def int dos (int dos){
+        Print("cuatro")
+        Return 7*8
     }
 
     Void Main(){ 
         Var pato donald
-        dos(2, True)
-        donald.grasnar(7, 9>3, 1*8)
+        Print(donald.bonito())   
     }
 Finish

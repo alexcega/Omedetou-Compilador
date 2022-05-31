@@ -1,1 +1,1 @@
-myTest = 'test_objetos_acceso.txt'
+myTest = 'test_print_voidfunc.txt'

@@ -332,6 +332,9 @@ while Quads[index][0] != 'Endprogram':
 
     elif Quads[index][0] == 'Return':
         mm[myGlobalVars[currentFunctionCall]['address']] = mm[Quads[index][3]]
+        print('se acabo')
+        index = regreso
+        continue
 
     elif Quads[index][0] == 'Endfunc':
         print('se acabo')
