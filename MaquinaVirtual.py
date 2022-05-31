@@ -18,13 +18,9 @@ print('\n\n')
 
 print("MAQUINA VIRTUAL \n")
 while Quads[index][0] != 'Endprogram':
-    print("index actual", index)
+    # print("index actual", index)
     if Quads[index][0] in '*/+-!>==<=|&':
         if Quads[index][0] == '*' :
-            # if Quads[index][0] < mm.
-            # print(f"""se multplica la casilla { Quads[index][1]['address'] }  que contiene {mm[Quads[index][1]['address']]}
-            #     por la casilla {Quads[index][2]['address']}  que tiene un {mm[Quads[index][2]['address']]}
-            # """)
             if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
                 mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])*int(mm[Quads[index][2]['address']])
 

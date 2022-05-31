@@ -66,8 +66,8 @@ COMMENT : /#.*/
 start: programa
 
 programa : START_PROGRAM NEW_LINE programa2 FINISH_PROGRAM
-programa2 : some_vars* np_main (class*|COMMENT) (function*|COMMENT) start_main 
-np_main : 
+programa2 : some_vars* np_fin_igualacion (class*|COMMENT) (function*|COMMENT) start_main 
+np_fin_igualacion : 
 some_vars : vars np_limpiar_temps| asignacion np_limpiar_temps | COMMENT
 np_limpiar_temps: 
 start_main:  VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
@@ -159,9 +159,10 @@ factor_var  : var_cte -> guardar_cte
 
 
 
-class : LESS_THAN CLASS GREATER_THAN class_extended? IDENTIFIER bloque np_fin_clase->inicializar_clase
+class : LESS_THAN CLASS GREATER_THAN IDENTIFIER LEFT_CURRLY_BRACES np_inicio_vars_obj (vars|COMMENT)* np_fin_vars_obj (function|COMMENT)*  RIGHT_CURRLY_BRACES np_fin_clase->inicializar_clase
+np_inicio_vars_obj:
+np_fin_vars_obj:
 np_fin_clase: 
-class_extended : IDENTIFIER EXTENDS 
 
 function  : DEF (tipo|VOID) IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES (estatuto* function_return?)+ RIGHT_CURRLY_BRACES np_fin_funcion
 function_param : tipo IDENTIFIER function_params*

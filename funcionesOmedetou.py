@@ -61,8 +61,8 @@ class instructions(Visitor):
         '''
         pass
 
-    def np_main(self, tree):
-        #* Goto main
+    def np_fin_igualacion(self, tree):
+        #* Goto next igualacion, puede ser de objetos, puede ser de main
         Quads.append(['Goto', None,None, tbd])
         Psaltos.append(len(Quads)-1)
     
@@ -75,6 +75,15 @@ class instructions(Visitor):
         global currentFunction
         #*Decir que llegamos a main
         currentFunction = 'main'
+
+    def np_inicio_vars_obj(self, tree):
+        relleno = Psaltos.pop()
+        Quads[relleno][3] = len(Quads) + 1
+
+    def np_fin_vars_obj(self, tree):
+        #* el ultimo de estos sera goto main
+        Quads.append(['Goto', None,None, tbd])
+        Psaltos.append(len(Quads)-1)
 
     #& Estatutos secuenciales
     '''
