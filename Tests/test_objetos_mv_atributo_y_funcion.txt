@@ -1,5 +1,6 @@
 Start
     <Class> pato {
+        var int  variable  = 10 
         Def Void uno(int cancion){
             Print("se sabe")
         }
@@ -21,6 +22,6 @@ Start
         Print(habla())
         Var pato donald
         donald.uno(1)
-        Print(donald.sePudo(True))
+        Print(donald.sePudo(False))
     }
 Finish

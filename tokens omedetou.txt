@@ -8,7 +8,6 @@ ELSE            : "Else"
 DEF             : "Def"
 RETURN          : "Return"
 CLASS           : "Class"
-EXTENDS         : "Extends"
 PRINT           : "Print"
 MAIN            : "Main"
 VOID            : "Void"
@@ -60,7 +59,6 @@ COMMENT : /#.*/
 %ignore WHITESPACE
 %ignore NEW_LINE
 %import common.ESCAPED_STRING   -> STRING
-%import common.SIGNED_NUMBER    -> NUMBER
 
 // rules
 start: programa
@@ -70,6 +68,7 @@ programa2 : some_vars* np_fin_igualacion (class*|COMMENT) (function*|COMMENT) st
 np_fin_igualacion : 
 some_vars : vars np_limpiar_temps| asignacion np_limpiar_temps | COMMENT
 np_limpiar_temps: 
+
 start_main:  VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
 np_fin_funcion:
 
@@ -89,7 +88,6 @@ np_arr_bracket2:
 
 
 asignacion      : IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor NEW_LINE -> reasignar
-                | IDENTIFIER DOT IDENTIFIER  EQUAL expresion NEW_LINE ->reasignar_obj
 
 bloque: LEFT_CURRLY_BRACES (b1?|function_return)+ RIGHT_CURRLY_BRACES
 b1 : estatuto b1*

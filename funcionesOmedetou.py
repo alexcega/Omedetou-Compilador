@@ -46,6 +46,9 @@ class Objetos():
         self.objectVarsDic = {}
 
 #& Manejo de estatutos / Directorio de procedimientos
+#^ Al llamar a un visitor como parte de la clase instructions
+#^ autonaticamente se mandan a llamar las funciones correspondientes dependiendo de la regla que este en 
+#^ el arbol de parseo
 class instructions(Visitor):
     '''
     Inicio de puntos neuralgicos de Main
@@ -244,6 +247,8 @@ class instructions(Visitor):
                 Quads.append(['Read', 'global',identificador, myGlobalVars[identificador]['address']])
             except KeyError:
                 errorRead(tree)
+        # TODO ALEX leer variables en objetos
+
     '''
     Puntos neuralgicos Escritura
     '''
@@ -507,10 +512,10 @@ class instructions(Visitor):
         Poper.append('=')
 
     def np_arr_bracket1(self,tree):
-        global contDim,isArray, R
+        global contDim,isArray, R_rango
         contDim = 1
         isArray = True
-        R = 1
+        R_rango = 1
         aux = pilaO.pop()
         # print(aux['address']) 
         pilaDim.append((aux['address'], contDim))
