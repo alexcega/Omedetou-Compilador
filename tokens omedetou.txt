@@ -171,9 +171,9 @@ function_return : RETURN expresion np_guadalupe
 np_guadalupe: 
 function_params : COMMA tipo IDENTIFIER 
 
-function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? RIGHT_PARENTHESIS
+function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? np_reset_count_params RIGHT_PARENTHESIS
 fc_class : DOT IDENTIFIER 
-fc_param : expresion np_check_param np_insert_param fc_params* np_reset_count_params
+fc_param : expresion np_check_param np_insert_param fc_params* 
 np_check_param:
 np_insert_param:
 np_reset_count_params:

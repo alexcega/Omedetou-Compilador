@@ -3,20 +3,20 @@ Start
         Var int cuack = 10
         Var int meme = 45
         Var String nombre = "vacas"
-        Def Void uno(int sofia){
+        Def Void grasnar(int die){
             Var String vfo = "VFO"
-            Print("verdades")
+            Print("hola")
         }
     }
 
-    Def Void dos (int dos){
+    Def Void dos (int tres){
         Var int vaca = 15
     }
 
     Void Main(){ 
-        Var pato plumas
-        Print(plumas.cuack)
-        Var int hi = 2
-        Print("uwu")
+        Var pato donald
+        dos(2)
+        Print(donald.cuack)
+        donald.grasnar(5)
     }
 Finish

@@ -21,6 +21,7 @@ currentObject = None
 currentParam = 0
 countParam = None
 currentMemory = None
+currentObjectFC= None
 myGlobalVars = {}
 
 
@@ -42,6 +43,7 @@ class Objetos():
         self.name = name
         self.funciones = {}
         self.objectVarsDic = {}
+
 #& Manejo de estatutos / Directorio de procedimientos
 class instructions(Visitor):
     '''
@@ -82,10 +84,6 @@ class instructions(Visitor):
         espacio = apartarMemoriaConst('int')
         mainMemory[espacio] = tree.children[0].value
         pilaO.append({'address': espacio, 'type': 'int'})
-
-        print("PilaO en entero")
-        print(pilaO)
-        print("PilaO en entero")
 
     def decimal(self, tree):
         espacio = apartarMemoriaConst('float')
@@ -301,7 +299,6 @@ class instructions(Visitor):
             'address':tree.children[2].value, 
             'type': tree.children[1].children[0].value
         })
-        # print(pilaO)
 
     '''
     Inicio de puntos neuralgicos
@@ -444,7 +441,6 @@ class instructions(Visitor):
         contDim = 1
         isArray = True
         R = 1
-        print(pilaO)
         aux = pilaO.pop()
         # print(aux['address']) 
         pilaDim.append((aux['address'], contDim))
@@ -452,8 +448,6 @@ class instructions(Visitor):
 
     # def np_arr_dim(self,tree):
     #     limSuperior = pilaO.pop()
-        
-        
 
     def np_arr_expresion(self,tree):
         Quads.append(["ver", 0, pilaO.pop(), "currentTempMemory"])
@@ -465,9 +459,7 @@ class instructions(Visitor):
             # Aparta memmoria con*#
             #   apartarMemoriaTemporal(tipo de dato)
             Quads.append(["+", aux1, aux2, "currentTempMemory"])
-        print("test")
-        print(pilaO)
-        print("test")
+
 
     # def np_arr_bracket2(self,tree):
     #     aux1 = pilaO.pop()
@@ -737,6 +729,7 @@ class instructions(Visitor):
     def np_fin_funcion(self, tree):
         if currentFunction != 'main':
             Quads.append(['Endfunc',None,None,None])
+            #* Resetear memoria local
             try:
                 for varname, value in myDirFunctions[currentFunction].varsDic.items():
                     clearMemory(value['type'], value['address'])
@@ -763,11 +756,27 @@ class instructions(Visitor):
         global currentFunctionCall, countParam
         countParam = tree
         currentFunctionCall = tree.children[0].value
-        # print(tree.children[0].value)  # name of the function
+        # tree.children[0].value  #* name of the function of normal function
+        #* Validar en funciones generalees
         if tree.children[0].value not in myDirFunctions:
-            if tree.children[0].value not in myObjects[currentObject].funciones:
-                #! Error validation, function not defined
-                errorFuntionNotDefined(tree)
+            #* validar en funciones de objeto 
+            #TODO VAlidar esto
+            # try: 
+                #* llamada de funcion de objeto
+                if tree.children[0].value not in myDirFunctions[currentFunction].varsDic:
+                    #! Error validation, function not defined
+                    errorFuntionNotDefined(tree)
+                else:
+                    #print(tree.children[1].children[1]) #* funcion del objeto
+                    #* Funciones del objeto 
+                    if tree.children[1].children[1].value not in myDirFunctions[currentFunction].varsDic[tree.children[0].value].funciones:
+                        #! Error validation, function of objecto not defined
+                        errorObjectFunction(tree)
+                    global currentObjectFC
+                    currentObjectFC = tree.children[0].value
+                    currentFunctionCall = tree.children[1].children[1].value
+                    Quads.append(['Era', None, None, tree.children[1].children[1].value])
+                    return
         Quads.append(['Era', None, None, tree.children[0].value])
 
     def np_check_param(self,tree):
@@ -776,7 +785,7 @@ class instructions(Visitor):
         try:
             check = myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[currentParam][0]]
             if check['type'] != cParam['type']:
-                #! Error Validation
+                #! Error Validation, error de tipos
                 #* Validacion de tipos
                 errorParamTypeMissmatch(check['type'], cParam['type'] , currentFunction, currentParam)
             else:
@@ -785,29 +794,45 @@ class instructions(Visitor):
         except IndexError:
             #* Tenemos aqui cuidado cuendo la funcion no tiene parametros, ahi siempre es index error
             if  len(myDirFunctions[currentFunctionCall].paramsDic) > 0:
-                #! Error validation
-                #* Mas parametros dados de los que hay
-                #TODO Correccion de llamado, cuando se pasa por una ya no cuenta lso demas 
-                #TODO por lo que si se pasa por 5 y recibe 2, solo marcara hasta el 3
+                #! Error validation,  Mas parametros dados de los que hay
                 errorNumberOfParams(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), countParam)
-    
+
+        except KeyError:
+            #* funcion de objeto
+            check = myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic.items())[currentParam][0]]
+            if check['type'] != cParam['type']:
+                #! Error Validation, error de tipos
+                #* Validacion de tipos
+                errorParamTypeMissmatch(check['type'], cParam['type'] , currentFunction, currentParam)
+            else:
+                currentParam += 1
+
     def np_insert_param(self, tree):
         direcccion = pilaO.pop()['address']
         #* llamar 
         #* ver https://stackoverflow.com/questions/10058140/accessing-items-in-an-collections-ordereddict-by-index
-        myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[currentParam-1][0]]['value'] = direcccion
+        try :
+            #* Funcion normal
+            myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[currentParam-1][0]]['value'] = direcccion
         # print('debo tener la misma de arriba', myDirFunctions[currentFunctionCall].paramsDic['address'])
+        except KeyError:
+            #* Funcion de objeto
+            myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic.items())[currentParam-1][0]]['value'] = direcccion
         Quads.append(['Param', currentParam, None, direcccion])
 
     def np_reset_count_params(self,tree):
         global currentParam, countParam
-        if currentParam != len(myDirFunctions[currentFunctionCall].paramsDic):
-            #! Error Validation
-            #* menos parametros dados de los que hay
-            errorNumberOfParamsLess(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), currentParam, countParam)
-        currentParam = 0
-        #* mandar a llamar funcion
-        Quads.append(['Gosub',None,None, currentFunctionCall])
+        #* funcion normal
+        try:
+            if currentParam != len(myDirFunctions[currentFunctionCall].paramsDic):
+                #! Error Validation
+                #* menos parametros dados de los que hay
+                errorNumberOfParamsLess(currentFunction, currentFunctionCall, len(myDirFunctions[currentFunctionCall].paramsDic), currentParam, countParam)
+            currentParam = 0
+            #* mandar a llamar funcion
+            Quads.append(['Gosub',None,None, currentFunctionCall])
+        except KeyError:
+            Quads.append(['Gosub',None,None, currentFunctionCall])
 
         #* Agregar valor en de parche guadalupano
         try:
@@ -824,9 +849,6 @@ class instructions(Visitor):
             #         'type': myGlobalVars[currentFunctionCall]['type']
             #         })
             #     Quads.append(['=', {'address': myGlobalVars[currentFunctionCall]['address'],'type': myGlobalVars[currentFunctionCall]['type']}, currentFunctionCall, myGlobalVars[currentFunctionCall]['address']])
-
-
-            
             # myGlobalVars[currentFunctionCall]['value']
         #* key error es por que la funcion es void, no hay que hacer nada mas
         except KeyError:
@@ -868,22 +890,19 @@ class instructions(Visitor):
             errorNotSuchObject(tree)
 
     def guardar_var_de_obj(self,tree):
-        print('atriburo de obj')
-        # print(tree.children[0])  #nombre de objeto
-        # print(tree.children[2])     # atributo de objeto
+        # print(tree.children[0])  #*nombre de objeto 
+        # print(tree.children[2])  #* atributo de objeto
         # print(myDirFunctions[currentFunction].varsDic)
         if tree.children[0].value not in myDirFunctions[currentFunction].varsDic:
             #! Error validation, objeto no existente
             errorObjectName(tree)
 
-        # nombre tipo objeto myDirFunctions[currentFunction].varsDic[tree.children[0]].name
+        #* nombre tipo objeto 
+        # myDirFunctions[currentFunction].varsDic[tree.children[0]].name
         if tree.children[2].value not in myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic:
             #! Error validation, atributo de objeto no existente
             errorObjectAtribute(tree)
         else:
-            # myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic[tree.children[2].value]['address']
-            print("AQUI")
-            print( myDirFunctions[currentFunction].varsDic[tree.children[0]])
             pilaO.append({
                 'address': myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic[tree.children[2].value]['address'],
                 'type' : myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic[tree.children[2].value]['type']

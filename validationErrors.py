@@ -104,7 +104,6 @@ def errorObjectName(tree):
             print('^', end='')
     print()
     print("Error at line", str(tree.children[0].line) + ", object '" + tree.children[0].value + "'", 'not defined')
-    
     exit()
 
 def errorObjectAtribute(tree):
@@ -116,7 +115,17 @@ def errorObjectAtribute(tree):
             print('^', end='')
     print()
     print("Error at line", str(tree.children[2].line) + ", atribute '" + tree.children[2].value + "'", 'not defined')
-    
+    exit()
+
+def errorObjectFunction(tree):
+    print(code[tree.children[2].line-1], end='')
+    for x in range(len(code[tree.children[1].children[1].line-1])):
+        if x != tree.children[1].children[1].column-1:
+            print(' ', end='')
+        else: 
+            print('^', end='')
+    print()
+    print("Error at line", str(tree.children[1].children[1].line-1) + ", Function '" + tree.children[1].children[1].value + "' of object "+ "'" +str(tree.children[0]) + "'", 'not defined')
     exit()
 def errorRead(tree):
     print(code[tree.children[2].line-1],end='')

@@ -36,9 +36,6 @@ except EOFError:
 
 # my_parse_tree = T().transform(my_parse_tree)
 
-print(my_parse_tree.pretty())
-print()
-
 class Parentes(Visitor):
     def __default__(self, tree):
         for subtree in tree.children:
