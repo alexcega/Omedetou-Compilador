@@ -7,10 +7,18 @@ Start
             Print("se sabe")
         }
     }
+
+    <Class> perro {
+        Def Void ladrar(){
+            Print("bark")
+        }
+    }
+    
     Void Main(){ 
         Var int anio = 1999
         Print(anio)
         Var pato donald
         Print(donald.cuack)
+        donald.uno(1)
     }
 Finish

@@ -5,6 +5,7 @@ index = 0
 j = 0 
 cont = 0
 currentFunctionCall = None
+currentObjectFunctionCall = None
 regreso = 0 
 for celda in mm:
     if j % 10 == 0 : 
@@ -308,32 +309,34 @@ while Quads[index][0] != 'Endprogram':
     
     elif Quads[index][0] == 'Era':
         currentFunctionCall = Quads[index][3]
+        if Quads[index][2] != None:
+            currentObjectFunctionCall = Quads[index][2] 
     
     elif Quads[index][0] == 'Param':
-        # print('que es esto',mm[Quads[index][3]])
-        # print('y esto',myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1][0]]['address'])
-        print('tenemos',mm[Quads[index][3]])
-        mm[myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1][0]]['address']] = mm[Quads[index][3]]
+        try:
+            #* Funcion normal
+            mm[myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ]['address']] = mm[Quads[index][3]]
+        except KeyError:
+            #* funcion de objeto
+            mm[myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].paramsDic[list(myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ] ['address']] = mm[Quads[index][3]]
+
 
     elif Quads[index][0] == 'Gosub':
-        # print("empieza en" ,myDirFunctions[currentFunctionCall].startLine)
-        # print("Estamos en la", index)
         regreso = index + 1
-        print("tenemos que volver a ",regreso)
-        index = myDirFunctions[currentFunctionCall].startLine 
-        print("y vamos a la", index)
+        # print("tenemos que volver a ",regreso)
+        try:
+            index = myDirFunctions[currentFunctionCall].startLine 
+        except KeyError:
+            index = myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].startLine - 1
+        # print("y vamos a la", index)
         # print('regreso',regreso)  
-        exit()
-        
 
     elif Quads[index][0] == 'Return':
         mm[myGlobalVars[currentFunctionCall]['address']] = mm[Quads[index][3]]
-        print('se acabo')
         index = regreso
         continue
 
     elif Quads[index][0] == 'Endfunc':
-        print('se acabo')
         index = regreso
         continue
     index += 1

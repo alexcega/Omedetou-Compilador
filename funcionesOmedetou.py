@@ -838,7 +838,7 @@ class instructions(Visitor):
                     global currentObjectFC
                     currentObjectFC = tree.children[0].value
                     currentFunctionCall = tree.children[1].children[1].value
-                    Quads.append(['Era', None, None, tree.children[1].children[1].value])
+                    Quads.append(['Era', None, myDirFunctions[currentFunction].varsDic[currentObjectFC].name, tree.children[1].children[1].value])
                     return
         Quads.append(['Era', None, None, tree.children[0].value])
 
