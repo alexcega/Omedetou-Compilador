@@ -1,6 +1,9 @@
 from cuboSemantico import OTypeError
 from test import myTest
+
+#* Archivo de texto con todo el input de codigo
 code = open("Tests/" +myTest).readlines()
+
 #! Error Validation
 def errorValueDontExist(tree):
     print(code[tree.children[0].line-1],end='')
@@ -83,7 +86,6 @@ def errorNumberOfParamsLess(fun,funC, fparams, fcparams, tree):
     print("Error in " + fun +", Less params Error at function '" + funC+ "', requires " +str(fparams), 'arguments', 'but ', str(fcparams) , 'were provided' )
     exit()
 
-#TODO revisar indices
 def errorNotSuchObject(tree):
     print(code[tree.children[1].line-1],end='')
     for x in range(len(code[tree.children[2].line-1])):
