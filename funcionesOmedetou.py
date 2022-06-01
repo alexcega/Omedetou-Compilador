@@ -517,12 +517,8 @@ class instructions(Visitor):
         isArray = True
         R_rango = 1
         aux = pilaO.pop()
-        # print(aux['address']) 
         pilaDim.append((aux['address'], contDim))
-        # print(pilaDim)
 
-    # def np_arr_dim(self,tree):
-    #     limSuperior = pilaO.pop()
 
     def np_arr_expresion(self,tree):
         Quads.append(["ver", 0, pilaO.pop(), "currentTempMemory"])
@@ -536,10 +532,6 @@ class instructions(Visitor):
             Quads.append(["+", aux1, aux2, "currentTempMemory"])
 
 
-    # def np_arr_bracket2(self,tree):
-    #     aux1 = pilaO.pop()
-    #     Quads.append(["+", aux1, aux2, "currentTempMemory"])
-    #     Quads.append(["+", aux1, aux2, "currentTempMemory"])
 
     '''
     Inicio de puntos neuralgicos
