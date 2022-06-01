@@ -1,1 +1,1 @@
-myTest = 'test_arr_1dim.txt'
+myTest = 'test_arr_en_obj.txt'

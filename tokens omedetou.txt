@@ -176,12 +176,13 @@ np_fin_vars_obj:
 np_fin_clase: 
 
 function  : DEF (tipo|VOID) IDENTIFIER LEFT_PARENTHESIS function_param? RIGHT_PARENTHESIS LEFT_CURRLY_BRACES (estatuto* function_return?)+ RIGHT_CURRLY_BRACES np_fin_funcion
-function_param : tipo IDENTIFIER function_params*
+function_param : tipo IDENTIFIER is_array function_params*
 function_return : RETURN expresion np_guadalupe
                 | RETURN LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS np_guadalupe
 
 np_guadalupe: 
-function_params : COMMA tipo IDENTIFIER 
+function_params : COMMA tipo IDENTIFIER is_array
+is_array: LEFT_BRACKET CONST_INT RIGHT_BRACKET
 
 function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? np_reset_count_params RIGHT_PARENTHESIS
 fc_class : DOT IDENTIFIER 

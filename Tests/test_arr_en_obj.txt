@@ -3,9 +3,16 @@ Start
     Var int dos = 9
     Var int myarr2[3]
     Var int siete = 2
-    
+    <Class> casa {
+        Var float meses = 54
+        Var float muebles[3]
+        Def Void limpiar(){
+            Var bool boolarr [6]
+            Print("se limpio")
+        }
+    }
+
     Def Void unafuncion(){
-        #Var bool boolarr [6]
         #myarr2[0] = 8
         Var String perro = "rocky"
     }

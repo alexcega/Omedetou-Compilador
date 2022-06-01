@@ -353,44 +353,82 @@ class instructions(Visitor):
                     'address' : tbd
                 }
 
-    #* Apartar memoria de arreglo
     def var_arreglo(self,tree):
         global currArray 
         id_arr = tree.children[2].value
         if currentFunction != None : 
-            #* Revisas si esta dentro de la funcion actual
-            if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
-                #! Error validation
-                errorDoubleDeclatration(tree)
-            memo = apartarMemoriaLocal(tree.children[1].children[0].value)
-            mynode = Arreglo()
-            currArray = id_arr
-            myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
-                'type' : tree.children[1].children[0].value,
-                'value' : tbd,
-                'scope' : 'local',
-                'address' : memo,
-                'arreglo' : mynode
-            }
-  
             
+            typo_de_arr = tree.children[1].children[0].value
+            memo = apartarMemoriaLocal(typo_de_arr)
+            try:
+                mynode = Arreglo()
+                currArray = id_arr
+
+                #* Local
+                #* Revisas si esta dentro de la funcion actual
+                if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
+                    #! Error validation
+                    errorDoubleDeclatration(tree)
+                myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
+                    'type' : typo_de_arr,
+                    'value' : tbd,
+                    'scope' : 'local',
+                    'address' : memo,
+                    'arreglo' : mynode
+                }
+            except KeyError:
+                #* obj func arr
+                #* arreglo de una funcion en objeto
+                if id_arr in myObjects[currentObject].objectVarsDic:
+                    errorDoubleDeclatration(tree)
+                myObjects[currentObject].funciones[currentFunction].varsDic[id_arr] ={
+                    'type' : typo_de_arr,
+                    'value' : tbd,
+                    'scope' : 'local',
+                    'address' : memo,
+                    'arreglo' : mynode
+                }
+
+  
         else:
             if tree.children[2].value in myGlobalVars:
                 #! Error validation
                 errorDoubleDeclatration(tree)
-            
-            #* Si esta en global
-            memo = apartarMemoria(tree.children[1].children[0].value)
-            mynode = Arreglo()
-            
-            currArray = id_arr
-            myGlobalVars[tree.children[2].value] = {
-                'type' : tree.children[1].children[0].value,
-                'value' : tbd,
-                'scope' : 'global',
-                'address'  : memo,
-                'arreglo' : mynode
-            }
+            if tree.children[2].value in myDirFunctions:
+                errorDoubleDeclatration(tree)
+            if currentObject == None:
+                #* Si esta en global
+                memo = apartarMemoria(tree.children[1].children[0].value)
+                mynode = Arreglo()
+                
+                currArray = id_arr
+                myGlobalVars[tree.children[2].value] = {
+                    'type' : tree.children[1].children[0].value,
+                    'value' : tbd,
+                    'scope' : 'global',
+                    'address'  : memo,
+                    'arreglo' : mynode
+                }
+            else:
+                #* matriz de objeto
+                #* no repetir nombre de una funcion del obj
+                if tree.children[2].value in myObjects[currentObject].funciones:
+                    errorDoubleDeclatration(tree)
+                #* no repetir nombre de una variable de obj
+                if tree.children[2].value in myObjects[currentObject].objectVarsDic:
+                    errorDoubleDeclatration(tree)
+                #* else
+                memo = apartarMemoriaLocal(tree.children[1].children[0].value)
+                mynode = Arreglo()
+                currArray = id_arr
+                myObjects[currentObject].objectVarsDic[tree.children[2].value] = {
+                    'type' : tree.children[1].children[0].value,
+                    'value' : tbd,
+                    'scope' : 'local',
+                    'address' : memo,
+                    'arreglo' : mynode
+                }
+                
 
     def np_arr_bracket1(self,tree):
         mycontDim = myGlobalVars[currArray]['arreglo'].contDim
@@ -398,7 +436,18 @@ class instructions(Visitor):
         
     #* Obtener limite superior y limite inferior para calcular el rango R
     def np_get_lim_s(self, tree):
-        nodoCurr = myGlobalVars[currArray]['arreglo']
+        try:
+            #*global
+            nodoCurr = myGlobalVars[currArray]['arreglo']
+        except KeyError:
+            try:
+                #* Local
+                nodoCurr = myDirFunctions[currentFunction].varsDic[currArray]['arreglo']
+            except KeyError:
+                try:
+                    nodoCurr = myObjects[currentObject].objectVarsDic[currArray]['arreglo']
+                except KeyError:
+                    nodoCurr = myObjects[currentObject].funciones[currentFunction].varsDic[currArray]['arreglo']
         # print(type(mainMemory[pilaO.pop()['address']]))
         nodoCurr.ls = float(mainMemory[pilaO.pop()['address']])
         nodoCurr.r_rango = (nodoCurr.ls - nodoCurr.li + 1) * nodoCurr.r_rango
@@ -408,7 +457,17 @@ class instructions(Visitor):
         myGlobalVars[currArray]['arreglo'].contDim += 1 
     
     def np_calcular_m(self,tree):
-        nodoCurr = myGlobalVars[currArray]['arreglo']
+        try:
+            #*global
+            nodoCurr = myGlobalVars[currArray]['arreglo']
+        except KeyError:
+            try:
+                nodoCurr = myDirFunctions[currentFunction].varsDic[currArray]['arreglo']
+            except KeyError:
+                try:
+                    nodoCurr = myObjects[currentObject].objectVarsDic[currArray]['arreglo']
+                except KeyError:
+                    nodoCurr = myObjects[currentObject].funciones[currentFunction].varsDic[currArray]['arreglo']
         # nodoCurr.dim = 1
         nodoCurr.offset = 0 
         nodoCurr.size = nodoCurr.r_rango
@@ -432,11 +491,27 @@ class instructions(Visitor):
 
     def np_arr_next_virtualadress(self,tree):
         global currArray
-        nodoCurr = myGlobalVars[currArray]['arreglo']
+        try:
+            #*global
+            nodoCurr = myGlobalVars[currArray]['arreglo']
+            typoApartar = myGlobalVars[currArray]['type']
+            queremosApartar = apartarMemoria
+        except KeyError:
+            try:
+                nodoCurr = myDirFunctions[currentFunction].varsDic[currArray]['arreglo']
+                typoApartar = myDirFunctions[currentFunction].varsDic[currArray]['type']
+            except KeyError:
+                try:
+                    nodoCurr = myObjects[currentObject].objectVarsDic[currArray]['arreglo']
+                    typoApartar = myObjects[currentObject].objectVarsDic[currArray]['type']
+                except KeyError:
+                    nodoCurr = myObjects[currentObject].funciones[currentFunction].varsDic[currArray]['arreglo']
+                    typoApartar = myObjects[currentObject].funciones[currentFunction].varsDic[currArray]['type']
+            queremosApartar = apartarMemoriaLocal
         temp = nodoCurr.size
-        #* global
-        while temp > 0:
-            apartarMemoria(myGlobalVars[currArray]['type'])
+        # exit()
+        while temp > 1:
+            queremosApartar(typoApartar)
             temp -= 1
         currArray = None
 
