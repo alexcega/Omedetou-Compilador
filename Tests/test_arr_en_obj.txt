@@ -1,23 +1,24 @@
 Start
     Var int uno = 3
     Var int dos = 9
-    Var int myarr2[3]
+    #Var int myarr2[3]
     Var int siete = 2
     <Class> casa {
         Var float meses = 54
-        Var float muebles[3]
+        #Var float muebles[3]
         Def Void limpiar(){
-            Var bool boolarr [6]
+            #Var bool oaj[6]
             Print("se limpio")
         }
     }
 
-    Def Void unafuncion(){
-        #myarr2[0] = 8
+    Def Void unafuncion(int uno ){
         Var String perro = "rocky"
+        Var casa nombreF
     }
     Void Main () {
-        myarr2[1] = myarr2[0]
+        Var float fmain = 0.0
+        #myarr2[1] = myarr2[0]
         Var int newArr [7]
     }
 Finish

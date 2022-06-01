@@ -357,7 +357,6 @@ class instructions(Visitor):
         global currArray 
         id_arr = tree.children[2].value
         if currentFunction != None : 
-            
             typo_de_arr = tree.children[1].children[0].value
             memo = apartarMemoriaLocal(typo_de_arr)
             try:
@@ -368,6 +367,12 @@ class instructions(Visitor):
                 #* Revisas si esta dentro de la funcion actual
                 if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
                     #! Error validation
+                    errorDoubleDeclatration(tree)
+                if tree.children[2].value in myGlobalVars:
+                    errorDoubleDeclatration(tree)
+                if tree.children[2].value in myObjects:
+                    errorDoubleDeclatration(tree)
+                if tree.children[2].value in myDirFunctions:
                     errorDoubleDeclatration(tree)
                 myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
                     'type' : typo_de_arr,
@@ -380,6 +385,12 @@ class instructions(Visitor):
                 #* obj func arr
                 #* arreglo de una funcion en objeto
                 if id_arr in myObjects[currentObject].objectVarsDic:
+                    errorDoubleDeclatration(tree)
+                if id_arr in myObjects[currentObject].funciones:
+                    errorDoubleDeclatration(tree)
+                if id_arr in myGlobalVars:
+                    errorDoubleDeclatration(tree)
+                if tree.children[2].value in myObjects:
                     errorDoubleDeclatration(tree)
                 myObjects[currentObject].funciones[currentFunction].varsDic[id_arr] ={
                     'type' : typo_de_arr,
@@ -417,6 +428,10 @@ class instructions(Visitor):
                 #* no repetir nombre de una variable de obj
                 if tree.children[2].value in myObjects[currentObject].objectVarsDic:
                     errorDoubleDeclatration(tree)
+                #* no repetir nombre de objeto
+                if tree.children[2].value in myObjects:
+                    errorDoubleDeclatration(tree)
+
                 #* else
                 memo = apartarMemoriaLocal(tree.children[1].children[0].value)
                 mynode = Arreglo()
@@ -1016,22 +1031,27 @@ class instructions(Visitor):
             Quads.append(['Return',currentFunction,currentObject, pg])
         # myGlobalVars[currentFunction]['address'] = pg
 
+#TODO revisar 
     def np_fin_funcion(self, tree):
         if currentFunction != 'main':
             Quads.append(['Endfunc',None,None,None])
-            #* Resetear memoria local
-            try:
-                for varname, value in myDirFunctions[currentFunction].varsDic.items():
-                    clearMemory(value['type'], value['address'])
-                # myDirFunctions[currentFunction].varsDic.clear()
-
-                for varname, value in myDirFunctions[currentFunction].paramsDic.items():
-                    clearMemory(value['type'], value['address'])
             #* Funciones en objetos
-            except:
+            try:
+                print(currentObject)
                 for varname, value in myObjects[currentObject].funciones[currentFunction].varsDic.items():
                     clearMemory(value['type'], value['address'])
                 for varname, value in myObjects[currentObject].funciones[currentFunction].paramsDic.items():
+                    clearMemory(value['type'], value['address'])
+            except:
+            #* Resetear memoria local
+                for varname, value in myDirFunctions[currentFunction].varsDic.items():
+                    try:
+                        clearMemory(value['type'], value['address'])
+                    except:
+                        pass
+
+
+                for varname, value in myDirFunctions[currentFunction].paramsDic.items():
                     clearMemory(value['type'], value['address'])
                 
             # TODO Resetear los temporales: booleanos, enteros, etc.
@@ -1195,6 +1215,17 @@ class instructions(Visitor):
     #* Declaracion inicial de objeto
     def var_objeto(self,tree):
         if tree.children[1] in myObjects:
+            nombreasignar = tree.children[2].value
+            if nombreasignar in myObjects:
+                errorDoubleDeclatration(tree)
+            if nombreasignar in myGlobalVars:
+                errorDoubleDeclatration(tree)
+            if nombreasignar in myDirFunctions:
+                errorDoubleDeclatration(tree)
+            if nombreasignar in myDirFunctions[currentFunction].varsDic:
+                errorDoubleDeclatration(tree)
+
+
             #* objeto
             myDirFunctions[currentFunction].varsDic[tree.children[2].value] = deepcopy(myObjects[tree.children[1]])
             #* funcion
