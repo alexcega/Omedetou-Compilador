@@ -92,11 +92,12 @@ np_arr_next_virtualadress:
 
 asignacion      : IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor NEW_LINE -> reasignar
                 | IDENTIFIER DOT IDENTIFIER  EQUAL expresion NEW_LINE ->reasignar_obj
-                | acceder_array EQUAL expresion -> reasignar_casilla_matriz
+                | acceder_array EQUAL np_meter_igual expresion np_reasignar_arr -> reasignar_casilla_matriz
                 
 acceder_array  : IDENTIFIER  LEFT_BRACKET np_ver_dimension_access np_meterff expresion np_arr_ver_expresion RIGHT_BRACKET accesso_matriz*  np_fin_array np_sacarff  
 accesso_matriz : np_actualizar_dim LEFT_BRACKET np_ver_dimension_access np_meterff expresion np_arr_ver_expresion RIGHT_BRACKET 
 
+np_reasignar_arr:
 np_actualizar_dim:
 np_ver_dimension_access:
 np_arr_ver_expresion:

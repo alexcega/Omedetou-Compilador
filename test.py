@@ -1,1 +1,1 @@
-myTest = 'test_arr_en_obj.txt'
+myTest = 'test_operaciones_arr.txt'

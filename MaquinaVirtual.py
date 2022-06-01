@@ -66,15 +66,15 @@ while Quads[index][0] != 'Endprogram':
 
                 elif Quads[index][1]['type'] == 'String' and Quads[index][2]['type'] == 'String':
                     mm[Quads[index][3]] = str(mm[Quads[index][1]['address']])+str(mm[Quads[index][2]['address']])
-            except:
+            except TypeError:
+                #* Arreglos
                 try:
-                    #TODO validar en * / - y en  = 
-                    # (pointer) + num 
-                    #* pointer izq
+                    #TODO validar en * / - y en  =  y los demas
+                    #* (pointer) + num 
                     mm[Quads[index][3]] = mm[mm[Quads[index][1][1]['address']]['address']] + mm[Quads[index][2]['address']]
                 except:
                     try:
-                        # num + (pointer)
+                        #* num + (pointer)
                         mm[Quads[index][3]] = mm[Quads[index][1]] + mm[mm[Quads[index][2][1]['address']]['address']]
                     except:
                         #*(pointer) + (pointer)
@@ -94,8 +94,23 @@ while Quads[index][0] != 'Endprogram':
                 mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])-float(mm[Quads[index][2]['address']])
     
         elif Quads[index][0] == '=':
-            mm[Quads[index][3]] = mm[Quads[index][1]['address']]
-        
+            try:
+                mm[Quads[index][3]] = mm[Quads[index][1]['address']]
+            except TypeError:
+                try:
+                #* (pointer) = num
+                    mm[mm[Quads[index][3][1]]] = mm[Quads[index][1]['address']]
+                except TypeError:
+                #* num = (pointer)
+                    # print(Quads[index][3])
+                    # print(mm[Quads[index][3]])
+                    # print(Quads[index][1]['address'][1])
+                    # print(mm[Quads[index][1]['address'][1]])
+                    # print(mm[mm[Quads[index][1]['address'][1]]])
+                    mm[Quads[index][3]] = mm[mm[Quads[index][1]['address'][1]]]
+
+                #* (poiner) = (pointer)
+                    #mm[mm[Quads[index][3][1]]] = mm[mm[Quads[index][1][1]['address']]['address']]
         elif Quads[index][0] == '<':
             if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
                 mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<int(mm[Quads[index][2]['address']])
@@ -226,7 +241,11 @@ while Quads[index][0] != 'Endprogram':
             
     elif Quads[index][0] == 'Print':
         # print('estoy imprimiendo la ', Quads[index][3])
-        print(mm[Quads[index][3]])
+        try:
+            print(mm[Quads[index][3]])
+        except TypeError:
+            print(mm[mm[Quads[index][3][1]]])
+
 
     elif Quads[index][0] == 'Read':
         if Quads[index][1] == 'global':
@@ -334,7 +353,6 @@ while Quads[index][0] != 'Endprogram':
             #* funcion de objeto
             mm[myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].paramsDic[list(myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ] ['address']] = mm[Quads[index][3]]
 
-
     elif Quads[index][0] == 'Gosub':
         regreso = index + 1
         # print("tenemos que volver a ",regreso)
@@ -354,7 +372,29 @@ while Quads[index][0] != 'Endprogram':
             mm[myObjects[obj].objectVarsDic[curfun]['address']] = mm[Quads[index][3]]
         index = regreso
         continue
+    
+    elif Quads[index][0] == 'Ver':
+        acceso = mm[Quads[index][1]]
+        li = Quads[index][2]
+        ls = Quads[index][3]
 
+        try: 
+            acceso = float(acceso)
+            if not acceso.is_integer():
+                #! Error validation, index float
+                print('Index Error: \nUsed Float type, only hole numbers can be index')
+                exit()
+        except AttributeError:
+            #! Error validation, index string
+            print("Index Error: \nUsed String type, only hole numbers can be index")
+            exit()
+        except ValueError:
+            #! Error validation, index bool
+            print("Index Error: \nUsed bool type, only hole numbers can be index")
+            exit()
+        if  not (li <= acceso and acceso <= ls ):
+            print('Index Error, out of range')
+            exit()
     elif Quads[index][0] == 'Endfunc':
         index = regreso
         continue

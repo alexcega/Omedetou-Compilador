@@ -8,16 +8,23 @@
 
 # print(regresa(8))
 
-def imprime( seguir):
-    print('llamdada')
-    if (seguir == True) :
-        imprime(False)
+# def imprime( seguir):
+#     print('llamdada')
+#     if (seguir == True) :
+#         imprime(False)
 
     
-    else:
-        print("uno")
-        print("Ahora soy falso")
+#     else:
+#         print("uno")
+#         print("Ahora soy falso")
     
 
 
-imprime(True)
+# imprime(True)
+
+
+var = 'vaca'
+
+var = float(var)
+print(var)
+

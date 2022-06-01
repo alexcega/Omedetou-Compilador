@@ -492,7 +492,7 @@ class instructions(Visitor):
         globOff = nodoCurr.offset
         while True : 
             nodoCurr.m_motomami =  globR / (nodoCurr.ls - nodoCurr.li + 1)
-            print("La m vale",nodoCurr.m_motomami)
+
             globR = nodoCurr.m_motomami
             nodoCurr.offset = globOff + nodoCurr.li * nodoCurr.m_motomami
             nodoCurr.cajita = nodoCurr.m_motomami
@@ -588,14 +588,30 @@ class instructions(Visitor):
         currNodo = currNodo.nextNode
 
     def np_fin_array(self,tree):
+        #* global
         global currNodo
         aux1 = pilaO.pop()
-        currentTempMemory = apartarMemoriaTemporal('int')
-        Quads.append(['+', aux1, currNodo.cajita, currentTempMemory])
+        # currentTempMemory = apartarMemoriaTemporal('int')
+        #^ Debido a que nuestro limite inferior es 0, esto no es necesario 
+        # Quads.append(['+', aux1, {
+        #     'address':currNodo.cajita,
+        #     'type':'int'}, currentTempMemory])
         currentPointerMemory = apartarMemoriaPointer('int')
-        memoArr = myGlobalVars[currArray]['address']
-        Quads.append(['+',[ 'pointer' ,currentTempMemory], memoArr , currentPointerMemory])
-        pilaO.append({'address':currentPointerMemory, 'type': 'int'})
+        if myGlobalVars[currArray]['address'] not in myConstantes:
+            newconst= apartarMemoriaConst('int')
+            myConstantes[myGlobalVars[currArray]['address']] = newconst
+            mainMemory[newconst] = myGlobalVars[currArray]['address']
+        memoArr =  myConstantes[myGlobalVars[currArray]['address']]
+        # Quads.append(['+',{
+        #     'address':currentTempMemory,
+        #     'type': 'int'
+        # }, {
+        #     'address': memoArr,
+        #     'type': 'int'} ,currentPointerMemory ])
+        Quads.append(['+',aux1, {
+            'address': memoArr,
+            'type': 'int'} ,currentPointerMemory ])
+        pilaO.append({'address':['pointer',currentPointerMemory], 'type': 'int'})
         
 
    
@@ -639,19 +655,20 @@ class instructions(Visitor):
                         errorValueDontExist(tree)
 
     def np_reasignar_arr(self,tree):
-         if Poper[-1] == '=':
-                right = pilaO.pop()
-                left = pilaO.pop()
-                operador = Poper.pop()
-                resultType =  getType(left,right,operador)
-                if resultType != OTypeError:
-                    print(left)
-                    print(left)
-                    print(right)
-                    Quads.append([operador, right,None, ['pointer',left['address']]])
-                else:
-                    #! Error validaiton
-                    errorType(operador, left, right)
+        if Poper:
+            if Poper[-1] == '=':
+                    right = pilaO.pop()
+                    left = pilaO.pop()
+                    operador = Poper.pop()
+                    resultType =  getType(left,right,operador)
+                    if resultType != OTypeError:
+                        print(left)
+                        print(left)
+                        print(right)
+                        Quads.append([operador, right,None,left['address']])
+                    else:
+                        #! Error validaiton
+                        errorType(operador, left, right)
 
     def np_asiganar_valor(self,tree):
         if Poper:

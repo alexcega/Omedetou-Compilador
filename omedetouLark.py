@@ -62,18 +62,18 @@ for myq in Quads:
     # print()
 print('\n## Mis vars globales')
 for myGb, myval in myGlobalVars.items():
-    print(myGb, myval)
+    print('\t',myGb, myval)
 # print(myGlobalVars)
 
 print('\n## Mis funciones')
 for k, v in myDirFunctions.items():
-    print(k,v)
+    print('\t',k,v)
     print('\t # Parametros')
     for kk, vv in v.paramsDic.items():
-        print('\t',kk,vv)
+        print('\t\t',kk,vv)
     print('\t # Variables')
     for kk, vv in v.varsDic.items():
-        print('\t',kk,vv)
+        print('\t\t',kk,vv)
 
 print('\n# Mis objetos')
 for k,v in myObjects.items():
@@ -92,6 +92,9 @@ for k,v in myObjects.items():
         print('\t\t # Variables')
         for kkk, vvv in v2v.varsDic.items():
             print('\t\t',kkk,vvv)
+print('\n # Mis Constantes')
+for k,v in myConstantes.items():
+    print('\t',k,v)
 
 # Measure-Command {python omedetouLark.py}
 
