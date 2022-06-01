@@ -10,11 +10,10 @@ Poper = []
 Quads = []
 Psaltos = []
 pilaDim = []
-contDim = 0
-isArray = False
-R = 0
-limSuperior = 0
+
 #TODO Cambiar currentFunction a pila para recursividad
+currArray = None
+currNodo = None
 currentFunction = None
 currentFunctionCall = None
 currentObject = None
@@ -24,6 +23,16 @@ currentMemory = None
 currentObjectFC= None
 myGlobalVars = {}
 myConstantes = {}
+
+
+class Arreglo() :
+    def __init__(self):
+        self.r_rango = 1
+        self.contDim = 1
+        self.li = 0
+        self.ls = 0
+        self.cajita = 0
+        self.nextNode = None
 
 
 #& Direction Functions
@@ -343,37 +352,164 @@ class instructions(Visitor):
                     'scope' : 'global',
                     'address' : tbd
                 }
-        
+
+    #* Apartar memoria de arreglo
     def var_arreglo(self,tree):
+        global currArray 
+        id_arr = tree.children[2].value
         if currentFunction != None : 
-            # Revisas si esta dentro de la funcion actual
+            #* Revisas si esta dentro de la funcion actual
             if tree.children[2].value in myDirFunctions[currentFunction].varsDic:
                 #! Error validation
                 errorDoubleDeclatration(tree)
+            memo = apartarMemoriaLocal(tree.children[1].children[0].value)
+            mynode = Arreglo()
+            currArray = id_arr
             myDirFunctions[currentFunction].varsDic[tree.children[2].value] = {
                 'type' : tree.children[1].children[0].value,
                 'value' : tbd,
                 'scope' : 'local',
-                'address' : tbd
+                'address' : memo,
+                'arreglo' : mynode
             }
+  
+            
         else:
             if tree.children[2].value in myGlobalVars:
                 #! Error validation
                 errorDoubleDeclatration(tree)
             
             #* Si esta en global
+            memo = apartarMemoria(tree.children[1].children[0].value)
+            mynode = Arreglo()
+            
+            currArray = id_arr
             myGlobalVars[tree.children[2].value] = {
                 'type' : tree.children[1].children[0].value,
                 'value' : tbd,
                 'scope' : 'global',
-                'address'  : tbd
-        }
+                'address'  : memo,
+                'arreglo' : mynode
+            }
+
+    def np_arr_bracket1(self,tree):
+        mycontDim = myGlobalVars[currArray]['arreglo'].contDim
+        pilaDim.append((pilaO.pop()['address'], mycontDim))
+        
+    #* Obtener limite superior y limite inferior para calcular el rango R
+    def np_get_lim_s(self, tree):
+        nodoCurr = myGlobalVars[currArray]['arreglo']
+        # print(type(mainMemory[pilaO.pop()['address']]))
+        nodoCurr.ls = float(mainMemory[pilaO.pop()['address']])
+        nodoCurr.r_rango = (nodoCurr.ls - nodoCurr.li + 1) * nodoCurr.r_rango
+        
+    #* Actualiza la dimension += 1
+    def np_add_dimension(self,tree):
+        myGlobalVars[currArray]['arreglo'].contDim += 1 
+    
+    def np_calcular_m(self,tree):
+        nodoCurr = myGlobalVars[currArray]['arreglo']
+        # nodoCurr.dim = 1
+        nodoCurr.offset = 0 
+        nodoCurr.size = nodoCurr.r_rango
+        
+        #* Hacer mientras se llega al ultimo nodo
+        globR = nodoCurr.r_rango
+        globOff = nodoCurr.offset
+        while True : 
+            nodoCurr.m_motomami =  globR / (nodoCurr.ls - nodoCurr.li + 1)
+            print("La m vale",nodoCurr.m_motomami)
+            globR = nodoCurr.m_motomami
+            nodoCurr.offset = globOff + nodoCurr.li * nodoCurr.m_motomami
+            nodoCurr.cajita = nodoCurr.m_motomami
+            if nodoCurr.nextNode != None:
+                nodoCurr = nodoCurr.nextNode
+            else:
+                break
+
+        k_kilos = globOff
+        nodoCurr.cajita = k_kilos * (-1)
+
+    def np_arr_next_virtualadress(self,tree):
+        global currArray
+        nodoCurr = myGlobalVars[currArray]['arreglo']
+        temp = nodoCurr.size
+        #* global
+        while temp > 0:
+            apartarMemoria(myGlobalVars[currArray]['type'])
+            temp -= 1
+        currArray = None
+
+
+    def acceder_array(self,tree):
+        #* buscar en global
+        # myGlobalVars[tree.children[0]] #* name
+        print(tree.children[0])
+        try:
+            if 'arreglo' in myGlobalVars[tree.children[0]]:
+                pilaO.append({
+                    'address' : myGlobalVars[tree.children[0]]['address'],
+                    'type' : myGlobalVars[tree.children[0]]['type']
+                })
+                global currArray, currNodo
+                currArray = tree.children[0]
+                currNodo =  myGlobalVars[tree.children[0]]['arreglo']
+            else:
+                #* Una variable existente se intenta acceder a dimensiones inexistentes
+                errorDimensionAtt(tree)
+        except KeyError:
+            #* acceso a variable no definida de dimensiones
+            errorValueDontExist(tree)
+
+    def np_ver_dimension_access(self,tree):
+        #* global
+        global pilaDim
+        pilaDim.append({
+            'address' : pilaO.pop()['address'],
+            'dim' : 1
+        })
+
+
+
+    def np_arr_ver_expresion(self,tree):
+        #* arreglo global
+        global currNodo
+        Quads.append(["Ver",pilaO[-1]['address'] , currNodo.li,currNodo.ls ])
+        if currNodo.nextNode != None :
+            aux = pilaO.pop()
+            currentTempMemory = apartarMemoriaTemporal('int')
+            Quads.append( '*' ,aux["address"], currNodo.cajita, currentTempMemory)
+            pilaO.append({
+                'address' : currentTempMemory,
+                'type' : 'int'
+            })
+        if currNodo.contDim > 1 :
+            aux2 = pilaO.pop()
+            aux1 = pilaO.pop()
+            currentTempMemory = apartarMemoriaTemporal('int')
+            Quads.append(["+", aux1, aux2, currentTempMemory])
+            pilaO.append({
+                'address':currentTempMemory,
+                'type' : 'int'
+            })
+
+    def np_actualizar_dim(self,tree):
+        global currNodo
+        currNodo = currNodo.nextNode
+
+    def np_fin_array(self,tree):
+        global currNodo
+        aux1 = pilaO.pop()
+        currentTempMemory = apartarMemoriaTemporal('int')
+        Quads.append(['+', aux1, currNodo.cajita, currentTempMemory])
+        currentPointerMemory = apartarMemoriaPointer('int')
+        memoArr = myGlobalVars[currArray]['address']
+        Quads.append(['+',[ 'pointer' ,currentTempMemory], memoArr , currentPointerMemory])
+        pilaO.append({'address':currentPointerMemory, 'type': 'int'})
         
 
-        pilaO.append({
-            'address':tree.children[2].value, 
-            'type': tree.children[1].children[0].value
-        })
+   
+   
 
     '''
     Inicio de puntos neuralgicos
@@ -411,6 +547,21 @@ class instructions(Visitor):
                         })
                     except:
                         errorValueDontExist(tree)
+
+    def np_reasignar_arr(self,tree):
+         if Poper[-1] == '=':
+                right = pilaO.pop()
+                left = pilaO.pop()
+                operador = Poper.pop()
+                resultType =  getType(left,right,operador)
+                if resultType != OTypeError:
+                    print(left)
+                    print(left)
+                    print(right)
+                    Quads.append([operador, right,None, ['pointer',left['address']]])
+                else:
+                    #! Error validaiton
+                    errorType(operador, left, right)
 
     def np_asiganar_valor(self,tree):
         if Poper:
@@ -511,27 +662,6 @@ class instructions(Visitor):
     def np_meter_igual(self,tree):
         Poper.append('=')
 
-    def np_arr_bracket1(self,tree):
-        global contDim,isArray, R_rango
-        contDim = 1
-        isArray = True
-        R_rango = 1
-        aux = pilaO.pop()
-        pilaDim.append((aux['address'], contDim))
-
-
-    def np_arr_expresion(self,tree):
-        Quads.append(["ver", 0, pilaO.pop(), "currentTempMemory"])
-        
-        if contDim > 1 :
-            aux2 = pilaO.pop()
-            aux1 = pilaO.pop()
-            #
-            # Aparta memmoria con*#
-            #   apartarMemoriaTemporal(tipo de dato)
-            Quads.append(["+", aux1, aux2, "currentTempMemory"])
-
-
 
     '''
     Inicio de puntos neuralgicos
@@ -560,6 +690,7 @@ class instructions(Visitor):
                 if resultType != OTypeError:
                     currentTempMemory = apartarMemoriaTemporal(resultType)
                     pilaO.append({'address':currentTempMemory, 'type':resultType})
+                    
                     Quads.append([operador, left, right, currentTempMemory])
                 else:
                     errorType(operador, left, right)

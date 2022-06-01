@@ -51,20 +51,34 @@ while Quads[index][0] != 'Endprogram':
                 mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])/float(mm[Quads[index][2]['address']])
 
         elif Quads[index][0] == '+' :
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])+int(mm[Quads[index][2]['address']])
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])+int(mm[Quads[index][2]['address']])
 
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])+float(mm[Quads[index][2]['address']])
-            
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])+int(mm[Quads[index][2]['address']])
-            
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])+float(mm[Quads[index][2]['address']])
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])+float(mm[Quads[index][2]['address']])
+                
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])+int(mm[Quads[index][2]['address']])
+                
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])+float(mm[Quads[index][2]['address']])
 
-            elif Quads[index][1]['type'] == 'String' and Quads[index][2]['type'] == 'String':
-                mm[Quads[index][3]] = str(mm[Quads[index][1]['address']])+str(mm[Quads[index][2]['address']])
+                elif Quads[index][1]['type'] == 'String' and Quads[index][2]['type'] == 'String':
+                    mm[Quads[index][3]] = str(mm[Quads[index][1]['address']])+str(mm[Quads[index][2]['address']])
+            except:
+                try:
+                    #TODO validar en * / - y en  = 
+                    # (pointer) + num 
+                    #* pointer izq
+                    mm[Quads[index][3]] = mm[mm[Quads[index][1][1]['address']]['address']] + mm[Quads[index][2]['address']]
+                except:
+                    try:
+                        # num + (pointer)
+                        mm[Quads[index][3]] = mm[Quads[index][1]] + mm[mm[Quads[index][2][1]['address']]['address']]
+                    except:
+                        #*(pointer) + (pointer)
+                        mm[Quads[index][3]] = mm[mm[Quads[index][1][1]['address']]['address']]+ mm[mm[Quads[index][2][1]['address']]['address']]
 
         elif Quads[index][0] == '-' :
             if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':

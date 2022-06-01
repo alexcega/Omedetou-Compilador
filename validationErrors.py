@@ -139,3 +139,14 @@ def errorRead(tree):
     print()
     print("Name error, no such variable with name '"+ tree.children[2].value + "' at line ", tree.children[2].line)
     exit()
+
+def errorDimensionAtt(tree):
+    print(code[tree.children[0].line-1],end='')
+    for x in range(len(code[tree.children[0].line-1])):
+        if x !=tree.children[0].column:
+            print(' ', end='')
+        else: 
+            print('^', end='')
+    print()
+    print('Error Dimension, variable',tree.children[0], 'has no dimensions')
+    exit()

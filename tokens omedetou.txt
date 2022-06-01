@@ -74,20 +74,33 @@ np_fin_funcion:
 
 vars    : VAR tipo IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor  NEW_LINE                -> var_con_valor
         | VAR tipo IDENTIFIER                                                                           -> var_sin_valor
-        | VAR tipo IDENTIFIER np_arr_bracket1 np_meterff LEFT_BRACKET np_arr_dim exp np_arr_expresion arreglo1 RIGHT_BRACKET NEW_LINE    -> var_arreglo
+        | VAR tipo IDENTIFIER LEFT_BRACKET exp np_get_lim_s  RIGHT_BRACKET arreglo1 np_calcular_m np_arr_next_virtualadress NEW_LINE    -> var_arreglo
         | VAR IDENTIFIER IDENTIFIER                                                                     -> var_objeto
-arreglo1 : COMMA np_arr_dim exp np_arr_expresion arreglo2 |                                                                   -> arr_param
-arreglo2 : COMMA np_arr_dim exp np_arr_expresion |                                                                            -> arr_param2
+
+arreglo1 : LEFT_BRACKET np_add_dimension exp  RIGHT_BRACKET arreglo2 |                                                                   -> arr_param
+arreglo2 : LEFT_BRACKET np_add_dimension exp  RIGHT_BRACKET|                                                                            -> arr_param2
 np_asiganar_valor:
 np_meter_igual:
-
+np_add_dimension: 
 np_arr_bracket1:
-np_arr_expresion:
 np_arr_dim:
 np_arr_bracket2:
+np_get_lim_s:
+np_calcular_m:
+np_arr_next_virtualadress:
 
 
 asignacion      : IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor NEW_LINE -> reasignar
+                | IDENTIFIER DOT IDENTIFIER  EQUAL expresion NEW_LINE ->reasignar_obj
+                | acceder_array EQUAL expresion -> reasignar_casilla_matriz
+                
+acceder_array  : IDENTIFIER  LEFT_BRACKET np_ver_dimension_access np_meterff expresion np_arr_ver_expresion RIGHT_BRACKET accesso_matriz*  np_fin_array np_sacarff  
+accesso_matriz : np_actualizar_dim LEFT_BRACKET np_ver_dimension_access np_meterff expresion np_arr_ver_expresion RIGHT_BRACKET 
+
+np_actualizar_dim:
+np_ver_dimension_access:
+np_arr_ver_expresion:
+np_fin_array:
 
 bloque: LEFT_CURRLY_BRACES (b1?|function_return)+ RIGHT_CURRLY_BRACES
 b1 : estatuto b1*
@@ -154,7 +167,7 @@ np_sacarff:
 
 factor_var  : var_cte -> guardar_cte
         | IDENTIFIER DOT IDENTIFIER -> guardar_var_de_obj
-
+        | acceder_array -> guardar_acceder_array
 
 
 class : LESS_THAN CLASS GREATER_THAN IDENTIFIER LEFT_CURRLY_BRACES np_inicio_vars_obj (vars|COMMENT)* np_fin_vars_obj (function|COMMENT)*  RIGHT_CURRLY_BRACES np_fin_clase->inicializar_clase

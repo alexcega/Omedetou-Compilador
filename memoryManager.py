@@ -14,7 +14,7 @@ rangoFloat = limites(rangoInt.ls, rangoInt.ls + total)
 rangoBool = limites(rangoFloat.ls, rangoFloat.ls+ total)
 rangoStirng = limites(rangoBool.ls, rangoBool.ls+ total)
 
-# print(rangoInt.li, rangoStirng.ls)
+print(rangoInt.li, rangoStirng.ls)
 desfase = rangoStirng.ls
 #~ Temporales
 rangoTempInt = limites(0 + desfase ,total + desfase)
@@ -22,20 +22,26 @@ rangoTempFloat = limites(rangoInt.ls + desfase, rangoInt.ls + total + desfase)
 rangoTempBool = limites(rangoFloat.ls + desfase, rangoFloat.ls + total+ desfase)
 rangoTempStirng = limites(rangoBool.ls + desfase, rangoBool.ls + total + desfase)
 
-# print(rangoTempInt.li, rangoTempStirng.ls)
+print(rangoTempInt.li, rangoTempStirng.ls)
 #~ Locales
 rangoLocalInt = limites(0 + desfase*2  ,total + desfase)
 rangoLocalFloat = limites(rangoTempInt.ls + desfase, rangoTempInt.ls + total + desfase)
 rangoLocalBool = limites(rangoTempFloat.ls + desfase, rangoTempFloat.ls + total+ desfase)
 rangoLocalStirng = limites(rangoTempBool.ls + desfase, rangoTempBool.ls + total + desfase)
-# print(rangoLocalInt.li, rangoLocalStirng.ls)
+print(rangoLocalInt.li, rangoLocalStirng.ls)
 
 #~ Constantes
 rangoConstInt = limites(0 + desfase*3  ,total + desfase)
 rangoConstFloat = limites(rangoLocalInt.ls + desfase, rangoLocalInt.ls + total + desfase)
 rangoConstBool = limites(rangoLocalFloat.ls + desfase, rangoLocalFloat.ls + total+ desfase)
 rangoConstStirng = limites(rangoLocalBool.ls + desfase, rangoLocalBool.ls + total + desfase)
-# print(rangoConstInt.li, rangoConstStirng.ls)
+print(rangoConstInt.li, rangoConstStirng.ls)
+#~ Pointers
+rangoPointerInt = limites(0 + desfase*4, total + desfase)
+rangoPointerFloat = limites(rangoConstInt.ls + desfase, rangoConstInt.ls + total + desfase)
+rangoPointerBool = limites(rangoConstFloat.ls + desfase, rangoConstFloat.ls + total + desfase)
+rangoPointerString = limites(rangoConstBool.ls + desfase, rangoConstBool.ls + total + desfase)
+print(rangoPointerInt.li, rangoPointerString.ls)
 
 #~ Pointers
 rangoPointerInt = limites(0 + desfase*4, total + desfase)
@@ -44,7 +50,7 @@ rangoPointerBool = limites(rangoConstFloat.ls + desfase, rangoConstFloat.ls + to
 rangoPointerString = limites(rangoConstBool.ls + desfase, rangoConstBool.ls + total + desfase)
 
 #& Memoria
-mainMemory = [ None for _ in range(rangoConstStirng.ls)]
+mainMemory = [ None for _ in range(rangoPointerString.ls)]
 # print(len(mainMemory))
 
 def apartarMemoria(tipo ):
@@ -78,6 +84,7 @@ def apartarMemoriaTemporal(tipo):
         miRango = rangoTempBool
     elif tipo == 'String':
         miRango = rangoTempStirng
+    
     indice = miRango.li + miRango.cont
     miRango.cont += 1 
     checkCounter(miRango)

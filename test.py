@@ -1,1 +1,1 @@
-myTest = 'test_objetos_mv_atributo_y_funcion.txt'
+myTest = 'test_arr_1dim.txt'

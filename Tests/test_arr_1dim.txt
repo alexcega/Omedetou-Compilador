@@ -1,6 +1,10 @@
 Start
-Var int myarr[7]
+Var int uno = 3
+Var int dos = 9
+Var int myarr2[3]
+Var int myarr3 = 2
+
 Void Main () {
-    
+    myarr2[1] = myarr2[0]
 }
 Finish
