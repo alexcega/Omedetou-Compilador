@@ -97,6 +97,8 @@ asignacion      : IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor NE
 acceder_array  : IDENTIFIER  LEFT_BRACKET np_ver_dimension_access np_meterff expresion np_arr_ver_expresion RIGHT_BRACKET accesso_matriz*  np_fin_array np_sacarff  
 accesso_matriz : np_actualizar_dim LEFT_BRACKET np_ver_dimension_access np_meterff expresion np_arr_ver_expresion RIGHT_BRACKET 
 
+size_arr : IDENTIFIER COLON "size"
+
 np_reasignar_arr:
 np_actualizar_dim:
 np_ver_dimension_access:
@@ -169,6 +171,7 @@ np_sacarff:
 factor_var  : var_cte -> guardar_cte
         | IDENTIFIER DOT IDENTIFIER -> guardar_var_de_obj
         | acceder_array -> guardar_acceder_array
+        | size_arr -> arr_size
 
 
 class : LESS_THAN CLASS GREATER_THAN IDENTIFIER LEFT_CURRLY_BRACES np_inicio_vars_obj (vars|COMMENT)* np_fin_vars_obj (function|COMMENT)*  RIGHT_CURRLY_BRACES np_fin_clase->inicializar_clase

@@ -1,0 +1,40 @@
+Start
+    Void Main () {
+        Var int arrS[8]
+        arrS[1] = 1
+        arrS[2] = 2
+        arrS[3] = 3
+        arrS[4] = 4
+        arrS[5] = 5
+        Var int aux = 0
+        While (aux < arrS:size){
+            arrS[aux] = aux
+            aux = aux + 1
+        }
+        aux = 0
+        While (aux < arrS:size){
+            Print(arrS[aux])
+            aux = aux + 1
+        }
+
+        aux = 0 
+        Print("espacio")
+        If ( arrS[aux] != 100){
+                Print(aux)
+                Print(arrS[aux])
+            }
+        Else{
+
+        Print("final")
+        }
+        #While (aux < arrS:size ){
+        #    If ( 1 != arrS[aux]){
+        #        Print(aux)
+        #        Print(arrS[aux])
+        #    }
+
+        #    aux = aux + 1
+        #}
+
+    }
+Finish

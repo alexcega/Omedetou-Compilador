@@ -355,7 +355,9 @@ class instructions(Visitor):
                     'scope' : 'global',
                     'address' : tbd
                 }
-
+    '''
+    Inicio de declaraciones de arreglos
+    '''
     def var_arreglo(self,tree):
         global currArray 
         id_arr = tree.children[2].value
@@ -562,7 +564,6 @@ class instructions(Visitor):
                     currArray = tree.children[0]
                     currNodo =  myDirFunctions[currentFunction].varsDic[tree.children[0]]['arreglo']
             except KeyError:
-                print('Aqui')
                 errorValueDontExist(tree)
 
     def np_ver_dimension_access(self,tree):
@@ -643,6 +644,55 @@ class instructions(Visitor):
             'type': 'int'} ,currentPointerMemory ])
         pilaO.append({'address':['pointer',currentPointerMemory], 'type': eltypo})
         
+    def size_arr(self,tree):
+        print(tree)
+        currArray = tree.children[0].value
+        print(tree.children[0])
+        print(currArray)
+        
+        #* global
+        if currArray in myGlobalVars:
+            if 'arreglo' in myGlobalVars[currArray]:
+                ansSize = myGlobalVars[currArray]['arreglo'].ls + 1 
+            else:
+                #* Una variable existente se intenta acceder a dimensiones inexistentes
+                errorDimensionAtt(tree)
+        #* local
+        elif currArray in myDirFunctions[currentFunction].varsDic:
+            if 'arreglo' in myDirFunctions[currentFunction].varsDic[currArray]:
+                ansSize = myDirFunctions[currentFunction].varsDic[currArray]['arreglo'].ls + 1 
+            else:
+                #* Una variable existente se intenta acceder a dimensiones inexistentes
+                errorDimensionAtt(tree)
+        #* variable de objeto
+        elif currArray in myObjects[currentObject].objectVarsDic:
+            if 'arreglo' in myObjects[currentObject].objectVarsDic[currArray]:
+                ansSize = myObjects[currentObject].objectVarsDic[currArray]['arreglo'].ls + 1 
+            else:
+                #* Una variable existente se intenta acceder a dimensiones inexistentes
+                errorDimensionAtt(tree)
+        #* variable de funcion de objeto
+        elif currArray in myObjects[currentObject].funciones[currentFunction].varsDic:
+            if 'arreglo' in myObjects[currentObject].funciones[currentFunction].varsDic[currArray]:
+                ansSize = myObjects[currentObject].funciones[currentFunction].varsDic[currArray]['arreglo'].ls + 1 
+            else:
+                #* Una variable existente se intenta acceder a dimensiones inexistentes
+                errorDimensionAtt(tree)
+        # print(ansSize)
+        ansSize = int(ansSize)
+        if ansSize in myConstantes:
+            pilaO.append({
+                'address': myConstantes[ansSize],
+                'type' :'int'
+            })
+        else:
+            espacio = apartarMemoriaConst('int')
+            mainMemory[espacio] = ansSize
+            myConstantes[ansSize] = espacio
+            pilaO.append({
+                'address': espacio,
+                'type' : 'int'
+            })
 
     '''
     Inicio de puntos neuralgicos

@@ -55,7 +55,7 @@ def apartarMemoria(tipo ):
     indice = miRango.li + miRango.cont
     miRango.cont += 1 
     checkCounter(miRango)
-    mainMemory[indice] = -1
+    mainMemory[indice] = 'TBD'
     return indice
 
 def checkCounter(obj):
@@ -77,7 +77,7 @@ def apartarMemoriaTemporal(tipo):
     indice = miRango.li + miRango.cont
     miRango.cont += 1 
     checkCounter(miRango)
-    mainMemory[indice] = -1
+    mainMemory[indice] = 'TBD'
     return indice
 
 def apartarMemoriaLocal(tipo):
@@ -93,7 +93,7 @@ def apartarMemoriaLocal(tipo):
     indice = miRango.li + miRango.cont
     miRango.cont += 1 
     checkCounter(miRango)
-    mainMemory[indice] = -1
+    mainMemory[indice] = 'TBD'
     return indice
 
 def apartarMemoriaConst(tipo):
@@ -109,7 +109,7 @@ def apartarMemoriaConst(tipo):
     indice = miRango.li + miRango.cont
     miRango.cont += 1 
     checkCounter(miRango)
-    mainMemory[indice] = -1
+    mainMemory[indice] = 'TBD'
     return indice
 
 def apartarMemoriaPointer(tipo):
@@ -125,7 +125,7 @@ def apartarMemoriaPointer(tipo):
     indice = miRango.li + miRango.cont
     miRango.cont += 1 
     checkCounter(miRango)
-    mainMemory[indice] = -1
+    mainMemory[indice] = 'TBD'
     return indice
 
 #^ Siempre es de los locales

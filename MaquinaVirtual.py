@@ -37,15 +37,20 @@ while Quads[index][0] != 'Endprogram':
             except TypeError:
                 try:
                 #* (p) * num 
-                    mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) * int(mm[Quads[index][2]['address']])
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) * float(mm[Quads[index][2]['address']])
                 except TypeError:
                     try:
                     #* num * (p)
-                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) * int(mm[mm[Quads[index][2]['address'][1]]])
+                        mm[Quads[index][3]] = float(mm[Quads[index][1]['address']]) * float(mm[mm[Quads[index][2]['address'][1]]])
                     except TypeError:
                         #* (p) * (p)
-                        mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) * int(mm[mm[Quads[index][2]['address'][1]]])
-
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) * float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '/' :
             if mm[Quads[index][2]['address']] == '0':
                 # raise ZeroDivisionError ('Zero division error')
@@ -82,15 +87,20 @@ while Quads[index][0] != 'Endprogram':
                 #* Arreglos
                 try:
                 #* (p) + num 
-                    mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) + int(mm[Quads[index][2]['address']])
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) + float(mm[Quads[index][2]['address']])
                 except TypeError:
                     try:
                     #* num + (p)
-                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) + int(mm[mm[Quads[index][2]['address'][1]]])
+                        mm[Quads[index][3]] = float(mm[Quads[index][1]['address']]) + float(mm[mm[Quads[index][2]['address'][1]]])
                     except TypeError:
                         #* (p) + (p)
-                        mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) + int(mm[mm[Quads[index][2]['address'][1]]])
-
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) + float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '-' :
             try:
                 if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
@@ -105,17 +115,22 @@ while Quads[index][0] != 'Endprogram':
                 elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
                     mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])-float(mm[Quads[index][2]['address']])
             except TypeError:
-                        try:
-                        #* (p) * num 
-                            mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) - int(mm[Quads[index][2]['address']])
-                        except TypeError:
-                            try:
-                            #* num * (p)
-                                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) - int(mm[mm[Quads[index][2]['address'][1]]])
-                            except TypeError:
-                                #* (p) * (p)
-                                mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) - int(mm[mm[Quads[index][2]['address'][1]]])
-
+                try:
+                #* (p) * num 
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) - float(mm[Quads[index][2]['address']])
+                except TypeError:
+                    try:
+                    #* num * (p)
+                        mm[Quads[index][3]] = float(mm[Quads[index][1]['address']]) - float(mm[mm[Quads[index][2]['address'][1]]])
+                    except TypeError:
+                        #* (p) * (p)
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) - float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '=':
             try:
                 mm[Quads[index][3]] = mm[Quads[index][1]['address']]
@@ -131,104 +146,220 @@ while Quads[index][0] != 'Endprogram':
                     except TypeError:   
                         #* (poiner) = (pointer)
                         mm[mm[Quads[index][3][1]]] =mm[mm[Quads[index][1]['address'][1]]]
-
-                        # exit()
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '<':
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<float(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])<int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])<float(mm[Quads[index][2]['address']])
-              
-            elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
-                mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])<bool(mm[Quads[index][2]['address']])
-            
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<float(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])<int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])<float(mm[Quads[index][2]['address']])
+                
+                elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
+                    mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])<bool(mm[Quads[index][2]['address']])
+            except TypeError:
+                try:
+                #* (p) * num 
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) < float(mm[Quads[index][2]['address']])
+                except TypeError:
+                    try:
+                    #* num * (p)
+                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) < float(mm[mm[Quads[index][2]['address'][1]]])
+                    except TypeError:
+                        #* (p) * (p)
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) < float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '>':
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])>int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])>float(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])>int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])>float(mm[Quads[index][2]['address']])
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])>int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])>float(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])>int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])>float(mm[Quads[index][2]['address']])
 
-            elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
-                mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])>bool(mm[Quads[index][2]['address']])
-            
+                elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
+                    mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])>bool(mm[Quads[index][2]['address']])
+            except TypeError:
+                try:
+                #* (p) * num 
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) > float(mm[Quads[index][2]['address']])
+                except TypeError:
+                    try:
+                    #* num * (p)
+                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) > float(mm[mm[Quads[index][2]['address'][1]]])
+                    except TypeError:
+                        #* (p) * (p)
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) > float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '>=':
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])>=int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])>=float(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])>=int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])>=float(mm[Quads[index][2]['address']])
-            
-            elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
-                mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])>=bool(mm[Quads[index][2]['address']])
-            
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])>=int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])>=float(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])>=int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])>=float(mm[Quads[index][2]['address']])
+                
+                elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
+                    mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])>=bool(mm[Quads[index][2]['address']])
+            except TypeError:
+                try:
+                #* (p) * num 
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) >= float(mm[Quads[index][2]['address']])
+                except TypeError:
+                    try:
+                    #* num * (p)
+                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) >= float(mm[mm[Quads[index][2]['address'][1]]])
+                    except TypeError:
+                        #* (p) * (p)
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) >= float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '<=':
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<=int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<=float(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])<=int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])<=float(mm[Quads[index][2]['address']])
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<=int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<=float(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])<=int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])<=float(mm[Quads[index][2]['address']])
 
-            elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
-                mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])<=bool(mm[Quads[index][2]['address']])
-            
+                elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
+                    mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])<=bool(mm[Quads[index][2]['address']])
+            except TypeError:
+                try:
+                #* (p) * num 
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) <= float(mm[Quads[index][2]['address']])
+                except TypeError:
+                    try:
+                    #* num * (p)
+                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) <= float(mm[mm[Quads[index][2]['address'][1]]])
+                    except TypeError:
+                    
+                        #* (p) * (p)
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) <= float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '!=':
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != float(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])!=int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])!=float(mm[Quads[index][2]['address']])
-            
-            elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
-                mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])!=bool(mm[Quads[index][2]['address']])
-            
+            print(Quads[index])
+            exit()
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != float(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])!=int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])!=float(mm[Quads[index][2]['address']])
+                
+                elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
+                    mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])!=bool(mm[Quads[index][2]['address']])
+            except TypeError:
+                try:
+                #* (p) != num 
+                    print('uno')
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) != float(mm[Quads[index][2]['address']])
+                except TypeError:
+                    try:
+                        print('dos')
+                    #* num != (p)
+                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != float(mm[mm[Quads[index][2]['address'][1]]])
+                        print(mm[Quads[index][3]])
+                        exit()
+
+                    except TypeError:
+                        print('tres')
+                        #* (p) != (p)
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) != float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
         elif Quads[index][0] == '==':
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) == int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) == float(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])==int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])==float(mm[Quads[index][2]['address']])
-            
-            elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
-                mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])==bool(mm[Quads[index][2]['address']])
-            
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) == int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) == float(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])==int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])==float(mm[Quads[index][2]['address']])
+                
+                elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
+                    mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])==bool(mm[Quads[index][2]['address']])
+            except TypeError:
+                try:
+                #* (p) * num 
+                    mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) == float(mm[Quads[index][2]['address']])
+                except TypeError:
+                    try:
+                    #* num * (p)
+                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) == float(mm[mm[Quads[index][2]['address'][1]]])
+                    except TypeError:
+                        #* (p) * (p)
+                        mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) == float(mm[mm[Quads[index][2]['address'][1]]])
+                    except ValueError:
+                        print("Array contains non defined values")
+                        exit()
+                except ValueError:
+                    print("Array contains non defined values")
+                    exit()
+
         elif Quads[index][0] == '|':
             if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
                 mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) or int(mm[Quads[index][2]['address']])
@@ -262,7 +393,6 @@ while Quads[index][0] != 'Endprogram':
                 mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']]) and bool(mm[Quads[index][2]['address']])
             
     elif Quads[index][0] == 'Print':
-        # print('estoy imprimiendo la ', Quads[index][3])
         try:
             print(mm[Quads[index][3]])
         except TypeError:

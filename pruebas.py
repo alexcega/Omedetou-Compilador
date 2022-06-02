@@ -23,8 +23,12 @@
 # imprime(True)
 
 
-var = 'vaca'
+myMat = [   [1,1,1,1], 
+            [1,1,1,1], 
+            [1,1,1,1],
+            [1,1,1,1], 
+            [1,1,1,1], 
+            [1,1,1,1]
+        ]
 
-var = float(var)
-print(var)
-
+print(len(myMat))
