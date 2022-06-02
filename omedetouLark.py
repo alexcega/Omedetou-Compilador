@@ -98,7 +98,6 @@ for k,v in myConstantes.items():
 
 # Measure-Command {python omedetouLark.py}
 
-
 #~ how to print all tokens
 # all_tokens = my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token))
 # print('alltokens \n', *all_tokens)

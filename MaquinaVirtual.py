@@ -22,17 +22,29 @@ while Quads[index][0] != 'Endprogram':
     # print("index actual", index)
     if Quads[index][0] in '*/+-!>==<=|&':
         if Quads[index][0] == '*' :
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])*int(mm[Quads[index][2]['address']])
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])*int(mm[Quads[index][2]['address']])
 
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])*int(mm[Quads[index][2]['address']])
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])*int(mm[Quads[index][2]['address']])
 
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])*float(mm[Quads[index][2]['address']])
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])*float(mm[Quads[index][2]['address']])
 
-            else:
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])*float(mm[Quads[index][2]['address']])
+                else:
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])*float(mm[Quads[index][2]['address']])
+            except TypeError:
+                try:
+                #* (p) * num 
+                    mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) * int(mm[Quads[index][2]['address']])
+                except TypeError:
+                    try:
+                    #* num * (p)
+                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) * int(mm[mm[Quads[index][2]['address'][1]]])
+                    except TypeError:
+                        #* (p) * (p)
+                        mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) * int(mm[mm[Quads[index][2]['address'][1]]])
 
         elif Quads[index][0] == '/' :
             if mm[Quads[index][2]['address']] == '0':
@@ -69,30 +81,41 @@ while Quads[index][0] != 'Endprogram':
             except TypeError:
                 #* Arreglos
                 try:
-                    #TODO validar en * / - y en  =  y los demas
-                    #* (pointer) + num 
-                    mm[Quads[index][3]] = mm[mm[Quads[index][1][1]['address']]['address']] + mm[Quads[index][2]['address']]
-                except:
+                #* (p) + num 
+                    mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) + int(mm[Quads[index][2]['address']])
+                except TypeError:
                     try:
-                        #* num + (pointer)
-                        mm[Quads[index][3]] = mm[Quads[index][1]] + mm[mm[Quads[index][2][1]['address']]['address']]
-                    except:
-                        #*(pointer) + (pointer)
-                        mm[Quads[index][3]] = mm[mm[Quads[index][1][1]['address']]['address']]+ mm[mm[Quads[index][2][1]['address']]['address']]
+                    #* num + (p)
+                        mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) + int(mm[mm[Quads[index][2]['address'][1]]])
+                    except TypeError:
+                        #* (p) + (p)
+                        mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) + int(mm[mm[Quads[index][2]['address'][1]]])
 
         elif Quads[index][0] == '-' :
-            if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])-int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])-float(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])-int(mm[Quads[index][2]['address']])
-    
-            elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
-                mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])-float(mm[Quads[index][2]['address']])
-    
+            try:
+                if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])-int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])-float(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'int':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])-int(mm[Quads[index][2]['address']])
+        
+                elif Quads[index][1]['type'] == 'float' and Quads[index][2]['type'] == 'float':
+                    mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])-float(mm[Quads[index][2]['address']])
+            except TypeError:
+                        try:
+                        #* (p) * num 
+                            mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) - int(mm[Quads[index][2]['address']])
+                        except TypeError:
+                            try:
+                            #* num * (p)
+                                mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) - int(mm[mm[Quads[index][2]['address'][1]]])
+                            except TypeError:
+                                #* (p) * (p)
+                                mm[Quads[index][3]] = int(mm[mm[Quads[index][1]['address'][1]]]) - int(mm[mm[Quads[index][2]['address'][1]]])
+
         elif Quads[index][0] == '=':
             try:
                 mm[Quads[index][3]] = mm[Quads[index][1]['address']]
@@ -101,16 +124,15 @@ while Quads[index][0] != 'Endprogram':
                 #* (pointer) = num
                     mm[mm[Quads[index][3][1]]] = mm[Quads[index][1]['address']]
                 except TypeError:
-                #* num = (pointer)
-                    # print(Quads[index][3])
-                    # print(mm[Quads[index][3]])
-                    # print(Quads[index][1]['address'][1])
-                    # print(mm[Quads[index][1]['address'][1]])
-                    # print(mm[mm[Quads[index][1]['address'][1]]])
-                    mm[Quads[index][3]] = mm[mm[Quads[index][1]['address'][1]]]
+                    try:
+                    #* num = (pointer)
+                        mm[Quads[index][3]] = mm[mm[Quads[index][1]['address'][1]]]
 
-                #* (poiner) = (pointer)
-                    #mm[mm[Quads[index][3][1]]] = mm[mm[Quads[index][1][1]['address']]['address']]
+                    except TypeError:   
+                        #* (poiner) = (pointer)
+                        mm[mm[Quads[index][3][1]]] =mm[mm[Quads[index][1]['address'][1]]]
+
+                        # exit()
         elif Quads[index][0] == '<':
             if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
                 mm[Quads[index][3]] = int(mm[Quads[index][1]['address']])<int(mm[Quads[index][2]['address']])

@@ -1,3 +1,4 @@
+from ast import operator
 from cuboSemantico import getType, OTypeError
 from lark import Visitor
 from validationErrors import *
@@ -113,6 +114,7 @@ class instructions(Visitor):
         except KeyError:
         #* Crear memoria nueva
             espacio = apartarMemoriaConst('int')
+            print('Debe ser por aqui ', espacio)
             mainMemory[espacio] = tree.children[0].value
             myConstantes[tree.children[0].value] = espacio
             pilaO.append({'address': espacio, 'type': 'int'})
@@ -127,6 +129,7 @@ class instructions(Visitor):
         except KeyError:
         #* Crear memoria nueva
             espacio = apartarMemoriaConst('float')
+            print('Debe ser por aqui ', espacio)
             mainMemory[espacio] = tree.children[0].value
             myConstantes[tree.children[0].value] = espacio
             pilaO.append({'address': espacio, 'type': 'float'})
@@ -359,6 +362,7 @@ class instructions(Visitor):
         if currentFunction != None : 
             typo_de_arr = tree.children[1].children[0].value
             memo = apartarMemoriaLocal(typo_de_arr)
+            print('cual aparte', memo)
             try:
                 mynode = Arreglo()
                 currArray = id_arr
@@ -434,6 +438,7 @@ class instructions(Visitor):
 
                 #* else
                 memo = apartarMemoriaLocal(tree.children[1].children[0].value)
+                
                 mynode = Arreglo()
                 currArray = id_arr
                 myObjects[currentObject].objectVarsDic[tree.children[2].value] = {
@@ -524,7 +529,7 @@ class instructions(Visitor):
                     typoApartar = myObjects[currentObject].funciones[currentFunction].varsDic[currArray]['type']
             queremosApartar = apartarMemoriaLocal
         temp = nodoCurr.size
-        # exit()
+
         while temp > 1:
             queremosApartar(typoApartar)
             temp -= 1
@@ -534,7 +539,6 @@ class instructions(Visitor):
     def acceder_array(self,tree):
         #* buscar en global
         # myGlobalVars[tree.children[0]] #* name
-        print(tree.children[0])
         try:
             if 'arreglo' in myGlobalVars[tree.children[0]]:
                 pilaO.append({
@@ -542,14 +546,24 @@ class instructions(Visitor):
                     'type' : myGlobalVars[tree.children[0]]['type']
                 })
                 global currArray, currNodo
-                currArray = tree.children[0]
+                currArray = tree.children[0].value
                 currNodo =  myGlobalVars[tree.children[0]]['arreglo']
             else:
                 #* Una variable existente se intenta acceder a dimensiones inexistentes
                 errorDimensionAtt(tree)
         except KeyError:
-            #* acceso a variable no definida de dimensiones
-            errorValueDontExist(tree)
+            #*local
+            try:
+                if 'arreglo' in myDirFunctions[currentFunction].varsDic[tree.children[0]]:
+                    pilaO.append({
+                        'address' : myDirFunctions[currentFunction].varsDic[tree.children[0]]['address'],
+                        'type' : myDirFunctions[currentFunction].varsDic[tree.children[0]]['type']
+                    })
+                    currArray = tree.children[0]
+                    currNodo =  myDirFunctions[currentFunction].varsDic[tree.children[0]]['arreglo']
+            except KeyError:
+                print('Aqui')
+                errorValueDontExist(tree)
 
     def np_ver_dimension_access(self,tree):
         #* global
@@ -588,7 +602,6 @@ class instructions(Visitor):
         currNodo = currNodo.nextNode
 
     def np_fin_array(self,tree):
-        #* global
         global currNodo
         aux1 = pilaO.pop()
         # currentTempMemory = apartarMemoriaTemporal('int')
@@ -596,26 +609,40 @@ class instructions(Visitor):
         # Quads.append(['+', aux1, {
         #     'address':currNodo.cajita,
         #     'type':'int'}, currentTempMemory])
-        currentPointerMemory = apartarMemoriaPointer('int')
-        if myGlobalVars[currArray]['address'] not in myConstantes:
-            newconst= apartarMemoriaConst('int')
-            myConstantes[myGlobalVars[currArray]['address']] = newconst
-            mainMemory[newconst] = myGlobalVars[currArray]['address']
-        memoArr =  myConstantes[myGlobalVars[currArray]['address']]
+        currentPointerMemory = apartarMemoriaPointer(aux1['type'])
+        #* global
+        try:
+            if myGlobalVars[currArray]['address'] not in myConstantes:
+                newconst= apartarMemoriaConst('int')
+                myConstantes[myGlobalVars[currArray]['address']] = newconst
+                mainMemory[newconst] = myGlobalVars[currArray]['address']
+            memoArr =  myConstantes[myGlobalVars[currArray]['address']]
+        except KeyError:
+            #* local
+            if myDirFunctions[currentFunction].varsDic[currArray]['address'] not in myConstantes:
+                newconst= apartarMemoriaConst('int')
+                myConstantes[myDirFunctions[currentFunction].varsDic[currArray]['address']] = newconst
+                mainMemory[newconst] = myDirFunctions[currentFunction].varsDic[currArray]['address']
+            memoArr =  myConstantes[myDirFunctions[currentFunction].varsDic[currArray]['address']]
+
         # Quads.append(['+',{
         #     'address':currentTempMemory,
         #     'type': 'int'
         # }, {
         #     'address': memoArr,
         #     'type': 'int'} ,currentPointerMemory ])
+        print('ver',aux1)
+        try:
+            #*global
+            eltypo = myGlobalVars[currArray]['type']
+        except:
+            eltypo = myDirFunctions[currentFunction].varsDic[currArray]['type']
+            pass
         Quads.append(['+',aux1, {
             'address': memoArr,
             'type': 'int'} ,currentPointerMemory ])
-        pilaO.append({'address':['pointer',currentPointerMemory], 'type': 'int'})
+        pilaO.append({'address':['pointer',currentPointerMemory], 'type': eltypo})
         
-
-   
-   
 
     '''
     Inicio de puntos neuralgicos
@@ -661,10 +688,9 @@ class instructions(Visitor):
                     left = pilaO.pop()
                     operador = Poper.pop()
                     resultType =  getType(left,right,operador)
+                    print(right, left, operador)
                     if resultType != OTypeError:
-                        print(left)
-                        print(left)
-                        print(right)
+
                         Quads.append([operador, right,None,left['address']])
                     else:
                         #! Error validaiton
@@ -702,7 +728,8 @@ class instructions(Visitor):
                             try: #* Asignar valores propios
                                 #*Funcion a la que pertenece
                                 if myDirFunctions[currentFunction].varsDic[left['address']]['address'] == 'tbd':
-                                    currentMemory = apartarMemoriaLocal(resultType)
+                                    currentMemory = apartarMemoriaTemporal(resultType)
+                                    print('cual aparte', currentMemory)
                                     Quads.append([operador, right, None, currentMemory])
                                     myDirFunctions[currentFunction].varsDic[left['address']]['value'] =  right['address']
                                     myDirFunctions[currentFunction].varsDic[left['address']]['address'] =  currentMemory
@@ -1026,8 +1053,6 @@ class instructions(Visitor):
                         'type': fType,
                         'address': dondeva}
                 except KeyError:
-                    # print(myObjects[currentObject].funciones[currentFunction].paramsDic)
-                    # exit()
                     if fID in  myObjects[currentObject].funciones[currentFunction].paramsDic:
                         #! Error Validation, name of parameter repeted
                         errorDuplicateArgument(tree)
@@ -1043,8 +1068,6 @@ class instructions(Visitor):
         if currentObject == None:
             Quads.append(['Return',None,None, pg])
         else:
-            print(currentObject)
-            # exit()
             Quads.append(['Return',currentFunction,currentObject, pg])
         # myGlobalVars[currentFunction]['address'] = pg
 
@@ -1271,7 +1294,6 @@ class instructions(Visitor):
             })
 
     #TODO Matrix @Guasso
-
 
 #? posible registro del padre de current rule
 class Parent(Visitor):

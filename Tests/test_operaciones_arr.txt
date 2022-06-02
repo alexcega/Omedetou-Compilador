@@ -1,13 +1,13 @@
 Start
     Var int uno = 8
     Var int dos = 9
-    Var int myarr[3]
     Var int siete = 2
+    Var float myarr[3]
     Void Main () {
-        myarr[1] = 33
+        myarr[1] = 30.0 * 20.0
+        myarr[2] =    myarr[1] + 2.0
         Print(myarr[1])
-        Var int temp
-        temp = myarr[1]
-        Print(temp)
+        Print(myarr[2])
+
     }
 Finish

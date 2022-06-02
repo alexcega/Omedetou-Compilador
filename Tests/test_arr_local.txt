@@ -1,0 +1,10 @@
+Start
+
+    Void Main () {
+        Var float myLocalarr[3]  
+        myLocalarr[1] = 30.0 * 20.0
+        myLocalarr[2] = myLocalarr[1] 
+        Print(myLocalarr[1])
+        Print(myLocalarr[2])
+    }
+Finish
