@@ -779,7 +779,6 @@ class instructions(Visitor):
                                 #*Funcion a la que pertenece
                                 if myDirFunctions[currentFunction].varsDic[left['address']]['address'] == 'tbd':
                                     currentMemory = apartarMemoriaTemporal(resultType)
-                                    print('cual aparte', currentMemory)
                                     Quads.append([operador, right, None, currentMemory])
                                     myDirFunctions[currentFunction].varsDic[left['address']]['value'] =  right['address']
                                     myDirFunctions[currentFunction].varsDic[left['address']]['address'] =  currentMemory
@@ -788,16 +787,28 @@ class instructions(Visitor):
                                     myDirFunctions[currentFunction].varsDic[left['address']]['value'] =  right['address']
                                     Quads.append([operador, right,None, myDirFunctions[currentFunction].varsDic[left['address']]['address']])
                             except KeyError:
-                                #* reasignar valores pero de algo global en local
-                                # print('quiero reasignar')
-                                if myGlobalVars[left['address']]['address'] != 'tbd':
-                                    Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
-                                    myGlobalVars[left['address']]['value'] =  right['address']
-                                else:
-                                    currentMemory = apartarMemoria(resultType)
-                                    myGlobalVars[left['address']]['address'] =  currentMemory
-                                    Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
-                                    myGlobalVars[left['address']]['value'] =  right['address']
+                                try:
+                                    #* reasignar parametro value
+                                    if myDirFunctions[currentFunction].paramsDic[left['address']]['address'] == 'tbd':
+                                        currentMemory = apartarMemoriaTemporal(resultType)
+                                        Quads.append([operador, right, None, currentMemory])
+                                        myDirFunctions[currentFunction].paramsDic[left['address']]['value'] =  right['address']
+                                        myDirFunctions[currentFunction].paramsDic[left['address']]['address'] =  currentMemory
+                                    else:
+                                        #* reasignar valor local en local
+                                        myDirFunctions[currentFunction].paramsDic[left['address']]['value'] =  right['address']
+                                        Quads.append([operador, right,None, myDirFunctions[currentFunction].paramsDic[left['address']]['address']])
+                                except KeyError:
+                                    #* reasignar valores pero de algo global en local
+                                    # print('quiero reasignar')
+                                    if myGlobalVars[left['address']]['address'] != 'tbd':
+                                        Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
+                                        myGlobalVars[left['address']]['value'] =  right['address']
+                                    else:
+                                        currentMemory = apartarMemoria(resultType)
+                                        myGlobalVars[left['address']]['address'] =  currentMemory
+                                        Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
+                                        myGlobalVars[left['address']]['value'] =  right['address']
 
                     else:
                         #! Error validaiton
