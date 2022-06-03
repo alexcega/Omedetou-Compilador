@@ -1,0 +1,16 @@
+Start
+
+    Def Void imprime(int a){
+        If (a < 2) {
+            a = a + 1
+            imprime(a)
+        }
+        Else{
+            Print("entre al else")
+        }
+    }
+
+    Void Main(){ 
+        imprime(0)
+    }
+Finish

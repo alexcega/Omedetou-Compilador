@@ -14,9 +14,9 @@ Start
     }
 
     Void Main(){ 
-        #Var pato plumas
-        #Print(plumas.pop)
-        Var int hi = 2
-        Print("uwu")
+        Var pato plumas
+        Print(plumas.cuack)
+        #Var int hi = 2
+        #Print("uwu")
     }
 Finish
