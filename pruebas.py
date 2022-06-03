@@ -45,3 +45,4 @@ def fact(num):
 fact(4)
 
 
+print(bool("False"))

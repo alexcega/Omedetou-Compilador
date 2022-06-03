@@ -96,6 +96,9 @@ print('\n # Mis Constantes')
 for k,v in myConstantes.items():
     print('\t',k,v)
 
+for k, v in myDirFunctions.items():
+    print('inician', v.startLine)
+
 # Measure-Command {python omedetouLark.py}
 
 #~ how to print all tokens

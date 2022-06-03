@@ -1,0 +1,15 @@
+Start
+
+    Def Void fact(int num){
+        If (num == 1){
+            Return (num)
+        }
+        Else{
+            Return (num * fact (num - 1))
+        }
+    }
+
+    Void Main(){ 
+        Print(fact(4))
+    }
+Finish

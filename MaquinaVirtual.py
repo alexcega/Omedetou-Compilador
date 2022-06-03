@@ -7,6 +7,7 @@ cont = 0
 currentFunctionCall = None
 currentObjectFunctionCall = None
 regreso = 0 
+pilaRecursion = []
 for celda in mm:
     if j % 10 == 0 : 
         print() 
@@ -19,7 +20,6 @@ print('\n\n')
 
 print("MAQUINA VIRTUAL \n")
 while Quads[index][0] != 'Endprogram':
-    # print("index actual", index)
     if Quads[index][0] in '*/+-!>==<=|&':
         if Quads[index][0] == '*' :
             try:
@@ -295,7 +295,6 @@ while Quads[index][0] != 'Endprogram':
                     exit()
         elif Quads[index][0] == '!=':
             print(Quads[index])
-            exit()
             try:
                 if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
                     mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != int(mm[Quads[index][2]['address']])
@@ -310,22 +309,19 @@ while Quads[index][0] != 'Endprogram':
                     mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])!=float(mm[Quads[index][2]['address']])
                 
                 elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
-                    mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])!=bool(mm[Quads[index][2]['address']])
+                    mm[Quads[index][3]] = mm[Quads[index][1]['address']]!=mm[Quads[index][2]['address']]
             except TypeError:
                 try:
                 #* (p) != num 
-                    print('uno')
                     mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) != float(mm[Quads[index][2]['address']])
                 except TypeError:
                     try:
-                        print('dos')
                     #* num != (p)
                         mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != float(mm[mm[Quads[index][2]['address'][1]]])
                         print(mm[Quads[index][3]])
                         exit()
 
                     except TypeError:
-                        print('tres')
                         #* (p) != (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) != float(mm[mm[Quads[index][2]['address'][1]]])
                 #! Validation error
@@ -350,7 +346,7 @@ while Quads[index][0] != 'Endprogram':
                     mm[Quads[index][3]] = float(mm[Quads[index][1]['address']])==float(mm[Quads[index][2]['address']])
                 
                 elif Quads[index][1]['type'] == 'bool' and Quads[index][2]['type'] == 'bool':
-                    mm[Quads[index][3]] = bool(mm[Quads[index][1]['address']])==bool(mm[Quads[index][2]['address']])
+                    mm[Quads[index][3]] = mm[Quads[index][1]['address']] == mm[Quads[index][2]['address']]
             except TypeError:
                 try:
                 #* (p) * num 
@@ -516,14 +512,13 @@ while Quads[index][0] != 'Endprogram':
             mm[myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].paramsDic[list(myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ] ['address']] = mm[Quads[index][3]]
 
     elif Quads[index][0] == 'Gosub':
+        pilaRecursion.append(index + 1)
         regreso = index + 1
-        # print("tenemos que volver a ",regreso)
         try:
-            index = myDirFunctions[currentFunctionCall].startLine -1
+            index = myDirFunctions[currentFunctionCall].startLine 
         except KeyError:
-            index = myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].startLine - 1
-        # print("y vamos a la", index)
-        # print('regreso',regreso)
+            index = myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].startLine 
+        continue
 
     elif Quads[index][0] == 'Return':
         try :
@@ -533,6 +528,7 @@ while Quads[index][0] != 'Endprogram':
             obj = Quads[index][2]
             mm[myObjects[obj].objectVarsDic[curfun]['address']] = mm[Quads[index][3]]
         index = regreso
+        index = pilaRecursion.pop()
         continue
     
     elif Quads[index][0] == 'Ver':
@@ -558,7 +554,7 @@ while Quads[index][0] != 'Endprogram':
             print('Index Error, out of range')
             exit()
     elif Quads[index][0] == 'Endfunc':
-        index = regreso
+        index = pilaRecursion.pop()
         continue
     index += 1
     # elif Quads[index][0]

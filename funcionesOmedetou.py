@@ -68,7 +68,6 @@ class instructions(Visitor):
         rangoTempFloat.cont = 0
         rangoTempBool.cont = 0
         rangoTempStirng.cont = 0
-        pass
 
     def np_fin_igualacion(self, tree):
         #* Goto next igualacion, puede ser de objetos, puede ser de main
@@ -1045,6 +1044,7 @@ class instructions(Visitor):
         else:
             #* Validar que funcion no exista en objeto
             if id in myObjects[currentObject].funciones:
+                #! Error validation
                 errorDoubleDeclatration(tree)
             if id in myGlobalVars:
                 #! Error validation
