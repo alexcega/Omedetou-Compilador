@@ -1,4 +1,3 @@
-from ast import operator
 from cuboSemantico import getType, OTypeError
 from lark import Visitor
 from validationErrors import *
@@ -11,8 +10,6 @@ Poper = []
 Quads = []
 Psaltos = []
 pilaDim = []
-
-#TODO Cambiar currentFunction a pila para recursividad
 currArray = None
 currNodo = None
 currentFunction = None
@@ -25,7 +22,6 @@ currentObjectFC= None
 myGlobalVars = {}
 myConstantes = {}
 
-
 class Arreglo() :
     def __init__(self):
         self.r_rango = 1
@@ -34,7 +30,6 @@ class Arreglo() :
         self.ls = 0
         self.cajita = 0
         self.nextNode = None
-
 
 #& Direction Functions
 myDirFunctions = {}
@@ -170,12 +165,9 @@ class instructions(Visitor):
                     'address': myDirFunctions[currentFunction].varsDic[tree.children[0].value]['address'],
                     'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
                     })
-                # errorValueDontExist(tree)
             except KeyError:
                 #* revisar que este en params de funcion
                 try:
-                    # print(currentFunctionCall)
-                    # myDirFunctions[currentFunctionCall]
                     pilaO.append({
                         'address': myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['address'],
                         'type' :myDirFunctions[currentFunction].paramsDic[tree.children[0].value]['type']
@@ -235,6 +227,8 @@ class instructions(Visitor):
     '''
     Puntos neuralgicos Lectura
     '''
+
+    #^ Especificacion: Read solo funciona en funciones, no en objetos
     def read_value(self, tree):
         identificador = tree.children[2].value
         if currentFunction != None:
@@ -252,25 +246,23 @@ class instructions(Visitor):
                         Quads.append(['Read', 'global',identificador, myGlobalVars[identificador]['address']])
                     except KeyError:
                         errorRead(tree)
-
         else:
             #*global
             try :
                 Quads.append(['Read', 'global',identificador, myGlobalVars[identificador]['address']])
             except KeyError:
                 errorRead(tree)
-        # TODO ALEX leer variables en objetos
 
     '''
     Puntos neuralgicos Escritura
     '''
     def np_print(self,tree):
-        # try:
+        try:
             Quads.append(['Print',None,None, pilaO.pop()['address']])
-        # except IndexError:
-        #     #! Validation Error, imprimir una funcion void
-        #     print('Error, can not print a void function')
-        #     exit()
+        except IndexError:
+            #! Validation Error, imprimir una funcion void
+            print('Error, can not print a void function')
+            exit()
 
     '''
     Inicio de puntos neuralgicos
@@ -405,8 +397,6 @@ class instructions(Visitor):
                     'address' : memo,
                     'arreglo' : mynode
                 }
-
-  
         else:
             if tree.children[2].value in myGlobalVars:
                 #! Error validation
@@ -605,8 +595,8 @@ class instructions(Visitor):
     def np_fin_array(self,tree):
         global currNodo
         aux1 = pilaO.pop()
+        #? Debido a que nuestro limite inferior es 0, esto no es necesario 
         # currentTempMemory = apartarMemoriaTemporal('int')
-        #^ Debido a que nuestro limite inferior es 0, esto no es necesario 
         # Quads.append(['+', aux1, {
         #     'address':currNodo.cajita,
         #     'type':'int'}, currentTempMemory])
@@ -625,14 +615,13 @@ class instructions(Visitor):
                 myConstantes[myDirFunctions[currentFunction].varsDic[currArray]['address']] = newconst
                 mainMemory[newconst] = myDirFunctions[currentFunction].varsDic[currArray]['address']
             memoArr =  myConstantes[myDirFunctions[currentFunction].varsDic[currArray]['address']]
-
-        # Quads.append(['+',{
-        #     'address':currentTempMemory,
-        #     'type': 'int'
-        # }, {
-        #     'address': memoArr,
-        #     'type': 'int'} ,currentPointerMemory ])
-        print('ver',aux1)
+        #?
+        #? Quads.append(['+',{
+        #?     'address':currentTempMemory,
+        #?     'type': 'int'
+        #? }, {
+        #?     'address': memoArr,
+        #?     'type': 'int'} ,currentPointerMemory ])
         try:
             #*global
             eltypo = myGlobalVars[currArray]['type']
@@ -719,8 +708,8 @@ class instructions(Visitor):
                         'address' : tree.children[0].value,
                         'type' : myGlobalVars[tree.children[0].value]['type']
                     })
-                    # print(myGlobalVars[tree.children[0].value]['type']) # tipo 
-                    # print(tree.children[0].value) # identificador
+                    # print(myGlobalVars[tree.children[0].value]['type']) #* tipo 
+                    # print(tree.children[0].value) #* identificador
                 except :
                     #* Buscar en objetos
                     try:
@@ -766,8 +755,6 @@ class instructions(Visitor):
                                 Quads.append([operador, right,None, currentMemory])
                                 #* Registrar el valor en myGlobalVars, no es necesario revisar que exista la llave
                                 #* Asignar el valor
-                                # print("revisar mv main", right['address'])
-                                # print(mainMemory[right['address']])
                                 myGlobalVars[left['address']]['value'] =  right['address']
                                 myGlobalVars[left['address']]['address'] =  currentMemory
                             else:
@@ -800,7 +787,6 @@ class instructions(Visitor):
                                         Quads.append([operador, right,None, myDirFunctions[currentFunction].paramsDic[left['address']]['address']])
                                 except KeyError:
                                     #* reasignar valores pero de algo global en local
-                                    # print('quiero reasignar')
                                     if myGlobalVars[left['address']]['address'] != 'tbd':
                                         Quads.append([operador, right,None, myGlobalVars[left['address']]['address']])
                                         myGlobalVars[left['address']]['value'] =  right['address']
@@ -1081,8 +1067,8 @@ class instructions(Visitor):
     def function_param(self, tree):
         fType = tree.children[0].children[0].value
         fID = tree.children[1].value
-        # print(tree.children[0].children[0].value) # tipo
-        # print(tree.children[1].value)   # id
+        # print(tree.children[0].children[0].value) #* tipo
+        # print(tree.children[1].value)   #* id
         dondeva =  apartarMemoriaLocal(fType)
         #* Normal funcion
         if currentObject == None:
@@ -1230,7 +1216,6 @@ class instructions(Visitor):
         try :
             #* Funcion normal
             myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[currentParam-1][0]]['value'] = direcccion
-        # print('debo tener la misma de arriba', myDirFunctions[currentFunctionCall].paramsDic['address'])
         except KeyError:
             #* Funcion de objeto
             myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunction].varsDic[currentObjectFC].funciones[currentFunctionCall].paramsDic.items())[currentParam-1][0]]['value'] = direcccion
@@ -1278,20 +1263,11 @@ class instructions(Visitor):
                     'type' : tipoFuncionObjeto 
                     },currentFunctionCall , memo])
                 currentObjectFC = None
-            
-            # else:
-            #     pilaO.append({
-            #         'address': myGlobalVars[currentFunctionCall]['address'],
-            #         'type': myGlobalVars[currentFunctionCall]['type']
-            #         })
-            #     Quads.append(['=', {'address': myGlobalVars[currentFunctionCall]['address'],'type': myGlobalVars[currentFunctionCall]['type']}, currentFunctionCall, myGlobalVars[currentFunctionCall]['address']])
-            # myGlobalVars[currentFunctionCall]['value']
-        #* key error es por que la funcion es void, no hay que hacer nada mas
+ 
+         #* key error es por que la funcion es void, no hay que hacer nada mas
         except KeyError:
             pass
         #TODO @Guasso, cambiar temps
-        # try:
-        #     myGlobalVars[currentFunctionCall]
 
     #& Codigo de Objetos
     '''
@@ -1307,7 +1283,6 @@ class instructions(Visitor):
         global currentObject
         currentObject = nombre_de_objeto
         myObjects[nombre_de_objeto] = Objetos(nombre_de_objeto)
-        # print(nombre_de_objeto)
 
     def np_fin_clase(self,tree):
         global currentObject
@@ -1325,8 +1300,6 @@ class instructions(Visitor):
                 errorDoubleDeclatration(tree)
             if nombreasignar in myDirFunctions[currentFunction].varsDic:
                 errorDoubleDeclatration(tree)
-
-
             #* objeto
             myDirFunctions[currentFunction].varsDic[tree.children[2].value] = deepcopy(myObjects[tree.children[1]])
             #* funcion
@@ -1338,13 +1311,11 @@ class instructions(Visitor):
     def guardar_var_de_obj(self,tree):
         # print(tree.children[0])  #*nombre de objeto 
         # print(tree.children[2])  #* atributo de objeto
-        # print(myDirFunctions[currentFunction].varsDic)
         if tree.children[0].value not in myDirFunctions[currentFunction].varsDic:
             #! Error validation, objeto no existente
             errorObjectName(tree)
 
-        #* nombre tipo objeto 
-        # myDirFunctions[currentFunction].varsDic[tree.children[0]].name
+        # myDirFunctions[currentFunction].varsDic[tree.children[0]].name #* nombre tipo objeto 
         if tree.children[2].value not in myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic:
             #! Error validation, atributo de objeto no existente
             errorObjectAtribute(tree)

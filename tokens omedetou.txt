@@ -77,8 +77,8 @@ vars    : VAR tipo IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor  
         | VAR tipo IDENTIFIER LEFT_BRACKET exp np_get_lim_s  RIGHT_BRACKET arreglo1 np_calcular_m np_arr_next_virtualadress NEW_LINE    -> var_arreglo
         | VAR IDENTIFIER IDENTIFIER                                                                     -> var_objeto
 
-arreglo1 : LEFT_BRACKET np_add_dimension exp  RIGHT_BRACKET arreglo2 |                                                                   -> arr_param
-arreglo2 : LEFT_BRACKET np_add_dimension exp  RIGHT_BRACKET|                                                                            -> arr_param2
+arreglo1 : LEFT_BRACKET np_add_dimension exp np_get_lim_s RIGHT_BRACKET arreglo2 |                                                                   -> arr_param
+arreglo2 : LEFT_BRACKET np_add_dimension exp np_get_lim_s RIGHT_BRACKET|                                                                            -> arr_param2
 np_asiganar_valor:
 np_meter_igual:
 np_add_dimension: 

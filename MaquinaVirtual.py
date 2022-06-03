@@ -45,6 +45,7 @@ while Quads[index][0] != 'Endprogram':
                     except TypeError:
                         #* (p) * (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) * float(mm[mm[Quads[index][2]['address'][1]]])
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -95,6 +96,7 @@ while Quads[index][0] != 'Endprogram':
                     except TypeError:
                         #* (p) + (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) + float(mm[mm[Quads[index][2]['address'][1]]])
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -125,6 +127,7 @@ while Quads[index][0] != 'Endprogram':
                     except TypeError:
                         #* (p) * (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) - float(mm[mm[Quads[index][2]['address'][1]]])
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -146,6 +149,7 @@ while Quads[index][0] != 'Endprogram':
                     except TypeError:   
                         #* (poiner) = (pointer)
                         mm[mm[Quads[index][3][1]]] =mm[mm[Quads[index][1]['address'][1]]]
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -179,6 +183,7 @@ while Quads[index][0] != 'Endprogram':
                     except TypeError:
                         #* (p) * (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) < float(mm[mm[Quads[index][2]['address'][1]]])
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -212,6 +217,7 @@ while Quads[index][0] != 'Endprogram':
                     except TypeError:
                         #* (p) * (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) > float(mm[mm[Quads[index][2]['address'][1]]])
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -245,6 +251,7 @@ while Quads[index][0] != 'Endprogram':
                     except TypeError:
                         #* (p) * (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) >= float(mm[mm[Quads[index][2]['address'][1]]])
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -279,6 +286,7 @@ while Quads[index][0] != 'Endprogram':
                     
                         #* (p) * (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) <= float(mm[mm[Quads[index][2]['address'][1]]])
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -320,6 +328,7 @@ while Quads[index][0] != 'Endprogram':
                         print('tres')
                         #* (p) != (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) != float(mm[mm[Quads[index][2]['address'][1]]])
+                #! Validation error
                     except ValueError:
                         print("Array contains non defined values")
                         exit()
@@ -354,6 +363,7 @@ while Quads[index][0] != 'Endprogram':
                         #* (p) * (p)
                         mm[Quads[index][3]] = float(mm[mm[Quads[index][1]['address'][1]]]) == float(mm[mm[Quads[index][2]['address'][1]]])
                     except ValueError:
+                #! Validation error
                         print("Array contains non defined values")
                         exit()
                 except ValueError:

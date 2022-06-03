@@ -34,12 +34,9 @@ rangoConstStirng = limites(rangoLocalBool.ls + desfase, rangoLocalBool.ls + tota
 
 #~ Pointers
 rangoPointerInt = limites(0 + desfase*4, total + desfase*4) #*161 - 170
-rangoPointerFloat = limites(rangoConstInt.ls + desfase, rangoConstInt.ls + total + desfase)
-rangoPointerBool = limites(rangoConstFloat.ls + desfase, rangoConstFloat.ls + total + desfase)
-rangoPointerString = limites(rangoConstBool.ls + desfase, rangoConstBool.ls + total + desfase)
 
 #& Memoria
-mainMemory = [ None for _ in range(rangoPointerString.ls)]
+mainMemory = [ None for _ in range(rangoPointerInt.ls)]
 # print(len(mainMemory))
 
 def apartarMemoria(tipo ):
@@ -116,12 +113,6 @@ def apartarMemoriaPointer(tipo):
     miRango = None
     if tipo == 'int':
         miRango = rangoPointerInt
-    elif tipo == 'float':
-        miRango = rangoPointerFloat
-    elif tipo == 'bool':
-        miRango = rangoPointerBool
-    elif tipo == 'String':
-        miRango = rangoPointerString
     indice = miRango.li + miRango.cont
     miRango.cont += 1 
     checkCounter(miRango)

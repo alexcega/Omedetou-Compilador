@@ -103,13 +103,35 @@ Generacion de codigo de funciones
 * Parche Guadalupano (Declaracion de funcion en globalVars)
 * Recursion
 
-##  ❓Fase 6 
+##  ✅Fase 6 
 Mapa de memoria / Maquina virtual
-* ❓Estatutos secuenciales en MV
-* ❓Expresiones aritmeticas en MV
-* ✅Creacion de directorio de objetos
-* ✅Creacion de objeto para linkear Tabla de Variables y directorio de funciones en objetos
-* ❓Mapa de memoria
+* Estatutos secuenciales en MV
+* Expresiones aritmeticas en MV
+* Creacion de directorio de objetos
+* Creacion de objeto para linkear Tabla de Variables y directorio de funciones en objetos
+* Mapa de memoria
 
+## ✅Fase 7
+Maquina virtual
+* Funciones lineales
+* Validacion division en 0
+* Correccion de expresiones
+* Correccion de parche guadalupano
 
+Compilador
+* Correcciones en recursividad
 
+## ✅ Fase 8
+Compilador
+* Creacion de objetos
+* creaccion de arreglos
+* Creacion de memoria de pointers
+* Correccion en mapa de memoria
+* Funciones recursivas
+* Limpiar temporales
+Documentacion:
+* Especificaciones de MV
+* Especificaciones de Compilador
+* Alcance de proyecto
+* Correccion de diagramas
+* Caracteristicas del lenguaje
