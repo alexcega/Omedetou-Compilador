@@ -1,0 +1,9 @@
+Start
+    Void Main(){ 
+        Var float perro = 5.0 
+        While( perro > 0 ){
+            Print(perro)
+            perro = perro - 1.0
+        }
+    }
+Finish

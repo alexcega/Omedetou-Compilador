@@ -1,0 +1,9 @@
+Start
+    Def Void sumDos(int uno, int dos){
+        Print(uno + dos)
+    }
+
+    Void Main(){
+        sumDos( 1 , 2 ) 
+    }
+Finish

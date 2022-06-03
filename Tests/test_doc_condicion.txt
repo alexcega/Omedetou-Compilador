@@ -1,0 +1,10 @@
+Start
+    Var int aux1 = 15
+    Var int aux2 = 14
+    
+    Void Main(){ 
+        If( aux1  > aux2 ){
+            Print( "Entramos" )
+        }
+    }
+Finish

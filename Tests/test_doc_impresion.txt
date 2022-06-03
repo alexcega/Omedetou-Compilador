@@ -1,0 +1,5 @@
+Start
+    Void Main(){
+        Print("hola")
+    }
+Finish

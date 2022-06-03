@@ -1,0 +1,6 @@
+Start
+    Void Main(){
+        Var int num = 12
+        Print(num)
+    }
+Finish

@@ -1,0 +1,7 @@
+Start
+    Void Main(){ 
+        Var int rana = 1
+        Read(rana)
+        Print(rana)
+    }
+Finish
