@@ -1,1 +1,1 @@
-myTest = 'test_funcion_imprimir_params.txt'
+myTest = 'test_doc_funcion.txt'

@@ -185,7 +185,7 @@ function_return : RETURN expresion np_guadalupe
                 | RETURN LEFT_PARENTHESIS expresion RIGHT_PARENTHESIS np_guadalupe
 
 np_guadalupe: 
-function_params : COMMA tipo IDENTIFIER is_array
+function_params : COMMA tipo IDENTIFIER is_array?
 is_array: LEFT_BRACKET CONST_INT RIGHT_BRACKET
 
 function_call : IDENTIFIER fc_class? LEFT_PARENTHESIS fc_param? np_reset_count_params RIGHT_PARENTHESIS
