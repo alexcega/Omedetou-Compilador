@@ -33,16 +33,26 @@
 
 # print(len(myMat))
 
-
+# #* iterativo
 def fact(num):
-    ans = 0
-    count = 0
-    while count < num:
-        ans = num * (num-1)
-        count += 1
-    print(ans)
+    result = 1
+    index = 1
+    limit = num+1
+    while index< limit :
+        result = result * index
+        index+=1
+    print(result)
 
 fact(4)
 
 
-print(bool("False"))
+# def  fact( num):
+#     if (num == 1) :
+#         return (num)
+#     else:
+#         return (num * fact (num - 1))
+    
+
+
+# print(fact(4))
+

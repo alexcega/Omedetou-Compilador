@@ -1,15 +1,15 @@
 Start
-
     Def Void fact(int num ){
-        Var int ans = 0
-        Var int count = 0
-        While (count < num){
-            ans = num * (num - 1) 
-            count = count + 1
+        Var int result = 1
+        Var int index = 1
+        Var int limit = num + 1
+        While (index < limit){
+            result = result * index 
+            index = index + 1
         }
-        Print(ans)
-
+        Print(result)
     }
+
     Void Main () {
         fact(4)
     }
