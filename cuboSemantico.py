@@ -17,29 +17,27 @@ cuboSemantico = {
             'int' : 'int',
             'float' : 'float',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError
         },
         '-': {
             'int' : 'int',
             'float' : 'float',
             'bool' : OTypeError,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError
         },
         '*': {
             'int' : 'int',
             'float' : 'float',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '/': {
             'int' : 'float',
             'float' : 'float',
             'bool' : OTypeError,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '==': {
             'int' : 'bool',
@@ -52,29 +50,29 @@ cuboSemantico = {
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '<':{
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '>=':{
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '<=':{
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '!=':{
             'int' : 'bool',
@@ -87,22 +85,22 @@ cuboSemantico = {
             'int' : 'int',
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '|':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '&':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
     },
     ###################### op1 FLOAT
@@ -113,29 +111,29 @@ cuboSemantico = {
             'int' : 'float',
             'float' : 'float',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '-': {
             'int' : 'float',
             'float' : 'float',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '*': {
             'int' : 'float',
             'float' : 'float',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '/': {
             'int' : 'float',
             'float' : 'float',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '==': {
             'int' : 'bool',
@@ -148,57 +146,56 @@ cuboSemantico = {
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '<':{
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '>=':{
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '<=':{
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '!=':{
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError ,
-            'String' : 'bool',    
-            'object' : 'bool',
+            'String' : 'bool'
         },
         '=':{
             'int' : OTypeError,
             'float' : 'float',
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '|':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '&':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' :  OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
     },
     ###################### op1 BOOL
@@ -209,92 +206,92 @@ cuboSemantico = {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'int' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '-': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'int' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '*': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'int' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '/': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'int' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '==': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '>': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '<':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '>=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '<=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '!=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '|':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '&':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : 'bool' ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
     } ,
     ###################### op1 STRING
@@ -305,64 +302,64 @@ cuboSemantico = {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : 'String',    
-            'object' : OTypeError,
+            'String' : 'String'    
+
         },
         '-': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '*': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '/': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '==': {
             'int' : 'bool',
             'float' : 'bool',
             'bool' : OTypeError ,
-            'String' : 'bool',    
-            'object' : OTypeError,
+            'String' : 'bool'    
+
         },
         '>': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : 'bool',    
-            'object' : OTypeError,
+            'String' : 'bool'    
+
         },
         '<':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : 'bool',    
-            'object' : OTypeError,
+            'String' : 'bool'    
+
         },
         '>=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : 'bool',    
-            'object' : OTypeError,
+            'String' : 'bool'    
+
         },
         '<=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : 'bool',    
-            'object' : OTypeError,
+            'String' : 'bool'    
+
         },
         '!=':{
             'int' : 'bool',
@@ -375,22 +372,22 @@ cuboSemantico = {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : 'String',    
-            'object' : OTypeError,
+            'String' : 'String'    
+
         },
         '|':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '&':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
     },    
     ###################### op1 OBJECT
@@ -401,29 +398,29 @@ cuboSemantico = {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '-': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '*': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '/': {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '==': {
             'int' : 'bool',
@@ -436,43 +433,41 @@ cuboSemantico = {
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '<':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '>=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '<=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
-            'String' : OTypeError,    
-            'object' : OTypeError,
+            'String' : OTypeError    
+
         },
         '!=':{
             'int' : 'bool',
             'float' : 'bool',
             'bool' : 'bool' ,
-            'String' : 'bool',    
-            'object' : 'bool',
+            'String' : 'bool',
         },
         '=':{
             'int' : OTypeError,
             'float' : OTypeError,
             'bool' : OTypeError ,
             'String' : OTypeError,    
-            'object' : 'object',
         }
     },
 }

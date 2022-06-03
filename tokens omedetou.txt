@@ -69,7 +69,7 @@ np_fin_igualacion :
 some_vars : vars np_limpiar_temps| asignacion np_limpiar_temps | COMMENT
 np_limpiar_temps: 
 
-start_main:  VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion
+start_main:  VOID MAIN LEFT_PARENTHESIS RIGHT_PARENTHESIS bloque np_fin_funcion np_limpiar_temps
 np_fin_funcion:
 
 vars    : VAR tipo IDENTIFIER EQUAL np_meter_igual expresion np_asiganar_valor  NEW_LINE                -> var_con_valor

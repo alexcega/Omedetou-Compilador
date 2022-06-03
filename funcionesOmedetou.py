@@ -53,20 +53,21 @@ class Objetos():
 #& Manejo de estatutos / Directorio de procedimientos
 #^ Al llamar a un visitor como parte de la clase instructions
 #^ autonaticamente se mandan a llamar las funciones correspondientes dependiendo de la regla que este en 
-#^ el arbol de parseo
+#^ el arbol de parseo, toda funcion tiene un self por ser de un objeto, y el tree parseado
 class instructions(Visitor):
     '''
     Inicio de puntos neuralgicos de Main
     goto y relleno
     '''
     def np_limpiar_temps(self, tree):
-        #TODO cambiar a direcciones de memoria, resetear booleanos, enteros, etc
-        #TODO @Guasso
         '''
-        una vez terminado las declaraciones globales es necesario 
+        una vez terminado las declaraciones globales y una funcion es necesario 
         resetear los teporales gastados, 
-        como son varialbes globales no cuenta con un endfunc
         '''
+        rangoTempInt.cont = 0
+        rangoTempFloat.cont = 0
+        rangoTempBool.cont = 0
+        rangoTempStirng.cont = 0
         pass
 
     def np_fin_igualacion(self, tree):
@@ -183,7 +184,6 @@ class instructions(Visitor):
                     #! Error validation
                         errorValueDontExist(tree)
         else:
-            #TODO revisar esto
             try:
                 #* buscar en local de la funcion objetos
                 pilaO.append({
@@ -848,7 +848,6 @@ class instructions(Visitor):
     Inicio de puntos neuralgicos
     de expresiones aritmeticas
     '''
-    # TODO push en una sola funcion
     def np_metermas(self,tree):
         Poper.append('+')
 
@@ -895,7 +894,6 @@ class instructions(Visitor):
     Inicio de puntos neuralgicos
     de comparaciones
     '''
-    # TODO push en una sola funcion
     def np_meter_mayorque(self,tree):
         Poper.append('>')
     
@@ -1118,7 +1116,6 @@ class instructions(Visitor):
             Quads.append(['Return',currentFunction,currentObject, pg])
         # myGlobalVars[currentFunction]['address'] = pg
 
-#TODO revisar 
     def np_fin_funcion(self, tree):
         if currentFunction != 'main':
             Quads.append(['Endfunc',None,None,None])
@@ -1157,8 +1154,6 @@ class instructions(Visitor):
         #* Validar en funciones generalees
         if tree.children[0].value not in myDirFunctions:
             #* validar en funciones de objeto 
-            #TODO VAlidar esto
-            # try: 
                 #* llamada de funcion de objeto
                 if tree.children[0].value not in myDirFunctions[currentFunction].varsDic:
                     #! Error validation, function not defined
@@ -1267,7 +1262,6 @@ class instructions(Visitor):
          #* key error es por que la funcion es void, no hay que hacer nada mas
         except KeyError:
             pass
-        #TODO @Guasso, cambiar temps
 
     #& Codigo de Objetos
     '''
@@ -1324,8 +1318,6 @@ class instructions(Visitor):
                 'address': myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic[tree.children[2].value]['address'],
                 'type' : myObjects[myDirFunctions[currentFunction].varsDic[tree.children[0]].name].objectVarsDic[tree.children[2].value]['type']
             })
-
-    #TODO Matrix @Guasso
 
 #? posible registro del padre de current rule
 class Parent(Visitor):
