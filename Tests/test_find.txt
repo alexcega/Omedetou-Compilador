@@ -1,0 +1,32 @@
+Start
+    Void Main(){ 
+        Var int arr[10]
+        Print(arr:size)
+        Var int num = arr:size
+        #* Asignar arreglo
+        While ( num > 0) {
+            arr[num-1] = num
+            num = num - 1
+        }
+
+        #* ver arreglo
+        num = arr:size
+        While ( num > 0) {
+            Print(arr[num-1])
+            num = num - 1 
+        }
+        #* buscar
+        num = arr:size
+        Var int target = 15
+        
+        Var bool found = False
+        While ( num > 0) {
+            If (arr[num-1] == target){
+                found =  True
+            }
+            num = num - 1 
+        }
+        Print(found)
+
+    }
+Finish

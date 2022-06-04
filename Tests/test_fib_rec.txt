@@ -1,0 +1,26 @@
+Start
+    
+    Def int fib(int num){
+        If (num < 0){
+            Print("no se puede")
+        }
+        Else{
+            If (num == 0 ){
+                Return 0
+
+            }
+
+            If (( num == 1) |  ( num == 2)  ){
+                Return (1)
+            }
+            Else{
+                Return ( (fib(num - 1)) + (fib (num - 2 )) )
+            }
+
+        }
+    }
+
+    Void Main(){ 
+        Print( (fib( 12)) ) 
+    }
+Finish

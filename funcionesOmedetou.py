@@ -159,6 +159,8 @@ class instructions(Visitor):
         if currentObject == None:
             #* revisar que este en local vars                
             try: 
+                print(myDirFunctions[currentFunction].varsDic[tree.children[0].value])
+                print(myDirFunctions[currentFunction].varsDic[tree.children[0].value]['address'])
                 pilaO.append({
                     'address': myDirFunctions[currentFunction].varsDic[tree.children[0].value]['address'],
                     'type' :myDirFunctions[currentFunction].varsDic[tree.children[0].value]['type']
@@ -456,11 +458,13 @@ class instructions(Visitor):
                     nodoCurr = myObjects[currentObject].objectVarsDic[currArray]['arreglo']
                 except KeyError:
                     nodoCurr = myObjects[currentObject].funciones[currentFunction].varsDic[currArray]['arreglo']
+        print(pilaO)
         nodoCurr.ls = float(mainMemory[pilaO.pop()['address']])
         nodoCurr.r_rango = (nodoCurr.ls - nodoCurr.li + 1) * nodoCurr.r_rango
         
     #* Actualiza la dimension += 1
     def np_add_dimension(self,tree):
+        #* global
         myGlobalVars[currArray]['arreglo'].contDim += 1 
     
     def np_calcular_m(self,tree):

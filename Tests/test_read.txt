@@ -3,7 +3,7 @@ Start
     Var float vaca = 6.0 
     Var int perro = 9
     Void Main(){ 
-        Var int rana = 1
+        Var bool rana = True
         Read(rana)
         Print(rana)
     }

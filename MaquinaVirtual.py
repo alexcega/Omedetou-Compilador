@@ -510,8 +510,12 @@ while Quads[index][0] != 'Endprogram':
         pilaMemoria.append(deepcopy(memoTemp))
     elif Quads[index][0] == 'Param':
         try:
+            try:
             #* Funcion normal'
-            mm[myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ]['address']] = mm[Quads[index][3]]
+                mm[myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ]['address']] = mm[Quads[index][3]]
+            except TypeError:
+                mm[myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ]['address']] = mm[mm[Quads[index][3][1]]]
+
         except KeyError:
             #* funcion de objeto
             mm[myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].paramsDic[list(myObjects[currentObjectFunctionCall].funciones[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ] ['address']] = mm[Quads[index][3]]

@@ -1,0 +1,32 @@
+Start
+
+    Def int fact(int num){
+        If (num == 1){
+            Return (num)
+        }
+        Else{
+            Return (num * (fact(num - 1)))
+        }
+    }
+
+    Void Main(){ 
+        Var int arr[10]
+        Print(arr:size)
+        Var int num = arr:size
+        While ( num > 0) {
+            arr[num-1] = num
+            num = num - 1
+        }
+        num = arr:size
+        While ( num > 0) {
+            Print(arr[num-1])
+            num = num - 1 
+        }
+        num = arr:size
+        While ( num > 0) {
+            Print(fact(arr[num-1]))
+            num = num - 1 
+        }
+
+    }
+Finish
