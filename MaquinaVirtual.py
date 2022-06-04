@@ -9,15 +9,17 @@ currentObjectFunctionCall = None
 regreso = 0 
 pilaRecursion = []
 pilaMemoria = []
-for celda in mm:
-    if j % 10 == 0 : 
-        print() 
-        print(cont, '- ', end='')
-        j = 0
-    print( celda, end=' ')
-    j+=1
-    cont +=1
-print('\n\n')
+
+# ? Visualizacion de memoria antes de maquina virtual
+# for celda in mm:
+#     if j % 10 == 0 : 
+#         print() 
+#         print(cont, '- ', end='')
+#         j = 0
+#     print( celda, end=' ')
+#     j+=1
+#     cont +=1
+# print('\n\n')
 
 print("MAQUINA VIRTUAL \n")
 while Quads[index][0] != 'Endprogram':
@@ -575,12 +577,13 @@ while Quads[index][0] != 'Endprogram':
     index += 1
     # elif Quads[index][0]
 
-cont = 0
-for celda in mm:
-    if j == 10 : 
-        print() 
-        print(cont, '- ', end='')
-        j = 0
-    print( celda, end=' ')
-    j+=1
-    cont +=1
+#? Visaulizacion de memoria despues de MV
+# cont = 0
+# for celda in mm:
+#     if j == 10 : 
+#         print() 
+#         print(cont, '- ', end='')
+#         j = 0
+#     print( celda, end=' ')
+#     j+=1
+#     cont +=1
