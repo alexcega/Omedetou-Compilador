@@ -33,18 +33,19 @@
 
 # print(len(myMat))
 
-# #* iterativo
-def fact(num):
-    result = 1
-    index = 1
-    limit = num+1
-    while index< limit :
-        result = result * index
-        index+=1
-    print(result)
+# # #* iterativo
+# def fact(num):
+#     result = 1
+#     index = 1
+#     limit = num+1
+#     while index< limit :
+#         result = result * index
+#         index+=1
+#     print(result)
 
-fact(4)
+# fact(4)
 
+#* recursivo
 
 # def  fact( num):
 #     if (num == 1) :
@@ -56,3 +57,5 @@ fact(4)
 
 # print(fact(4))
 
+
+print(int("TBD"))

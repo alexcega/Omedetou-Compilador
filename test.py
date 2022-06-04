@@ -1,1 +1,1 @@
-myTest = 'test_doc_funcion.txt'
+myTest = 'test_fact_recur.txt'

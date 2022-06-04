@@ -96,8 +96,6 @@ print('\n # Mis Constantes')
 for k,v in myConstantes.items():
     print('\t',k,v)
 
-for k, v in myDirFunctions.items():
-    print('inician', v.startLine)
 
 # Measure-Command {python omedetouLark.py}
 
@@ -106,7 +104,7 @@ for k, v in myDirFunctions.items():
 # print('alltokens \n', *all_tokens)
 
 
-#* aqui comprobamos que se imprime correctamente el tipo de dato de los tokens
+#~ aqui comprobamos que se imprime correctamente el tipo de dato de los tokens
 # for mint in my_parse_tree.scan_values(lambda v: isinstance(v, lexer.Token)):
 #     print(mint.value)
 #     print(type(mint.value))

@@ -1,11 +1,11 @@
 Start
 
-    Def Void fact(int num){
+    Def int fact(int num){
         If (num == 1){
             Return (num)
         }
         Else{
-            Return (num * fact (num - 1))
+            Return (num * (fact(num - 1)))
         }
     }
 

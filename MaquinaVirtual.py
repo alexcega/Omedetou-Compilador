@@ -8,6 +8,7 @@ currentFunctionCall = None
 currentObjectFunctionCall = None
 regreso = 0 
 pilaRecursion = []
+pilaMemoria = []
 for celda in mm:
     if j % 10 == 0 : 
         print() 
@@ -404,7 +405,6 @@ while Quads[index][0] != 'Endprogram':
         except TypeError:
             print(mm[mm[Quads[index][3][1]]])
 
-
     elif Quads[index][0] == 'Read':
         if Quads[index][1] == 'global':
             eltype = myGlobalVars[Quads[index][2][1]]['type']
@@ -494,6 +494,10 @@ while Quads[index][0] != 'Endprogram':
         continue
 
     elif Quads[index][0] == 'Gotof':
+        #borrar
+        # print(bool(mm[Quads[index][1]]))
+        # print(mm[Quads[index][1]])
+        # print(Quads[index][1])
         if bool(mm[Quads[index][1]]) == False :
             index = Quads[index][3] - 1
             continue
@@ -502,10 +506,11 @@ while Quads[index][0] != 'Endprogram':
         currentFunctionCall = Quads[index][3]
         if Quads[index][2] != None:
             currentObjectFunctionCall = Quads[index][2] 
-    
+        memoTemp = mainMemory[rangoLocalInt.li:rangoLocalStirng.ls]
+        pilaMemoria.append(deepcopy(memoTemp))
     elif Quads[index][0] == 'Param':
         try:
-            #* Funcion normal
+            #* Funcion normal'
             mm[myDirFunctions[currentFunctionCall].paramsDic[list(myDirFunctions[currentFunctionCall].paramsDic.items())[Quads[index][1]-1] [0] ]['address']] = mm[Quads[index][3]]
         except KeyError:
             #* funcion de objeto
@@ -513,6 +518,7 @@ while Quads[index][0] != 'Endprogram':
 
     elif Quads[index][0] == 'Gosub':
         pilaRecursion.append(index + 1)
+        
         regreso = index + 1
         try:
             index = myDirFunctions[currentFunctionCall].startLine 
@@ -522,11 +528,15 @@ while Quads[index][0] != 'Endprogram':
 
     elif Quads[index][0] == 'Return':
         try :
+            #* funcion normal
             mm[myGlobalVars[currentFunctionCall]['address']] = mm[Quads[index][3]]
         except KeyError:
+            #* objeto funcion
             curfun = Quads[index][1]
             obj = Quads[index][2]
             mm[myObjects[obj].objectVarsDic[curfun]['address']] = mm[Quads[index][3]]
+        memoarray = pilaMemoria.pop()
+        mainMemory[rangoLocalInt.li:rangoLocalStirng.ls] = memoarray
         index = regreso
         index = pilaRecursion.pop()
         continue
@@ -555,6 +565,8 @@ while Quads[index][0] != 'Endprogram':
             exit()
     elif Quads[index][0] == 'Endfunc':
         index = pilaRecursion.pop()
+        memoarray = pilaMemoria.pop()
+        mainMemory[rangoLocalInt.li:rangoLocalStirng.ls] = memoarray
         continue
     index += 1
     # elif Quads[index][0]

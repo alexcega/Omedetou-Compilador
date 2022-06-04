@@ -109,7 +109,6 @@ class instructions(Visitor):
         except KeyError:
         #* Crear memoria nueva
             espacio = apartarMemoriaConst('int')
-            print('Debe ser por aqui ', espacio)
             mainMemory[espacio] = tree.children[0].value
             myConstantes[tree.children[0].value] = espacio
             pilaO.append({'address': espacio, 'type': 'int'})
@@ -124,7 +123,6 @@ class instructions(Visitor):
         except KeyError:
         #* Crear memoria nueva
             espacio = apartarMemoriaConst('float')
-            print('Debe ser por aqui ', espacio)
             mainMemory[espacio] = tree.children[0].value
             myConstantes[tree.children[0].value] = espacio
             pilaO.append({'address': espacio, 'type': 'float'})
@@ -355,7 +353,6 @@ class instructions(Visitor):
         if currentFunction != None : 
             typo_de_arr = tree.children[1].children[0].value
             memo = apartarMemoriaLocal(typo_de_arr)
-            print('cual aparte', memo)
             try:
                 mynode = Arreglo()
                 currArray = id_arr
@@ -459,7 +456,6 @@ class instructions(Visitor):
                     nodoCurr = myObjects[currentObject].objectVarsDic[currArray]['arreglo']
                 except KeyError:
                     nodoCurr = myObjects[currentObject].funciones[currentFunction].varsDic[currArray]['arreglo']
-        # print(type(mainMemory[pilaO.pop()['address']]))
         nodoCurr.ls = float(mainMemory[pilaO.pop()['address']])
         nodoCurr.r_rango = (nodoCurr.ls - nodoCurr.li + 1) * nodoCurr.r_rango
         
@@ -633,11 +629,7 @@ class instructions(Visitor):
         pilaO.append({'address':['pointer',currentPointerMemory], 'type': eltypo})
         
     def size_arr(self,tree):
-        print(tree)
         currArray = tree.children[0].value
-        print(tree.children[0])
-        print(currArray)
-        
         #* global
         if currArray in myGlobalVars:
             if 'arreglo' in myGlobalVars[currArray]:
@@ -666,7 +658,6 @@ class instructions(Visitor):
             else:
                 #* Una variable existente se intenta acceder a dimensiones inexistentes
                 errorDimensionAtt(tree)
-        # print(ansSize)
         ansSize = int(ansSize)
         if ansSize in myConstantes:
             pilaO.append({
@@ -707,8 +698,8 @@ class instructions(Visitor):
                         'address' : tree.children[0].value,
                         'type' : myGlobalVars[tree.children[0].value]['type']
                     })
-                    # print(myGlobalVars[tree.children[0].value]['type']) #* tipo 
-                    # print(tree.children[0].value) #* identificador
+                    # (myGlobalVars[tree.children[0].value]['type']) #* tipo 
+                    # (tree.children[0].value) #* identificador
                 except :
                     #* Buscar en objetos
                     try:
@@ -726,7 +717,6 @@ class instructions(Visitor):
                     left = pilaO.pop()
                     operador = Poper.pop()
                     resultType =  getType(left,right,operador)
-                    print(right, left, operador)
                     if resultType != OTypeError:
 
                         Quads.append([operador, right,None,left['address']])
@@ -1065,8 +1055,8 @@ class instructions(Visitor):
     def function_param(self, tree):
         fType = tree.children[0].children[0].value
         fID = tree.children[1].value
-        # print(tree.children[0].children[0].value) #* tipo
-        # print(tree.children[1].value)   #* id
+        # (tree.children[0].children[0].value) #* tipo
+        # (tree.children[1].value)   #* id
         dondeva =  apartarMemoriaLocal(fType)
         #* Normal funcion
         if currentObject == None:
@@ -1109,19 +1099,22 @@ class instructions(Visitor):
 
 
     def np_guadalupe(self,tree):
-        pg =pilaO.pop()['address']
-        if currentObject == None:
-            Quads.append(['Return',None,None, pg])
-        else:
-            Quads.append(['Return',currentFunction,currentObject, pg])
-        # myGlobalVars[currentFunction]['address'] = pg
-
+        try:
+            pg =pilaO.pop()['address']
+            if currentObject == None:
+                Quads.append(['Return',None,None, pg])
+            else:
+                Quads.append(['Return',currentFunction,currentObject, pg])
+            # myGlobalVars[currentFunction]['address'] = pg
+        except IndexError:
+            #! Validation error
+            print('Void function does not return a value')
+            exit()
     def np_fin_funcion(self, tree):
         if currentFunction != 'main':
             Quads.append(['Endfunc',None,None,None])
             #* Funciones en objetos
             try:
-                print(currentObject)
                 for varname, value in myObjects[currentObject].funciones[currentFunction].varsDic.items():
                     clearMemory(value['type'], value['address'])
                 for varname, value in myObjects[currentObject].funciones[currentFunction].paramsDic.items():
@@ -1159,7 +1152,7 @@ class instructions(Visitor):
                     #! Error validation, function not defined
                     errorFuntionNotDefined(tree)
                 else:
-                    #print(tree.children[1].children[1]) #* funcion del objeto
+                    #(tree.children[1].children[1]) #* funcion del objeto
                     #* Funciones del objeto 
                     if tree.children[1].children[1].value not in myDirFunctions[currentFunction].varsDic[tree.children[0].value].funciones:
                         #! Error validation, function of objecto not defined
@@ -1303,8 +1296,8 @@ class instructions(Visitor):
             errorNotSuchObject(tree)
 
     def guardar_var_de_obj(self,tree):
-        # print(tree.children[0])  #*nombre de objeto 
-        # print(tree.children[2])  #* atributo de objeto
+        # (tree.children[0])  #*nombre de objeto 
+        # (tree.children[2])  #* atributo de objeto
         if tree.children[0].value not in myDirFunctions[currentFunction].varsDic:
             #! Error validation, objeto no existente
             errorObjectName(tree)

@@ -1,5 +1,5 @@
 Start
-    Def Void fact(int num ){
+    Def int fact(int num ){
         Var int result = 1
         Var int index = 1
         Var int limit = num + 1
@@ -7,10 +7,10 @@ Start
             result = result * index 
             index = index + 1
         }
-        Print(result)
+        Return (result)
     }
 
     Void Main () {
-        fact(4)
+        Print(fact(4))
     }
 Finish
