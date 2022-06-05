@@ -7,7 +7,7 @@ class limites():
         self.cont = 0
 
 #* cuantos valores hay por rango
-total = 10
+total = 1000
 #~ Globales
 rangoInt = limites(0,total) #*10
 rangoFloat = limites(rangoInt.ls, rangoInt.ls + total) #*20

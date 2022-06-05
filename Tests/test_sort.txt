@@ -1,0 +1,46 @@
+Start
+    Void Main(){ 
+        Var int arr[8]
+        arr[0] = 12
+        arr[1] = 15
+        arr[2] = 9 
+        arr[3] = 6 
+        arr[4] = 2 
+        arr[5] = 1 
+        arr[6] = 24
+        arr[7] = 0
+        arr[8] = 10
+
+        Var int num = 0
+        Print("Tenemos")
+        While ( num < arr:size) {
+            Print(arr[num])
+            num = num + 1 
+        }
+
+        # sort
+
+        Var int index = 0
+        While( index < arr:size){
+            Var int jin = 0
+            While (jin < (arr:size - index - 1)){
+                If (arr[jin] > arr[jin + 1 ] ){
+                    Var int aux =  arr[jin+1]
+                    arr[jin + 1] = arr[jin]
+                    arr[jin] = aux
+                }
+                jin = jin +1
+            }
+            index = index + 1
+        }    
+
+        Print("resultado")
+
+        num = 0
+        While ( num < arr:size) {
+            Print(arr[num])
+            num = num + 1 
+        }
+
+    }
+Finish

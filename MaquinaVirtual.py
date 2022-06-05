@@ -297,7 +297,6 @@ while Quads[index][0] != 'Endprogram':
                     print("Array contains non defined values")
                     exit()
         elif Quads[index][0] == '!=':
-            print(Quads[index])
             try:
                 if Quads[index][1]['type'] == 'int' and Quads[index][2]['type'] == 'int':
                     mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != int(mm[Quads[index][2]['address']])
@@ -321,8 +320,6 @@ while Quads[index][0] != 'Endprogram':
                     try:
                     #* num != (p)
                         mm[Quads[index][3]] = int(mm[Quads[index][1]['address']]) != float(mm[mm[Quads[index][2]['address'][1]]])
-                        print(mm[Quads[index][3]])
-                        exit()
 
                     except TypeError:
                         #* (p) != (p)
@@ -496,10 +493,6 @@ while Quads[index][0] != 'Endprogram':
         continue
 
     elif Quads[index][0] == 'Gotof':
-        #borrar
-        # print(bool(mm[Quads[index][1]]))
-        # print(mm[Quads[index][1]])
-        # print(Quads[index][1])
         if bool(mm[Quads[index][1]]) == False :
             index = Quads[index][3] - 1
             continue
